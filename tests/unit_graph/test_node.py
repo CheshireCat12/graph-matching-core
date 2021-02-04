@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from graph_pkg.graph.network import Node
+import pytest
 
-my_node = Node(1, 'C')
-
-
-def test_idx_node():
-    assert my_node.get_id() == 1
+from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
+from graph_pkg.graph.node import Node
 
 
-def test_label_node():
-    assert my_node.get_label() == 'C'
+@pytest.fixture()
+def my_node():
+    my_node = Node(1, LabelNodeLetter(1., 2.))
+    my_node.label.get_attributes()
+    return my_node
+
+
+def test_simple_node(my_node):
+    assert my_node.idx == 1
+    assert my_node.label.get_attributes() == (1., 2.)
+
+
+

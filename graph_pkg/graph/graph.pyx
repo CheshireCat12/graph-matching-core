@@ -22,6 +22,7 @@ cdef class Graph:
         self.num_nodes = 5
         self.idx_node = 0
 
+    # TODO: add __len__ to return the size of the graph ie the number of nodes
 
     cpdef str get_label(self):
         return self.label
