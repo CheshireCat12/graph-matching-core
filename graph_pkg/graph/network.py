@@ -33,7 +33,7 @@ class Edge:
     id_counter = 0
 
     def __init__(self, start_node, end_node, data=[]):
-        assert start_node != end_node, 'No loops accepted, the nodes id must be different!'
+        assert start_node != end_node, f'No loops accepted, the node: {start_node} loops on itself!'
 
         self.id = self.id_counter
         self.id_start_node = start_node

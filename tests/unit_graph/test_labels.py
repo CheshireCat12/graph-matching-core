@@ -4,8 +4,8 @@ Test the label letter
 """
 import pytest
 
-from graph_pkg.graph.label.label_node.label_node_letter import LabelNodeLetter
-from graph_pkg.graph.label.label_node.label_node_AIDS import LabelNodeAIDS
+from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
+from graph_pkg.graph.label.label_node_AIDS import LabelNodeAIDS
 
 @pytest.mark.parametrize('in_args',
                          [(5., 6.),

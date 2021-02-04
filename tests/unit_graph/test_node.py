@@ -2,7 +2,7 @@
 
 import pytest
 
-from graph_pkg.graph.label.label_node.label_node_letter import LabelNodeLetter
+from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
 from graph_pkg.graph.node import Node
 
 
