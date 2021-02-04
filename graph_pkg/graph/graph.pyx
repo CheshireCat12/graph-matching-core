@@ -1,11 +1,4 @@
-cdef class Node:
-    cdef:
-        unsigned int ID
-        str label
 
-    def __init__(self, int idx, str label):
-        self.ID = idx
-        self.label = label
 
 cdef class Graph:
     """A class that is used to work with nodes and edges of a graph"""

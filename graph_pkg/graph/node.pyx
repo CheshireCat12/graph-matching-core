@@ -7,7 +7,7 @@ cdef class Node:
         self.label = label
 
     def __richcmp__(self, Node other, int op):
-        assert isinstance(other, Node), f'The element {str(other)} is not a not!'
+        assert isinstance(other, Node), f'The element {str(other)} is not a Node!'
 
         if op == Py_EQ:
             return self.idx == other.idx
