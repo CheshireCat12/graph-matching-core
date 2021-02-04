@@ -87,6 +87,8 @@ class Network:
         return self._edges_in + self._edges_out
 
     def add_node(self, node):
+        # TODO: check if the node id is not bigger than the total number of nodes
+        #       check if the node position is not already taken
         self._nodes[node.get_id()] = node
         self._edges_in[node.get_id()] = list()
         self._edges_out[node.get_id()] = list()
