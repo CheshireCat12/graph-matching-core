@@ -1,4 +1,4 @@
-from graph_pkg.graph.label.label_node import LabelNode
+from graph_pkg.graph.label.label_node.label_node import LabelNode
 
 cdef class LabelNodeAIDS(LabelNode):
 

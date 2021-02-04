@@ -19,12 +19,12 @@ extensions = [Extension(name='graph_pkg.graph.graph',
                         sources=['./graph_pkg/graph/graph.pyx']),
               Extension(name='graph_pkg.graph.node',
                         sources=['./graph_pkg/graph/node.pyx']),
-              Extension(name='graph_pkg.graph.label.label_node',
-                        sources=['./graph_pkg/graph/label/label_node.pyx']),
-              Extension(name='graph_pkg.graph.label.label_node_letter',
-                        sources=['./graph_pkg/graph/label/label_node_letter.pyx']),
-              Extension(name='graph_pkg.graph.label.label_node_AIDS',
-                        sources=['./graph_pkg/graph/label/label_node_AIDS.pyx']),
+              Extension(name='graph_pkg.graph.label.label_node.label_node',
+                        sources=['./graph_pkg/graph/label/label_node/label_node.pyx']),
+              Extension(name='graph_pkg.graph.label.label_node.label_node_letter',
+                        sources=['./graph_pkg/graph/label/label_node/label_node_letter.pyx']),
+              Extension(name='graph_pkg.graph.label.label_node.label_node_AIDS',
+                        sources=['./graph_pkg/graph/label/label_node/label_node_AIDS.pyx']),
 
               ]
 
