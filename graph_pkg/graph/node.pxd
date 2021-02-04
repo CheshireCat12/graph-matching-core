@@ -1,7 +1,7 @@
-from graph_pkg.graph.label.label_node cimport LabelNode
+from graph_pkg.graph.label.label_base cimport LabelBase
 
 
 cdef class Node:
     cdef:
         readonly unsigned int idx
-        readonly LabelNode label
+        readonly LabelBase label

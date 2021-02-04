@@ -1,4 +1,4 @@
-cdef class LabelNode:
+cdef class LabelBase:
 
     def __cinit__(self):
         pass

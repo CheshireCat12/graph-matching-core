@@ -1,6 +1,4 @@
-from graph_pkg.graph.label.label_node import LabelNode
-
-cdef class LabelNodeLetter(LabelNode):
+cdef class LabelNodeLetter(LabelBase):
 
     def __cinit__(self, x, y):
         self.x = x

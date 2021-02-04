@@ -2,7 +2,7 @@ from cpython.object cimport Py_EQ
 
 cdef class Node:
 
-    def __cinit__(self, unsigned int idx, LabelNode label):
+    def __cinit__(self, unsigned int idx, LabelBase label):
         self.idx = idx
         self.label = label
 

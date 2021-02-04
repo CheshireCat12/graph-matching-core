@@ -1,6 +1,6 @@
-from graph_pkg.graph.label.label_node cimport LabelNode
+from graph_pkg.graph.label.label_base cimport LabelBase
 
-cdef class LabelNodeAIDS(LabelNode):
+cdef class LabelNodeAIDS(LabelBase):
     cdef:
         str symbol
         int chem

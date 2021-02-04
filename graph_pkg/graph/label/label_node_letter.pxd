@@ -1,6 +1,6 @@
-from graph_pkg.graph.label.label_node cimport LabelNode
+from graph_pkg.graph.label.label_base cimport LabelBase
 
-cdef class LabelNodeLetter(LabelNode):
+cdef class LabelNodeLetter(LabelBase):
     cdef:
         float x
         float y
