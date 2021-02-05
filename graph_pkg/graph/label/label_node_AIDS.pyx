@@ -7,3 +7,5 @@ cdef class LabelNodeAIDS(LabelBase):
         self.x = x
         self.y = y
 
+    cpdef tuple get_attributes(self):
+        return self.symbol, self.chem, self.charge, self.x, self.y

@@ -13,6 +13,7 @@ class LoaderBase(ABC):
 
     _num_lines_to_trim_front: int = NotImplemented
     _num_lines_to_trim_end: int = NotImplemented
+    _num_chars_to_trim_start: int = NotImplemented
     _num_chars_to_trim_end: int = NotImplemented
 
     __EXTENSION = '.gxl'
@@ -24,19 +25,18 @@ class LoaderBase(ABC):
         self._constructed_graph = None
 
     def _clean_text(self):
-        print('+++')
         start = self._num_lines_to_trim_front
         end = None
         if self._num_lines_to_trim_end is not None:
             end = -self._num_lines_to_trim_end
 
         removed_front_and_end_lines = self._current_graph_text[start: end]
-        print(removed_front_and_end_lines)
 
+        start = self._num_chars_to_trim_start
         end = None
         if self._num_chars_to_trim_end is not None:
             end = -self._num_chars_to_trim_end
-        joined_xml_without_end_chars = "".join(removed_front_and_end_lines)[:end]
+        joined_xml_without_end_chars = "".join(removed_front_and_end_lines)[start:end]
         self._current_graph_text = joined_xml_without_end_chars
 
     @abstractmethod
@@ -68,7 +68,7 @@ class LoaderBase(ABC):
         for element in graph_dict['node']:
             idx = self._format_idx(element['@id'])
 
-            assert idx == idx_verification, f'There is a gap in the index from {graph_name}'
+            assert idx == idx_verification, f'There is a gap in the index {idx} from {graph_name}'
 
             lbl_node = self._formated_lbl_node(element['attr'])
             self._constructed_graph.add_node(Node(idx, lbl_node))
@@ -82,7 +82,7 @@ class LoaderBase(ABC):
         for element in graph_dict['edge']:
             idx_from = self._format_idx(element['@from'])
             idx_to = self._format_idx(element['@to'])
-            lbl_edge = self._formated_lbl_edge(element['attr'])
+            lbl_edge = self._formated_lbl_edge(element)
             tmp_edge = Edge(idx_from, idx_to, lbl_edge)
 
             self._constructed_graph.add_edge(tmp_edge)
@@ -95,14 +95,12 @@ class LoaderBase(ABC):
         for graph_file in graph_files:
             with open(graph_file) as file:
                 self._current_graph_text = file.readlines()
-                # print(self._current_graph_text)
                 self._clean_text()
-                # print(self._current_graph_text)
                 self._parsed_data = parse(self._current_graph_text)
                 self._construct_graph()
 
             graphs.append(self._constructed_graph)
-            break
+            # break
 
         print(len(graph_files))
         print(str(graphs[0]))

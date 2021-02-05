@@ -6,6 +6,7 @@ class LoaderMutagenicity(LoaderBase):
 
     _num_lines_to_trim_front = 2
     _num_lines_to_trim_end = 1
+    _num_chars_to_trim_start = 0
     _num_chars_to_trim_end = None
 
     def __init__(self, folder):
@@ -20,4 +21,5 @@ class LoaderMutagenicity(LoaderBase):
         return lbl_mutagenicity
 
     def _formated_lbl_edge(self, attr):
+        attr = attr['attr']
         return LabelEdge(int(attr['int']))
