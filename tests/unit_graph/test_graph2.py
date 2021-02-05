@@ -1,12 +1,13 @@
+from itertools import combinations
+
 import pytest
 
-from graph_pkg.graph.graph import Graph
-from graph_pkg.graph.node import Node
 from graph_pkg.graph.edge import Edge
-from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
+from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.label.label_edge import LabelEdge
+from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
+from graph_pkg.graph.node import Node
 
-from itertools import combinations
 
 @pytest.fixture()
 def my_graph():

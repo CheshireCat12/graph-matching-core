@@ -7,4 +7,4 @@ cdef class EditCostLetterMinkowski(EditCostLetter):
     cdef:
         int degree
 
-    cdef float _compute_cost_substitute_node(self, float x1, float y1, float x2, float y2) except? -1
+    cdef double _compute_cost_substitute_node(self, double x1, double y1, double x2, double y2) except? -1
