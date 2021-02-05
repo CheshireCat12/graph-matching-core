@@ -18,11 +18,13 @@ def test_simple_node(my_node):
     assert my_node.label.get_attributes() == (1., 2.)
 
 
-@pytest.mark.parametrize('in_args, expected',
-                         [(Node(1, LabelNodeLetter(1., 2.)), True),
-                          (Node(3, LabelNodeLetter(1., 2.)), False)])
-def test_equality_node(my_node, in_args, expected):
-    equality = my_node == in_args
+@pytest.mark.parametrize('node1, node2, expected',
+                         [(Node(1, LabelNodeLetter(1., 2.)), Node(1, LabelNodeLetter(1., 2.)), True),
+                          (Node(1, LabelNodeLetter(1., 2.)), Node(3, LabelNodeLetter(1., 2.)), False),
+                          (Node(1, LabelNodeLetter(1., 2.)), Node(1, LabelNodeLetter(3, 5)), False)])
+def test_equality_node(node1, node2, expected):
+    equality = node1 == node2
+
     assert equality == expected
 
 

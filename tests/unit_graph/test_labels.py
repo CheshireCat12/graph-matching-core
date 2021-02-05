@@ -41,7 +41,9 @@ def test_label_lettre_to_string(in_args):
 
 @pytest.mark.parametrize('lbl_1, lbl_2, expected',
                          [(LabelNodeLetter(1, 2), LabelNodeLetter(1, 2), True),
-                          (LabelNodeLetter(1., 2.), LabelEdge(0), False)])
+                          (LabelNodeLetter(1., 2.), LabelEdge(0), False),
+                          (LabelEdge(0), LabelEdge(0), True),
+                          (LabelEdge(12), LabelEdge(2), False)])
 def test_label_equality(lbl_1, lbl_2, expected):
     equality = lbl_1 == lbl_2
 

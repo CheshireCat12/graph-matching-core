@@ -5,6 +5,14 @@ cdef class Graph:
         self.name = name
         self.num_nodes = num_nodes
         self.nodes = [None] * num_nodes
+        self._init_edges()
+
+    cdef void _init_edges(self):
+        self.edges = {i: [] for i in range(self.num_nodes)}
+
+    cdef bint _does_node_exist(self, int idx_node):
+        return 0 <= idx_node < self.num_nodes and \
+               self.nodes[idx_node] is not None
 
     cpdef list get_nodes(self):
         return self.nodes
@@ -12,38 +20,22 @@ cdef class Graph:
     cpdef int add_node(self, Node node) except? -1:
         assert node.idx < self.num_nodes, \
             f'The idx of the node {node.idx} exceed the number of nodes {self.num_nodes} authorized!'
+        # TODO: replace with the function: not _does_node_exist()
         assert self.nodes[node.idx] is None, \
             f'The position {node.idx} is already used!'
 
         self.nodes[node.idx] = node
 
-    # cpdef str get_label(self):
-    #     return self.label
-    #
-    # cpdef int count_nodes(self):
-    #     cdef:
-    #         int counter = 0
-    #         unsigned int idx = 0
-    #
-    #     for idx in range(self.num_nodes):
-    #         if self.nodes[idx] != '\0':
-    #             counter += 1
-    #
-    #     return counter
-    #
-    # cpdef void print_nodes(self):
-    #     cdef Node tmp_node
-    #
-    #     for tmp_node in self.nodes:
-    #         print(tmp_node.label)
-    #
-    #
-    # cpdef void add_node(self, str lbl_node):
-    #     """Add a new node to the graph."""
-    #     self.nodes.append(Node(len(self.nodes) + 1, lbl_node))
-    #
-    # cpdef void add_edge(self):
-    #     """Add a new edge to the graph."""
+    cpdef dict get_edges(self):
+        return self.edges
+
+    cpdef int add_edge(self, Edge edge) except? -1:
+        assert self._does_node_exist(edge.idx_node_start), f'The starting node {edge.idx_node_start} does not exist!'
+        assert self._does_node_exist(edge.idx_node_end), f'The ending node {edge.idx_node_end} does not exist!'
+
+        cdef Edge reversed_edge = edge.reversed()
+        self.edges[edge.idx_node_start].append(edge)
+        self.edges[reversed_edge.idx_node_start].append(reversed_edge)
 
     def __str__(self):
         eof = ",\n\t\t"

@@ -10,18 +10,20 @@ cdef class Graph:
         unsigned int num_nodes
         unsigned int num_edges
 
-    # cdef bint _does_node_exist(self, int idx_node)
-    #
+    cdef void _init_edges(self)
+
+    cdef bint _does_node_exist(self, int idx_node)
+
     # cdef void _del_edge(self, int idx_node, list edges)
 
     cpdef list get_nodes(self)
 
-    # cpdef list get_edges(self)
+    cpdef dict get_edges(self)
 
     cpdef int add_node(self, Node node) except? -1
 
-    # cpdef void add_edge(self, Edge edge)
-    #
+    cpdef int add_edge(self, Edge edge) except? -1
+
     # cpdef void add_edge(self, int idx_node_start, int idx_node_end)
     #
     # cpdef void remove_node_by_idx(self, int idx_node)

@@ -10,7 +10,8 @@ cdef class Node:
         assert isinstance(other, Node), f'The element {str(other)} is not a Node!'
 
         if op == Py_EQ:
-            return self.idx == other.idx
+            return self.idx == other.idx and \
+                   self.label == other.label
         else:
             assert False
 

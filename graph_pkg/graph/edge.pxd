@@ -8,3 +8,5 @@ cdef class Edge:
         readonly unsigned int idx_node_start
         readonly unsigned int idx_node_end
         readonly LabelBase weight
+
+    cpdef Edge reversed(self)
