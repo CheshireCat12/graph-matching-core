@@ -1,3 +1,5 @@
+import numpy as np
+
 from graph_pkg.graph.node cimport Node
 from graph_pkg.graph.edge cimport Edge
 
@@ -7,10 +9,15 @@ cdef class Graph:
         list nodes
         dict edges
 
-        unsigned int num_nodes
+        readonly unsigned int num_nodes_max
+        unsigned int num_nodes_current
         unsigned int num_edges
 
+        readonly int[:, :] adjacency_matrix
+
     cdef void _init_edges(self)
+
+    cdef void _init_adjacency_matrix(self)
 
     cdef bint _does_node_exist(self, int idx_node)
 

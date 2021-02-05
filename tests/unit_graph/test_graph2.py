@@ -16,7 +16,7 @@ def test_simple_graph():
     my_graph = Graph('gr1', 1)
 
     assert my_graph.name == 'gr1'
-    assert len(my_graph) == 1
+    assert len(my_graph) == 0
 
 
 @pytest.mark.parametrize('num_nodes',
@@ -88,3 +88,27 @@ def test_insert_invalid_edge(num_nodes, nodes, edge, expected_error_msg):
 
     assert error_msg == expected_error_msg
 
+import numpy as np
+@pytest.mark.parametrize('num_nodes, expected_matrix',
+                         [(2, np.array([[0, 1],
+                                        [1, 0]], dtype=np.int32)),
+                          (3, np.array([[0, 1, 1],
+                                        [1, 0, 1],
+                                        [1, 1, 0]], dtype=np.int32))
+                          ])
+def test_adjacency_matrix(num_nodes, expected_matrix):
+    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeLetter(i, i))
+        my_graph.add_node(tmp_node)
+
+    for idx_start, idx_end in combinations(range(num_nodes), 2):
+        tmp_edge = Edge(idx_start, idx_end, LabelEdge(0))
+        my_graph.add_edge(tmp_edge)
+
+    # transform memoryview to np.array
+    # my_graph.adjacency_matrix.base
+    # np.asarray(my_graph.adjacency_matrix)
+
+    assert np.array_equal(np.asarray(my_graph.adjacency_matrix), expected_matrix)
