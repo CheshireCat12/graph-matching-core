@@ -45,7 +45,7 @@ cdef class Graph:
     # cpdef void add_edge(self):
     #     """Add a new edge to the graph."""
 
-    def __repr__(self):
+    def __str__(self):
         eof = ",\n\t\t"
         return f'Graph: \n' \
                f'\tName: {self.name}\n' \
@@ -53,6 +53,10 @@ cdef class Graph:
                f'\tNodes: \n \t\t {eof.join(str(node) for node in self.nodes)}\n' \
                f'\tEdges: '
 
+    def __repr__(self):
+        return f'Graph: {self.name} -> ' \
+               f'Nodes: {", ".join(str(node) for node in self.nodes)}, ' \
+               f'Edges: {", ".join(str(edge) for edge in self.edges)}'
 
     def __len__(self):
         return self.num_nodes
