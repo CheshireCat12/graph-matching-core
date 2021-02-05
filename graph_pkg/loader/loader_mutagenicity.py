@@ -1,5 +1,6 @@
-from loader_base import LoaderBase
-
+from graph_pkg.loader.loader_base import LoaderBase
+from graph_pkg.graph.label.label_mutagenicity import LabelNodeMutagenicity
+from graph_pkg.graph.label.label_edge import LabelEdge
 
 class LoaderMutagenicity(LoaderBase):
 
@@ -10,26 +11,13 @@ class LoaderMutagenicity(LoaderBase):
     def __init__(self, folder):
         super().__init__(folder)
 
-    def _format_xml(self):
-        graph_dict = self._parsed_data['graph']
-        print(graph_dict)
-        # print(graph_dict['@id'])
-        # self._constructed_graph = Graph(graph_dict['@id'])
-        #
-        # print('Insert Vertices')
-        # if not isinstance(graph_dict['node'], list):
-        #     graph_dict['node'] = [graph_dict['node']]
-        # for element in graph_dict['node']:
-        #     idx = element['@id']
-        #     data = [val['float'] for val in element['attr']]
-        #     self._constructed_graph.add_node(Node(idx, data))
-        #
-        # print('Insert Edges:')
-        # if 'edge' not in graph_dict.keys():
-        #     return
-        # if not isinstance(graph_dict['edge'], list):
-        #     graph_dict['edge'] = [graph_dict['edge']]
-        # for element in graph_dict['edge']:
-        #     print(element['@from'])
-        #     print(element['@from'], element['@to'])
-        #     self._constructed_graph.add_edge(Edge(element['@from'], element['@to']))
+    def _format_idx(self, idx):
+        return int(idx) - 1
+
+    def _formated_lbl_node(self, attr):
+        lbl_mutagenicity = LabelNodeMutagenicity(attr['string'])
+
+        return lbl_mutagenicity
+
+    def _formated_lbl_edge(self, attr):
+        return LabelEdge(int(attr['int']))

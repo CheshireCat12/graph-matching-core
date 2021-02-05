@@ -48,13 +48,20 @@ cdef class Graph:
         self.adjacency_matrix[edge.idx_node_start][edge.idx_node_end] = 1
         self.adjacency_matrix[reversed_edge.idx_node_start][reversed_edge.idx_node_end] = 1
 
+    def _set_edge(self):
+        edges_set = set()
+        for key, edges_lst in self.edges.items():
+            edges_set.update(edges_lst)
+
+        return edges_set
+
     def __str__(self):
         eof = ",\n\t\t"
         return f'Graph: \n' \
                f'\tName: {self.name}\n' \
                f'\tNumber of nodes max: {self.num_nodes_max}\n' \
-               f'\tNodes: \n \t\t {eof.join(str(node) for node in self.nodes)}\n' \
-               f'\tEdges: '
+               f'\tNodes: \n \t\t{eof.join(str(node) for node in self.nodes)}\n' \
+               f'\tEdges: \n \t\t{eof.join(str(edge) for edge in self._set_edge())}\n'
 
     def __repr__(self):
         return f'Graph: {self.name} -> ' \
