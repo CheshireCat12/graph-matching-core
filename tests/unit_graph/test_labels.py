@@ -49,10 +49,10 @@ def test_label_equality(lbl_1, lbl_2, expected):
 
     assert equality == expected
 
-
-def test_label_AIDS():
-    expected = ('C', 0, 1, 6., 5.)
-    label = LabelNodeAIDS(*expected)
-
-    with pytest.raises(NotImplementedError) as execinfo:
-        label.get_attributes()
+#
+# def test_label_AIDS():
+#     expected = ('C', 0, 1, 6., 5.)
+#     label = LabelNodeAIDS(*expected)
+#
+#     with pytest.raises(NotImplementedError) as execinfo:
+#         label.get_attributes()

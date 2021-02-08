@@ -19,7 +19,8 @@ def extension_modules():
         if file.startswith('graph_pkg'):
             ext_name = file[:-4].replace('/', '.')
             source_name = './' + file
-
+            print(ext_name)
+            print(source_name)
             new_extension = Extension(name=ext_name, sources=[source_name])
             ext.append(new_extension)
             print(f'Create new Extension for: {ext_name.split(".")[-1]}')

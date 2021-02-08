@@ -1,3 +1,6 @@
+from libc.math cimport pow as c_pow
+from libc.math cimport sqrt as c_sqrt
+
 cdef class EditCostLetterMinkowski(EditCostLetter):
 
     def __cinit__(self, degree):

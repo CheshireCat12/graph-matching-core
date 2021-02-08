@@ -1,6 +1,7 @@
 import pytest
 
 from graph_pkg.graph.edge import Edge
+# from graph_pkg.graph.edge import Edge
 from graph_pkg.graph.label.label_edge import LabelEdge
 
 @pytest.mark.parametrize('idx_start, idx_end, label_weight',
