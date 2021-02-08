@@ -10,6 +10,7 @@ install_requires = [
     'powerline-status',
     'pytest',
     'xmltodict',
+    'pytest-profiling',
 ]
 
 
