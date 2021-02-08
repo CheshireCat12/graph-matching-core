@@ -6,6 +6,7 @@ from setuptools import setup, Extension
 install_requires = [
     'cython',
     'numpy',
+    'scipy',
     'powerline-status',
     'pytest',
     'xmltodict',

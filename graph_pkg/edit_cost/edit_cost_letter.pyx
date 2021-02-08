@@ -33,4 +33,4 @@ cdef class EditCostLetter(EditCost):
         return 1.
 
     cpdef double cost_substitute_edge(self, Edge edge1, Edge edge2) except? -1:
-        return 1.
+        return 0.

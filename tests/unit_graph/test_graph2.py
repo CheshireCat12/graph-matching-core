@@ -1,5 +1,6 @@
 from itertools import combinations
 
+import numpy as np
 import pytest
 
 from graph_pkg.graph.edge import Edge
@@ -89,7 +90,6 @@ def test_insert_invalid_edge(num_nodes, nodes, edge, expected_error_msg):
 
     assert error_msg == expected_error_msg
 
-import numpy as np
 @pytest.mark.parametrize('num_nodes, expected_matrix',
                          [(2, np.array([[0, 1],
                                         [1, 0]], dtype=np.int32)),
@@ -113,3 +113,22 @@ def test_adjacency_matrix(num_nodes, expected_matrix):
     # np.asarray(my_graph.adjacency_matrix)
 
     assert np.array_equal(np.asarray(my_graph.adjacency_matrix), expected_matrix)
+
+
+@pytest.mark.parametrize('num_nodes, expected_matrix',
+                         [(2, np.array([1, 1], dtype=np.int32)),
+                          (3, np.array([2, 2, 2], dtype=np.int32))
+                          ])
+def test_out_in_degrees(num_nodes, expected_matrix):
+    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeLetter(i, i))
+        my_graph.add_node(tmp_node)
+
+    for idx_start, idx_end in combinations(range(num_nodes), 2):
+        tmp_edge = Edge(idx_start, idx_end, LabelEdge(0))
+        my_graph.add_edge(tmp_edge)
+
+    assert np.array_equal(np.asarray(my_graph.out_degrees()), expected_matrix)
+    # assert np.array_equal(np.asarray(my_graph.in_degrees()), expected_matrix)

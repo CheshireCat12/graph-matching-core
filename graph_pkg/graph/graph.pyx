@@ -1,4 +1,6 @@
 import numpy as np
+cimport cython
+
 
 cdef class Graph:
     """A class that is used to work with nodes and edges of a graph"""
@@ -21,6 +23,11 @@ cdef class Graph:
     cdef bint _does_node_exist(self, int idx_node):
         return 0 <= idx_node < self.num_nodes_max and \
                self.nodes[idx_node] is not None
+
+    cdef bint has_edge(self, int idx_start, int idx_end):
+        return 0 <= idx_start < self.num_nodes_max and \
+               0 <= idx_end < self.num_nodes_max and \
+               self.edges[idx_start][idx_end] is not None
 
     cpdef list get_nodes(self):
         return self.nodes
@@ -47,6 +54,36 @@ cdef class Graph:
 
         self.adjacency_matrix[edge.idx_node_start][edge.idx_node_end] = 1
         self.adjacency_matrix[reversed_edge.idx_node_start][reversed_edge.idx_node_end] = 1
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef int[::1] out_degrees(self):
+        """
+        Take the out degree of every node and create a list of them.
+         
+        :return: list of out degrees per nodes
+        """
+        cdef:
+            i, j
+            n, m
+            int[::1] degrees
+
+        n = self.adjacency_matrix.shape[0]
+        m = self.adjacency_matrix.shape[1]
+        degrees = np.zeros(n, dtype=np.int32)
+        for i in range(n):
+            for j in range(m):
+                degrees[i] += self.adjacency_matrix[i][j]
+
+        return degrees
+
+    cpdef int[::1] in_degrees(self):
+        """
+        Take the out degree of every node and create a list of them.
+
+        :return: list of out degrees per nodes
+        """
+        return np.asarray(self.adjacency_matrix, dtype=np.int16).sum(axis=0)
 
     def _set_edge(self):
         edges_set = set()
