@@ -98,17 +98,35 @@ cdef class GED:
         print(row_ind)
         print(col_ind)
         print(self.C.base[row_ind, col_ind])
-        print(graph_source)
-        print(graph_target)
+        # print(graph_source)
+        # print(graph_target)
+
+        n = len(self.graph_source)
+        m = len(self.graph_target)
 
         for i in range(n + m):
             for j in range(i + 1, n + m):
                 phi_i = col_ind[i]
                 phi_j = col_ind[j]
 
+                print(f'i {i}, j {j}')
+
+                if graph_source.has_edge(i, j):
+                    # check for edge substitution
+                    if graph_target.has_edge(phi_i, phi_j):
+                        print(f'-Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
+
+                    #check for edge insertion
+                    else:
+                        print(f'#insertion edge {(i, j)} --> {(phi_i, phi_j)}')
+                else:
+                    # check for edge deletion
+                    if graph_target.has_edge(phi_i, phi_j):
+                        print(f'*Deletion edge {(i, j)} --> {(phi_i, phi_j)}')
 
 
-                if i < n and  j >= m:
-                    if 0 <= phi_i <= n or 0 <= phi_j <= m:
-                        print(f'Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
+
+                # if i < n and  j >= m:
+                #     if 0 <= phi_i <= n or 0 <= phi_j <= m:
+                #         print(f'Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
 

@@ -14,7 +14,7 @@ cdef class Graph:
         self._init_adjacency_matrix()
 
     cdef void _init_edges(self):
-        self.edges = {i: [] for i in range(self.num_nodes_max)}
+        self.edges = {i: [None] * self.num_nodes_max for i in range(self.num_nodes_max)}
 
     cdef void _init_adjacency_matrix(self):
         self.adjacency_matrix = np.zeros((self.num_nodes_max, self.num_nodes_max),
@@ -24,7 +24,7 @@ cdef class Graph:
         return 0 <= idx_node < self.num_nodes_max and \
                self.nodes[idx_node] is not None
 
-    cdef bint has_edge(self, int idx_start, int idx_end):
+    cpdef bint has_edge(self, int idx_start, int idx_end):
         return 0 <= idx_start < self.num_nodes_max and \
                0 <= idx_end < self.num_nodes_max and \
                self.edges[idx_start][idx_end] is not None
@@ -49,8 +49,8 @@ cdef class Graph:
         assert self._does_node_exist(edge.idx_node_end), f'The ending node {edge.idx_node_end} does not exist!'
 
         cdef Edge reversed_edge = edge.reversed()
-        self.edges[edge.idx_node_start].append(edge)
-        self.edges[reversed_edge.idx_node_start].append(reversed_edge)
+        self.edges[edge.idx_node_start][edge.idx_node_end] = edge
+        self.edges[reversed_edge.idx_node_start][reversed_edge.idx_node_end] = reversed_edge
 
         self.adjacency_matrix[edge.idx_node_start][edge.idx_node_end] = 1
         self.adjacency_matrix[reversed_edge.idx_node_start][reversed_edge.idx_node_end] = 1

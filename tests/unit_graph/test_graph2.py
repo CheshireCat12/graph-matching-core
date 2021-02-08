@@ -53,11 +53,11 @@ def test_add_node_higher_than_num_nodes(num_nodes, error_idx):
 
 
 @pytest.mark.parametrize('num_nodes, expected_edges',
-                         [(2, {0: [Edge(0, 1, LabelEdge(0))],
-                               1: [Edge(1, 0, LabelEdge(0))]}),
-                          (3, {0: [Edge(0, 1, LabelEdge(0)), Edge(0, 2, LabelEdge(0))],
-                               1: [Edge(1, 0, LabelEdge(0)), Edge(1, 2, LabelEdge(0))],
-                               2: [Edge(2, 0, LabelEdge(0)), Edge(2, 1, LabelEdge(0))]})
+                         [(2, {0: [None, Edge(0, 1, LabelEdge(0))],
+                               1: [Edge(1, 0, LabelEdge(0)), None]}),
+                          (3, {0: [None, Edge(0, 1, LabelEdge(0)), Edge(0, 2, LabelEdge(0))],
+                               1: [Edge(1, 0, LabelEdge(0)), None, Edge(1, 2, LabelEdge(0))],
+                               2: [Edge(2, 0, LabelEdge(0)), Edge(2, 1, LabelEdge(0)), None]})
                           ])
 def test_add_clique_edge(num_nodes, expected_edges):
     my_graph = Graph(f'gr{num_nodes}', num_nodes)
@@ -71,6 +71,9 @@ def test_add_clique_edge(num_nodes, expected_edges):
         my_graph.add_edge(tmp_edge)
 
     assert my_graph.get_edges() == expected_edges
+    assert my_graph.has_edge(0, num_nodes - 1) == True
+    assert my_graph.has_edge(num_nodes - 1, 0) == True
+    assert my_graph.has_edge(0, num_nodes + 1) == False
 
 
 @pytest.mark.parametrize('num_nodes, nodes, edge, expected_error_msg',

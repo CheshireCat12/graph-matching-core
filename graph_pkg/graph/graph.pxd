@@ -19,7 +19,7 @@ cdef class Graph:
 
     cdef bint _does_node_exist(self, int idx_node)
 
-    cdef bint has_edge(self, int idx_start, int idx_end)
+    cpdef bint has_edge(self, int idx_start, int idx_end)
 
     # cdef void _del_edge(self, int idx_node, list edges)
 
