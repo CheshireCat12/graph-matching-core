@@ -16,9 +16,6 @@ cdef class EditCostLetter(EditCost):
         self.x1, self.y1 = node1.label.get_attributes()
         self.x2, self.y2 = node2.label.get_attributes()
 
-        print(self.x1, self.y1)
-        print(self.x2, self.y2)
-
         self.result = self._compute_cost_substitute_node(self.x1, self.y1, self.x2, self.y2)
 
         return self.result

@@ -39,33 +39,33 @@ def define_graphs():
 
     return ged, graph_source, graph_target
 
+
 def test_simple_ged(define_graphs):
     ged, graph_source, graph_target = define_graphs
 
     ged.compute_distance_between_graph(graph_source, graph_target)
 
-    expected = np.array([[2., 1., 1., 1., np.inf, np.inf, np.inf],
-                         [1., 0., 0., np.inf, 1., np.inf, np.inf],
-                         [2.,  1.,  1., np.inf, np.inf,  1., np.inf],
-                         [0.,  1.,  1., np.inf, np.inf, np.inf,  1.],
-                         [1., np.inf, np.inf,  0.,  0.,  0.,  0.],
-                         [np.inf,  1., np.inf,  0.,  0.,  0.,  0.],
-                         [np.inf, np.inf,  1.,  0.,  0.,  0.,  0.]])
+    expected_C = np.array([[2., 1., 1., 1., np.inf, np.inf, np.inf],
+                           [1., 0., 0., np.inf, 1., np.inf, np.inf],
+                           [2., 1., 1., np.inf, np.inf, 1., np.inf],
+                           [0., 1., 1., np.inf, np.inf, np.inf, 1.],
+                           [1., np.inf, np.inf, 0., 0., 0., 0.],
+                           [np.inf, 1., np.inf, 0., 0., 0., 0.],
+                           [np.inf, np.inf, 1., 0., 0., 0., 0.]])
 
-    expected = np.array([[2.,  2.,  1.,  2., np.inf, np.inf, np.inf],
-                         [3.,  1.,  2., np.inf,  4., np.inf, np.inf],
-                         [3.,  1.,  2., np.inf, np.inf,  3., np.inf],
-                         [1.,  1.,  2., np.inf, np.inf, np.inf,  3.],
-                         [2., np.inf, np.inf,  0.,  0.,  0.,  0.],
-                         [np.inf,  3., np.inf,  0.,  0.,  0.,  0.],
-                         [np.inf, np.inf,  2.,  0.,  0.,  0.,  0.]])
+    expected_C_star = np.array([[2., 2., 1., 2., np.inf, np.inf, np.inf],
+                                [3., 1., 2., np.inf, 4., np.inf, np.inf],
+                                [3., 1., 2., np.inf, np.inf, 3., np.inf],
+                                [1., 1., 2., np.inf, np.inf, np.inf, 3.],
+                                [2., np.inf, np.inf, 0., 0., 0., 0.],
+                                [np.inf, 3., np.inf, 0., 0., 0., 0.],
+                                [np.inf, np.inf, 2., 0., 0., 0., 0.]])
     print('c')
     print(ged.C.base)
     print('c_star')
     print(ged.C_star.base)
-    print('expected')
-    print(expected)
-    assert np.array_equal(np.asarray(ged.C_star), expected)
+
+    assert np.array_equal(np.asarray(ged.C), expected_C)
+    assert np.array_equal(np.asarray(ged.C_star), expected_C_star)
     assert len(graph_source) == 4
     assert len(graph_target) == 3
-    assert False

@@ -1,4 +1,5 @@
 import numpy as np
+cimport numpy as np
 cimport cython
 
 from libc.math cimport abs as c_abs

@@ -64,8 +64,8 @@ cdef class Graph:
         :return: list of out degrees per nodes
         """
         cdef:
-            i, j
-            n, m
+            int i, j
+            int n, m
             int[::1] degrees
 
         n = self.adjacency_matrix.shape[0]
