@@ -26,6 +26,7 @@ def extension_modules():
 
     return ext
 
+# Create automatically the extenstions
 extensions = extension_modules()
 
 for e in extensions:
