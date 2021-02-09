@@ -1,6 +1,5 @@
 cdef class EditCostLetter(EditCost):
 
-
     def __cinit__(self,
                   double c_insert_node,
                   double c_delete_node,
@@ -8,7 +7,6 @@ cdef class EditCostLetter(EditCost):
                   double c_delete_edge,
                   str metric_name):
         super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name)
-        # self.metric = letter_manhattan
         self.metrics_available = ['manhattan', 'euclidean']
         self._init_metric()
 
