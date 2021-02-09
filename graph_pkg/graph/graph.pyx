@@ -44,6 +44,16 @@ cdef class Graph:
     cpdef dict get_edges(self):
         return self.edges
 
+    cdef Edge get_edge_by_node_idx(self, int idx_node_start, int idx_node_end):
+        """
+        
+        !! Caution, there is no verification if the indices exist!!
+        :param idx_node_start: 
+        :param idx_node_end: 
+        :return: Edge corresponding to the given nodes'idx
+        """
+        return self.edges[idx_node_start][idx_node_end]
+
     cpdef int add_edge(self, Edge edge) except? -1:
         assert self._does_node_exist(edge.idx_node_start), f'The starting node {edge.idx_node_start} does not exist!'
         assert self._does_node_exist(edge.idx_node_end), f'The ending node {edge.idx_node_end} does not exist!'

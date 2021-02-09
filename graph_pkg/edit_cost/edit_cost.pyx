@@ -1,7 +1,19 @@
 cdef class EditCost:
 
-    def __cinit__(self):
-        pass
+    def __cinit__(self,
+                  double c_insert_node,
+                  double c_delete_node,
+                  double c_insert_edge,
+                  double c_delete_edge,
+                  str metric_name):
+        self._c_insert_node = c_insert_node
+        self._c_delete_node = c_delete_node
+        self._c_insert_edge = c_insert_edge
+        self._c_delete_edge = c_delete_edge
+        self._metric_name = metric_name
+
+    cdef int _init_metric(self) except? -1:
+        raise NotImplementedError
 
     cpdef double cost_insert_node(self, Node node) except? -1:
         raise NotImplementedError

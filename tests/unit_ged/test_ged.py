@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from graph_pkg.algorithm.graph_edit_distance import GED
-from graph_pkg.edit_cost.edit_cost_letter_minkowski import EditCostLetterMinkowski
+from graph_pkg.edit_cost.edit_cost_letter import EditCostLetter
 from graph_pkg.graph.edge import Edge
 from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.label.label_edge import LabelEdge
@@ -12,7 +12,7 @@ from graph_pkg.graph.node import Node
 
 @pytest.fixture()
 def define_graphs():
-    ged = GED(EditCostLetterMinkowski(1))
+    ged = GED(EditCostLetter(1., 1., 1., 1., 'manhattan'))
 
     n, m = 4, 3
     graph_source = Graph('gr_source', n)
@@ -43,7 +43,9 @@ def define_graphs():
 def test_simple_ged(define_graphs):
     ged, graph_source, graph_target = define_graphs
 
-    ged.compute_distance_between_graph(graph_source, graph_target)
+    cost = ged.compute_distance_between_graph(graph_source, graph_target)
+
+    expected_cost = 4.
 
     expected_C = np.array([[2., 1., 1., 1., np.inf, np.inf, np.inf],
                            [1., 0., 0., np.inf, 1., np.inf, np.inf],
@@ -69,3 +71,4 @@ def test_simple_ged(define_graphs):
     assert np.array_equal(np.asarray(ged.C_star), expected_C_star)
     assert len(graph_source) == 4
     assert len(graph_target) == 3
+    assert cost == expected_cost

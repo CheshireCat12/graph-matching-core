@@ -3,6 +3,15 @@ from graph_pkg.graph.node cimport Node
 
 cdef class EditCost:
 
+    cdef:
+        double _c_insert_node
+        double _c_delete_node
+        double _c_insert_edge
+        double _c_delete_edge
+        str _metric_name
+
+    cdef int _init_metric(self) except? -1
+
     cpdef double cost_insert_node(self, Node node) except? -1
 
     cpdef double cost_delete_node(self, Node node) except? -1

@@ -27,6 +27,8 @@ cdef class Graph:
 
     cpdef dict get_edges(self)
 
+    cdef Edge get_edge_by_node_idx(self, int idx_node_start, int idx_node_end)
+
     cpdef int add_node(self, Node node) except? -1
 
     cpdef int add_edge(self, Edge edge) except? -1
