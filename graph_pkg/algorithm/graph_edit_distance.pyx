@@ -1,10 +1,9 @@
 import numpy as np
 cimport numpy as np
 cimport cython
-
 from libc.math cimport abs as c_abs
 from scipy.optimize import linear_sum_assignment
-import time
+
 from graph_pkg.graph.edge cimport Edge
 
 cdef class GED:
@@ -133,7 +132,7 @@ cdef class GED:
 
         return cost
 
-    cpdef double compute_distance_between_graph(self, Graph graph_source, Graph graph_target):
+    cpdef double compute_edit_distance(self, Graph graph_source, Graph graph_target):
         cdef:
             int i, j
             int[::1] phi

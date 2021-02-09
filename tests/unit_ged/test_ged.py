@@ -59,7 +59,7 @@ def define_graphs():
 def test_simple_ged(define_graphs):
     ged, graph_source, graph_target = define_graphs
 
-    cost = ged.compute_distance_between_graph(graph_source, graph_target)
+    cost = ged.compute_edit_distance(graph_source, graph_target)
 
     expected_cost = 4.
 
@@ -121,7 +121,8 @@ def test_letter_I(letter_graphs):
     print(f'Computation time NX {(time()-start_time) * 1000}')
 
     start_time = time()
-    real_cost = ged.compute_distance_between_graph(letter_graphs[0], letter_graphs[1])
+    real_cost = ged.compute_edit_distance(letter_graphs[0],
+                                          letter_graphs[1])
     print(f'Computation time {(time()-start_time) * 1000}')
     print(f'Expected cost: {expected_cost}')
     print(f'My cost:       {real_cost}')

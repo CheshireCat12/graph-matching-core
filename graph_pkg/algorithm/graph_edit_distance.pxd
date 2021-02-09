@@ -19,4 +19,4 @@ cdef class GED:
 
     cdef double _compute_cost_edge_edit(self, int[::1] phi)
 
-    cpdef double compute_distance_between_graph(self, Graph graph_source, Graph graph_target)
+    cpdef double compute_edit_distance(self, Graph graph_source, Graph graph_target)
