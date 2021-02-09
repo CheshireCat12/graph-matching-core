@@ -4,10 +4,12 @@ from graph_pkg.loader.loader_AIDS import LoaderAIDS
 
 
 def test_loader():
-    loader = LoaderLetter('./data/Letter/Letter/LOW/')
-    loader = LoaderMutagenicity('./data/Mutagenicity/data/')
-    # loader = LoaderAIDS('./data/AIDS/data/')
+    loader = LoaderLetter()
+    # loader = LoaderMutagenicity()
+    # loader = LoaderAIDS()
     graphs = loader.load()
+    print(graphs[0])
+    print(graphs[1])
 
 
 if __name__ == '__main__':

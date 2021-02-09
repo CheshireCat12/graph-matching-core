@@ -9,8 +9,10 @@ class LoaderMutagenicity(LoaderBase):
     _num_chars_to_trim_start = 0
     _num_chars_to_trim_end = None
 
-    def __init__(self, folder):
-        super().__init__(folder)
+    _folder = './data/Mutagenicity/data/'
+
+    def __init__(self):
+        super().__init__()
 
     def _format_idx(self, idx):
         return int(idx) - 1

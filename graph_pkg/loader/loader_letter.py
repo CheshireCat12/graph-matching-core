@@ -1,7 +1,7 @@
 from graph_pkg.graph.label.label_edge import LabelEdge
 from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
 from graph_pkg.loader.loader_base import LoaderBase
-
+import os
 
 class LoaderLetter(LoaderBase):
     _num_lines_to_trim_front = 3
@@ -9,8 +9,11 @@ class LoaderLetter(LoaderBase):
     _num_chars_to_trim_start = 0
     _num_chars_to_trim_end = 6
 
-    def __init__(self, folder):
-        super().__init__(folder)
+    _folder = './data/Letter/Letter/'
+
+    def __init__(self, spec='LOW'):
+        super().__init__()
+        self._folder = os.path.join(self._folder, spec, '')
 
     def _format_idx(self, idx):
         return int(idx[1:])

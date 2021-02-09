@@ -32,9 +32,6 @@ cdef class EditCostLetter(EditCost):
 
         return self.metric(self.x1, self.y1, self.x2, self.y2)
 
-    cdef double _compute_cost_substitute_node(self, double x1, double y1, double x2, double y2) except? -1:
-        raise NotImplementedError
-
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
         return self._c_insert_edge
 
@@ -43,6 +40,3 @@ cdef class EditCostLetter(EditCost):
 
     cpdef double cost_substitute_edge(self, Edge edge1, Edge edge2) except? -1:
         return 0.
-
-    cdef double _compute_cost_substitute_edge(self, double x, double y) except? -1:
-        raise NotImplementedError

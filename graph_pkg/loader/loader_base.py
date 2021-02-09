@@ -16,10 +16,11 @@ class LoaderBase(ABC):
     _num_chars_to_trim_start: int = NotImplemented
     _num_chars_to_trim_end: int = NotImplemented
 
+    _folder: str = NotImplemented
+
     __EXTENSION = '.gxl'
 
-    def __init__(self, folder):
-        self.folder = folder
+    def __init__(self):
         self._current_graph_text = None
         self._parsed_data = None
         self._constructed_graph = None
@@ -58,7 +59,7 @@ class LoaderBase(ABC):
         num_nodes = len(graph_dict['node'])
         self._constructed_graph = Graph(graph_name, num_nodes)
 
-        print(f'Construct Graph: {graph_name}')
+        # print(f'Construct Graph: {graph_name}')
 
         # variable used to check if there is no gap in the indexes from the xml files
         idx_verification = 0
@@ -88,7 +89,7 @@ class LoaderBase(ABC):
             self._constructed_graph.add_edge(tmp_edge)
 
     def load(self):
-        graph_files = glob(f'{self.folder}*{self.__EXTENSION}')
+        graph_files = glob(f'{self._folder}*{self.__EXTENSION}')
 
         graphs = []
         print('** Loading Graphs **')
@@ -102,7 +103,4 @@ class LoaderBase(ABC):
             graphs.append(self._constructed_graph)
             # break
 
-        print(len(graph_files))
-        print(str(graphs[0]))
-        print(len(graphs))
         return graphs
