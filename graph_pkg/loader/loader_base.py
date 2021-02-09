@@ -103,4 +103,5 @@ class LoaderBase(ABC):
             graphs.append(self._constructed_graph)
             # break
 
+        print(f'==> {len(graphs)} loaded')
         return graphs

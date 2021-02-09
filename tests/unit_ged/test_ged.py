@@ -90,7 +90,7 @@ def test_simple_ged(define_graphs):
     assert cost == expected_cost
 
 def test_letter_I(letter_graphs):
-    epsilon = 1e-9
+    epsilon = 1e-14
     cst_cost_node = 0.9
     cst_cost_edge = 2.3
     ged = GED(EditCostLetter(cst_cost_node, cst_cost_node,
@@ -111,22 +111,22 @@ def test_letter_I(letter_graphs):
     from time import time
     start_time = time()
     expected_cost = nx.algorithms.graph_edit_distance(gr1, gr2,
-                                      node_subst_cost=lambda x,y: np.linalg.norm(np.array(list(x.values()))-np.array(list(y.values()))),
+                                      node_subst_cost=lambda x, y: np.linalg.norm(np.array(list(x.values()))-np.array(list(y.values()))),
                                       node_ins_cost=lambda x: cst_cost_node,
                                       node_del_cost=lambda x: cst_cost_node,
                                       # edge_subst_cost=lambda x, y: 0.,
                                       edge_ins_cost=lambda x: cst_cost_edge,
                                       edge_del_cost=lambda x: cst_cost_edge)
 
-    print(f'Computation time  NX{time()-start_time}')
+    print(f'Computation time NX {(time()-start_time) * 1000}')
 
     start_time = time()
     real_cost = ged.compute_distance_between_graph(letter_graphs[0], letter_graphs[1])
-    print(f'Computation time {time()-start_time}')
+    print(f'Computation time {(time()-start_time) * 1000}')
     print(f'Expected cost: {expected_cost}')
-    print(f'My cost: {real_cost}')
+    print(f'My cost:       {real_cost}')
     assert real_cost - expected_cost < epsilon
-    assert False
+    # assert False
     # assert False
 
     # u = np.array([[1.41307, 2.96441], [1.47339, 0.590991]])
