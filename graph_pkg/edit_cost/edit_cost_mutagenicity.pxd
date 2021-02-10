@@ -1,14 +1,14 @@
 from graph_pkg.edit_cost.edit_cost cimport EditCost
 from graph_pkg.graph.edge cimport Edge
 from graph_pkg.graph.node cimport Node
-from graph_pkg.edit_cost.metrics cimport manhattan_letter, euclidean_letter
+from graph_pkg.edit_cost.metrics cimport dirac_mutagenicity
 
-ctypedef double (*metricptr)(double, double, double, double)
+ctypedef double (*metricptr)(int, int)
 
-cdef class EditCostLetter(EditCost):
+cdef class EditCostMutagenicity(EditCost):
 
     cdef:
-        double x1, y1, x2, y2, result
+        int chem_source, chem_target
         int valence_source, valence_target
 
         list metrics_available

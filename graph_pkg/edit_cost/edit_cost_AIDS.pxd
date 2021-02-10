@@ -10,7 +10,6 @@ cdef class EditCostAIDS(EditCost):
     cdef:
         int symbol_source, symbol_target
         int valence_source, valence_target
-        str metric_name
 
         list metrics_available
         metricptr metric
