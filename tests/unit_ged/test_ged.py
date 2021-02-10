@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 import pytest
 
 from graph_pkg.algorithm.graph_edit_distance import GED
@@ -14,17 +15,18 @@ import networkx as nx
 
 @pytest.fixture()
 def letter_graphs():
-    ged = GED(EditCostLetter(1., 1., 1., 1., 'euclidean'))
 
-    loader = LoaderLetter()
+    loader = LoaderLetter('HIGH')
     graphs = loader.load()
-    name_graphs_to_test = ['IP1_0000', 'IP1_0001']
-
-    graphs_to_work = [graph for graph in graphs if graph.name in name_graphs_to_test]
-
-    return graphs_to_work
+    return graphs
     # find graph
 
+@pytest.fixture()
+def dataframe():
+    with open('./data/goal/anthony_ged_dist_mat_alpha_node_cost0.9_edge_cost2.3.pkl', 'rb') as file:
+        df = pickle.load(file)
+
+    return df
 
 @pytest.fixture()
 def define_graphs():
@@ -90,6 +92,9 @@ def test_simple_ged(define_graphs):
     assert cost == expected_cost
 
 def test_letter_I(letter_graphs):
+    name_graphs_to_test = ['IP1_0000', 'IP1_0001']
+
+    letter_graphs = [graph for graph in letter_graphs if graph.name in name_graphs_to_test]
     epsilon = 1e-14
     cst_cost_node = 0.9
     cst_cost_edge = 2.3
@@ -97,16 +102,12 @@ def test_letter_I(letter_graphs):
                              cst_cost_edge, cst_cost_edge, 'euclidean'))
 
     gr1 = nx.Graph()
-    gr1.add_node(0, x=1.41307, y=2.96441)
-    gr1.add_node(1, x=1.47339, y=0.590991)
+    gr1.add_node(0, x=1.66831, y=2.93501)
+    gr1.add_node(1, x=1.34125, y=0.290566)
     gr1.add_edge(0, 1)
 
     gr2 = nx.Graph()
-    gr2.add_node(0, x=1.51, y=3.)
-    gr2.add_node(1, x=1.59592, y=0.48336)
-    gr2.add_node(2, x=0.585624, y=0.486731)
-    gr2.add_edge(0, 1)
-    gr2.add_edge(0, 2)
+    gr2.add_node(0, x=1.18827, y=3.20702)
 
     from time import time
     start_time = time()
@@ -126,30 +127,39 @@ def test_letter_I(letter_graphs):
     print(f'Computation time {(time()-start_time) * 1000}')
     print(f'Expected cost: {expected_cost}')
     print(f'My cost:       {real_cost}')
-    assert real_cost - expected_cost < epsilon
+    assert abs(real_cost - expected_cost) < epsilon
     # assert False
     # assert False
 
-    # u = np.array([[1.41307, 2.96441], [1.47339, 0.590991]])
-    # v = np.array([[1.51, 3.], [1.59592, 0.48336], [0.585624, 0.486731]])
-    # n, m = u.shape[0], v.shape[0]
-    # expected_C = np.zeros((n + m, n + m))
-    # for i in range(n):
-    #     for j in range(m):
-    #         expected_C[i][j] = np.linalg.norm([u[i] - v[j]])
-    #
-    # expected_C[:n, m:] = np.inf
-    # for i in range(n):
-    #     j = i + m
-    #     expected_C[i][j] = 0.9
-    #
-    # expected_C[n:, :m] = np.inf
-    # for j in range(m):
-    #     i = j + n
-    #     expected_C[i][j] = 0.9
-    #
-    # print(expected_C)
-    # print(letter_graphs[0])
-    # print(letter_graphs[1])
-    #
-    # assert False
+@pytest.mark.skip(reason='I have to had the expected accuracy')
+@pytest.mark.parametrize('graph_source_target',
+                         [(['AP1_0000', 'AP1_0001']),
+                          (['IP1_0000', 'IP1_0001']),
+                          (['AP1_0100', 'IP1_0000']),
+                          (['HP1_0100', 'WP1_0010']),
+                          (['XP1_0005', 'KP1_0023']),
+                          (['EP1_0120', 'LP1_0099']),
+                          (['MP1_0019', 'FP1_0083']),
+                          ])
+def test_with_verified_data(letter_graphs, dataframe, graph_source_target):
+    gr_name_src, gr_name_trgt = [name[0] + '/' + name for name in graph_source_target]
+    graph_source, graph_target = [graph for graph in letter_graphs if graph.name in graph_source_target]
+
+    cst_cost_node = 0.9
+    cst_cost_edge = 2.3
+    ged = GED(EditCostLetter(cst_cost_node, cst_cost_node,
+                             cst_cost_edge, cst_cost_edge, 'euclidean'))
+
+    results = ged.compute_edit_distance(graph_source, graph_target)
+    expected = dataframe.loc[gr_name_src, gr_name_trgt]
+
+    print(f'###### diff {results - expected}')
+    assert results == expected
+
+
+
+
+
+
+
+

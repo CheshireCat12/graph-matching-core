@@ -11,7 +11,8 @@ install_requires = [
     'pytest',
     'xmltodict',
     'pytest-profiling',
-    'networkx'
+    'networkx',
+    'pandas',
 ]
 
 

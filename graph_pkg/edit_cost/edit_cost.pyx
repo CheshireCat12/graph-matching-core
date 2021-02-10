@@ -6,10 +6,10 @@ cdef class EditCost:
                   double c_insert_edge,
                   double c_delete_edge,
                   str metric_name):
-        self._c_insert_node = c_insert_node
-        self._c_delete_node = c_delete_node
-        self._c_insert_edge = c_insert_edge
-        self._c_delete_edge = c_delete_edge
+        self.c_insert_node = c_insert_node
+        self.c_delete_node = c_delete_node
+        self.c_insert_edge = c_insert_edge
+        self.c_delete_edge = c_delete_edge
         self._metric_name = metric_name
 
     cdef int _init_metric(self) except? -1:
