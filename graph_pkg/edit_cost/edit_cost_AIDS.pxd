@@ -1,16 +1,15 @@
 from graph_pkg.edit_cost.edit_cost cimport EditCost
 from graph_pkg.graph.edge cimport Edge
 from graph_pkg.graph.node cimport Node
-from graph_pkg.edit_cost.metrics cimport manhattan_letter, euclidean_letter
+from graph_pkg.edit_cost.metrics cimport dirac_AIDS
 
-ctypedef double (*metricptr)(double, double, double, double)
+ctypedef double (*metricptr)(int, int)
 
-cdef class EditCostLetter(EditCost):
+cdef class EditCostAIDS(EditCost):
 
     cdef:
-        double x1, y1, x2, y2, result
+        int symbol_source, symbol_target
         int valence_source, valence_target
-
         str metric_name
 
         list metrics_available
