@@ -26,7 +26,7 @@ cdef class EditCostAIDS(EditCost):
         self.symbol_source = node1.label.symbol_int
         self.symbol_target = node2.label.symbol_int
 
-        return self.metric(self.symbol_source, self.symbol_target)
+        return 0. if self.metric(self.symbol_source, self.symbol_target) == 0. else (self.c_insert_node + self.c_delete_node)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
         return self.c_insert_edge

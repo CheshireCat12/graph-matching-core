@@ -10,6 +10,8 @@ from graph_pkg.graph.label.label_edge import LabelEdge
 from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
 from graph_pkg.graph.node import Node
 from graph_pkg.loader.loader_letter import LoaderLetter
+from graph_pkg.loader.loader_AIDS import LoaderAIDS
+from graph_pkg.edit_cost.edit_cost_AIDS import EditCostAIDS
 
 import networkx as nx
 
@@ -21,13 +23,28 @@ def letter_graphs():
     return graphs
     # find graph
 
+
 @pytest.fixture()
-def dataframe():
+def aids_graphs():
+    loader = LoaderAIDS()
+    graphs = loader.load()
+    return graphs
+
+
+@pytest.fixture()
+def dataframe_letter():
     with open('./data/goal/anthony_ged_dist_mat_alpha_node_cost0.9_edge_cost2.3.pkl', 'rb') as file:
         df = pickle.load(file)
 
     return df
 
+
+@pytest.fixture()
+def dataframe_aids():
+    with open('./data/goal/anthony_ged_dist_mat_alpha_node_cost1.1_edge_cost0.1.pkl', 'rb') as file:
+        df = pickle.load(file)
+
+    return df
 @pytest.fixture()
 def define_graphs():
     ged = GED(EditCostLetter(1., 1., 1., 1., 'manhattan'))
@@ -141,7 +158,7 @@ def test_letter_I(letter_graphs):
                           (['EP1_0120', 'LP1_0099']),
                           (['MP1_0019', 'FP1_0083']),
                           ])
-def test_with_verified_data(letter_graphs, dataframe, graph_source_target):
+def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target):
     gr_name_src, gr_name_trgt = [name[0] + '/' + name for name in graph_source_target]
     graph_source, graph_target = [graph for graph in letter_graphs if graph.name in graph_source_target]
 
@@ -151,12 +168,35 @@ def test_with_verified_data(letter_graphs, dataframe, graph_source_target):
                              cst_cost_edge, cst_cost_edge, 'euclidean'))
 
     results = ged.compute_edit_distance(graph_source, graph_target)
-    expected = dataframe.loc[gr_name_src, gr_name_trgt]
+    expected = dataframe_letter.loc[gr_name_src, gr_name_trgt]
 
     print(f'###### diff {results - expected}')
     assert results == expected
 
 
+@pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
+                         [(['molid624151', 'molid633011', 'a/11808', 'a/15905']),
+                          # (['IP1_0000', 'IP1_0001']),
+                          # (['AP1_0100', 'IP1_0000']),
+                          # (['HP1_0100', 'WP1_0010']),
+                          # (['XP1_0005', 'KP1_0023']),
+                          # (['EP1_0120', 'LP1_0099']),
+                          # (['MP1_0019', 'FP1_0083']),
+                          ])
+def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target, gr_name_src, gr_name_trgt):
+    graph_source, graph_target = [graph for graph in aids_graphs if graph.name in [graph_name_source, graph_name_target]]
+    print(graph_source)
+    print(graph_target)
+    cst_cost_node = 1.1
+    cst_cost_edge = 0.1
+    ged = GED(EditCostAIDS(cst_cost_node, cst_cost_node,
+                           cst_cost_edge, cst_cost_edge, 'dirac'))
+
+    results = ged.compute_edit_distance(graph_source, graph_target)
+    expected = dataframe_aids.loc[gr_name_src, gr_name_trgt]
+
+    print(f'###### diff {results - expected}')
+    assert results == expected
 
 
 
