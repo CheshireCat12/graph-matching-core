@@ -5,7 +5,7 @@ from graph_pkg.loader.loader_AIDS import LoaderAIDS
 
 def test_loader():
     loader = LoaderLetter()
-    # loader = LoaderMutagenicity()
+    loader = LoaderMutagenicity()
     # loader = LoaderAIDS()
     graphs = loader.load()
     print(graphs[0])

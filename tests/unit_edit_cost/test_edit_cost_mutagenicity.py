@@ -8,7 +8,9 @@ from graph_pkg.graph.label.label_node_mutagenicity import LabelNodeMutagenicity
                          [(('C',), ('C',), 0.),
                           (('C',), ('C',), 0.),
                           (('H',), ('C',), 1.),
-                          (('H',), ('O',), 1.)])
+                          (('H',), ('O',), 1.),
+                          (('Cl',), ('O',), 1.),
+                          (('Cl',), ('Cl',), 0.)])
 def test_euclidean_norm(coord1, coord2, expected):
     node0 = Node(0, LabelNodeMutagenicity(*coord1))
     node1 = Node(1, LabelNodeMutagenicity(*coord2))
