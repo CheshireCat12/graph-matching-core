@@ -70,8 +70,8 @@ cdef class GED:
         # Update the substitution part
         for i in range(self._n):
             for j in range(self._m):
-                cost = c_abs(out_degrees_source[i] - out_degrees_target[j]) # False * self.edit_cost.c_insert_edge
-                self.C_star[i][j] += cost * self._free_edge_sub # False it should be only ... += cost
+                cost = c_abs(out_degrees_source[i] - out_degrees_target[j]) * self.edit_cost.c_insert_edge
+                self.C_star[i][j] += cost  # * self._free_edge_sub # False it should be only ... += cost
 
         # Update the deletion part
         for i in range(self._n):

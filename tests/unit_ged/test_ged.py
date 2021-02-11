@@ -240,6 +240,7 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
 # @pytest.mark.skip(reason='I have to had the expected accuracy')
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
                          [(['molid624151', 'molid633011', 'a/11808', 'a/15905']),
+                          (['molid660165', 'molid645098', 'i/27249', 'a/21376'])
                           # (['IP1_0000', 'IP1_0001']),
                           # (['AP1_0100', 'IP1_0000']),
                           # (['HP1_0100', 'WP1_0010']),
