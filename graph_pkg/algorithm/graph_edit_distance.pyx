@@ -11,6 +11,7 @@ cdef class GED:
 
     def __cinit__(self, EditCost edit_cost):
         self.edit_cost = edit_cost
+        self._free_edge_sub = 0. if edit_cost.metric_name == 'dirac' else 1.
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -69,8 +70,8 @@ cdef class GED:
         # Update the substitution part
         for i in range(self._n):
             for j in range(self._m):
-                cost = c_abs(out_degrees_source[i] - out_degrees_target[j])
-                self.C_star[i][j] += cost
+                cost = c_abs(out_degrees_source[i] - out_degrees_target[j]) # False * self.edit_cost.c_insert_edge
+                self.C_star[i][j] += cost * self._free_edge_sub # False it should be only ... += cost
 
         # Update the deletion part
         for i in range(self._n):
@@ -116,7 +117,7 @@ cdef class GED:
                         edge_target = self.graph_target.get_edge_by_node_idx(phi_i, phi_j)
 
                         cost += self.edit_cost.cost_substitute_edge(edge_source, edge_target)
-                        # print(f'-Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
+                        print(f'-Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
 
 
                     #check for edge deletion
@@ -125,7 +126,7 @@ cdef class GED:
 
                         cost += self.edit_cost.cost_delete_edge(edge_source)
 
-                        # print(f'#deletion edge {(i, j)} --> empty')
+                        print(f'#deletion edge {(i, j)} --> empty')
                 else:
                     # check for edge insertion
                     if self.graph_target.has_edge(phi_i, phi_j):
@@ -133,8 +134,8 @@ cdef class GED:
 
                         cost += self.edit_cost.cost_insert_edge(edge_target)
 
-                        # print(f'*insertion edge empty --> {(phi_i, phi_j)}')
-                # print(f'current cost: edge {cost}')
+                        print(f'*insertion edge empty --> {(phi_i, phi_j)}')
+                # print(f'===== current cost: edge {cost}')
         return cost
 
     cpdef double compute_edit_distance(self, Graph graph_source, Graph graph_target):
@@ -149,24 +150,19 @@ cdef class GED:
         self._m = len(self.graph_target)
 
         self._create_c_matrix()
-        # np.set_printoptions(precision=3)
-        # print(self.C.base)
-        # print(np.asarray(self.C))
-        # for row in self.C.base:
-        #     print(row)
-        #
-        #     print(' '.join(str(element) for element in row))
-        # print(self.C.base)
         self._create_c_star_matrix()
+
+        # np.set_printoptions(precision=5, linewidth=1000, threshold=sys.maxsize)
+        # print(np.asarray(self.C))
         # print('######')
         # print(self.C_star.base)
-        # for row in self.C_star.base:
-        #     print(' '.join(chr(element) for element in row))
-        # print(self.C_star.base)
-
+        # from time import time
+        # start = time()
         _, col_ind = linear_sum_assignment(self.C_star)
+        # print(f'time LSAP: {time() - start} - {graph_source.name} - {graph_target.name}')
         phi = col_ind.astype(dtype=np.int32)
-        # print(f'phi: {col_ind}')
+        print(f'phi: {col_ind}')
+        self.phi = col_ind.astype(dtype=np.int32)
 
         edit_cost += self._compute_cost_node_edit(phi)
         edit_cost += self._compute_cost_edge_edit(phi)

@@ -6,10 +6,13 @@ cdef class GED:
 
     cdef:
         int _n, _m
+        readonly int[::1] phi
+        double _free_edge_sub
         readonly double[:, ::1] C, C_star
 
         Graph graph_source, graph_target
         EditCost edit_cost
+
 
     cdef void _create_c_matrix(self)
 

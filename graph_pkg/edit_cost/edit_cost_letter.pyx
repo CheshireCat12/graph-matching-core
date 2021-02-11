@@ -11,11 +11,11 @@ cdef class EditCostLetter(EditCost):
         self._init_metric()
 
     cdef int _init_metric(self) except? -1:
-        assert self._metric_name in self.metrics_available, f'The metric {self._metric_name} is not available'
+        assert self.metric_name in self.metrics_available, f'The metric {self.metric_name} is not available'
 
-        if self._metric_name == 'manhattan':
+        if self.metric_name == 'manhattan':
             self.metric = manhattan_letter
-        elif self._metric_name == 'euclidean':
+        elif self.metric_name == 'euclidean':
             self.metric = euclidean_letter
 
     cpdef double cost_insert_node(self, Node node) except? -1:
@@ -25,10 +25,10 @@ cdef class EditCostLetter(EditCost):
         return self.c_delete_node
 
     cpdef double cost_substitute_node(self, Node node1, Node node2) except? -1:
-        self.x1, self.y1 = node1.label.get_attributes()
-        self.x2, self.y2 = node2.label.get_attributes()
+        # self.x1, self.y1 = node1.label.get_attributes()
+        # self.x2, self.y2 = node2.label.get_attributes()
 
-        return self.metric(self.x1, self.y1, self.x2, self.y2)
+        return self.metric(node1.label.x, node1.label.y, node2.label.x, node2.label.y) # self.x1, self.y1, self.x2, self.y2)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
         return self.c_insert_edge

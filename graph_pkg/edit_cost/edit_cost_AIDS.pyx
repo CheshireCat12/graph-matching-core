@@ -11,9 +11,9 @@ cdef class EditCostAIDS(EditCost):
         self._init_metric()
 
     cdef int _init_metric(self) except? -1:
-        assert self._metric_name in self.metrics_available, f'The metric {self._metric_name} is not available'
+        assert self.metric_name in self.metrics_available, f'The metric {self.metric_name} is not available'
 
-        if self._metric_name == 'dirac':
+        if self.metric_name == 'dirac':
             self.metric = dirac_AIDS
 
     cpdef double cost_insert_node(self, Node node) except? -1:

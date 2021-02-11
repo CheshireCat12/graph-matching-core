@@ -10,7 +10,7 @@ cdef class EditCost:
         self.c_delete_node = c_delete_node
         self.c_insert_edge = c_insert_edge
         self.c_delete_edge = c_delete_edge
-        self._metric_name = metric_name
+        self.metric_name = metric_name
 
     cdef int _init_metric(self) except? -1:
         raise NotImplementedError

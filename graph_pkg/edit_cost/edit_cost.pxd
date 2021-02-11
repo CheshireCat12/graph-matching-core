@@ -8,7 +8,7 @@ cdef class EditCost:
         readonly double c_delete_node
         readonly double c_insert_edge
         readonly double c_delete_edge
-        str _metric_name
+        readonly str metric_name
 
     cdef int _init_metric(self) except? -1
 

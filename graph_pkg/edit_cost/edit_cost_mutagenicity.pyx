@@ -11,9 +11,9 @@ cdef class EditCostMutagenicity(EditCost):
         self._init_metric()
 
     cdef int _init_metric(self) except? -1:
-        assert self._metric_name in self.metrics_available, f'The metric {self._metric_name} is not available'
+        assert self.metric_name in self.metrics_available, f'The metric {self.metric_name} is not available'
 
-        if self._metric_name == 'dirac':
+        if self.metric_name == 'dirac':
             self.metric = dirac_mutagenicity
 
     cpdef double cost_insert_node(self, Node node) except? -1:
@@ -26,7 +26,8 @@ cdef class EditCostMutagenicity(EditCost):
         self.chem_source = node1.label.chem_int
         self.chem_target = node2.label.chem_int
 
-        return self.metric(self.chem_source, self.chem_target)
+       # return self.metric(self.chem_source, self.chem_target)
+        return 0. if self.metric(self.chem_source, self.chem_target) == 0. else (self.c_insert_node + self.c_delete_node)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
         return self.c_insert_edge
