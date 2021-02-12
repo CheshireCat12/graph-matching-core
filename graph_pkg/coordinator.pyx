@@ -27,9 +27,9 @@ cdef class Coordinator:
         self.edit_cost = EditCostLetter(*self.params_edit_cost)
 
     cdef void _init_AIDS(self):
-        self.loader = LoaderAIDS()
+        # self.loader = LoaderAIDS()
         self.edit_cost = EditCostAIDS(*self.params_edit_cost)
 
     cdef void _init_mutagenicity(self):
-        self.loader = LoaderMutagenicity()
+        # self.loader = LoaderMutagenicity()
         self.edit_cost = EditCostMutagenicity(*self.params_edit_cost)

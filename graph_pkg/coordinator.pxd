@@ -5,8 +5,8 @@ from graph_pkg.edit_cost.edit_cost_mutagenicity import EditCostMutagenicity
 from graph_pkg.algorithm.graph_edit_distance cimport GED
 from graph_pkg.loader.loader_base import LoaderBase
 from graph_pkg.loader.loader_letter import LoaderLetter
-from graph_pkg.loader.loader_AIDS import LoaderAIDS
-from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
+# from graph_pkg.loader.loader_AIDS import LoaderAIDS
+# from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 
 cdef class Coordinator:
 

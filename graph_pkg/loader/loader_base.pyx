@@ -7,29 +7,47 @@ from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.node import Node
 
 
-class LoaderBase(ABC):
+cdef class LoaderBase:
 
-    _folder: str = NotImplemented
-    __EXTENSION = '.gxl'
+    # _folder = NotImplemented
+    # __EXTENSION = '.gxl'
 
-    def __init__(self):
-        # self._current_graph_text = None
-        self._parsed_data = None
-        self._constructed_graph = None
+    def __cinit__(self, str folder):
+        self._folder = folder
+        self.__EXTENSION = '.gxl'
 
-    @abstractmethod
-    def _format_idx(self, idx):
-        pass
+    cpdef int _format_idx(self, str idx):
+        raise NotImplementedError
 
-    @abstractmethod
-    def _formatted_lbl_node(self, attr):
-        pass
+    cpdef LabelBase _formatted_lbl_node(self, attr):
+        raise NotImplementedError
 
-    @abstractmethod
-    def _formatted_lbl_edge(self, attr):
-        pass
+    cpdef LabelBase _formatted_lbl_edge(self, attr):
+        raise NotImplementedError
 
-    def _construct_graph(self):
+    cpdef list load(self):
+        files = f'{self._folder}*{self.__EXTENSION}'
+        graph_files = glob(files)
+        print(files)
+
+        print(graph_files)
+        graphs = []
+        print('** Loading Graphs **')
+        for graph_file in sorted(graph_files):
+            with open(graph_file) as file:
+                graph_text = "".join(file.readlines())
+            print(graph_text)
+            self._parsed_data = parse(graph_text)
+            print(self._parsed_data)
+            self._construct_graph()
+
+            graphs.append(self._constructed_graph)
+            # break
+
+        print(f'==> {len(graphs)} graphs loaded')
+        return graphs
+
+    cpdef void _construct_graph(self):
         graph_dict = self._parsed_data['gxl']['graph']
 
         graph_idx = graph_dict['@id']
@@ -63,20 +81,3 @@ class LoaderBase(ABC):
             tmp_edge = Edge(idx_from, idx_to, lbl_edge)
 
             self._constructed_graph.add_edge(tmp_edge)
-
-    def load(self):
-        graph_files = glob(f'{self._folder}*{self.__EXTENSION}')
-
-        graphs = []
-        print('** Loading Graphs **')
-        for graph_file in sorted(graph_files):
-            with open(graph_file) as file:
-                graph_text = "".join(file.readlines())
-            self._parsed_data = parse(graph_text)
-            self._construct_graph()
-
-            graphs.append(self._constructed_graph)
-            # break
-
-        print(f'==> {len(graphs)} graphs loaded')
-        return graphs
