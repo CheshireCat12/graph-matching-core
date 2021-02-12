@@ -1,6 +1,7 @@
 from graph_pkg.edit_cost.edit_cost cimport EditCost
 from graph_pkg.graph.graph cimport Graph
 from graph_pkg.graph.node cimport Node
+from graph_pkg.graph.edge cimport Edge
 
 cdef class GED:
 

@@ -1,4 +1,3 @@
-from cpython.object cimport Py_EQ
 
 cdef class Edge:
 

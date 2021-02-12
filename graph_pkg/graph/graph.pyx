@@ -1,6 +1,6 @@
-import numpy as np
 cimport cython
-
+import numpy as np
+cimport numpy as np
 
 cdef class Graph:
     """A class that is used to work with nodes and edges of a graph"""

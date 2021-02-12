@@ -1,3 +1,5 @@
+from cpython.object cimport Py_EQ
+
 from graph_pkg.graph.label.label_base cimport LabelBase
 
 

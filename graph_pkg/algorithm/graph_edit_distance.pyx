@@ -4,7 +4,6 @@ cimport cython
 from libc.math cimport abs as c_abs
 from scipy.optimize import linear_sum_assignment
 
-from graph_pkg.graph.edge cimport Edge
 import sys
 
 cdef class GED:
