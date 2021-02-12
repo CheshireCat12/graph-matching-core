@@ -235,10 +235,14 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
     # assert results == expected
     assert (results - expected) < accuracy
 import sys
-# @pytest.mark.skip(reason='I have to had the expected accuracy')
+
+@pytest.mark.skip(reason='I have to had the expected accuracy')
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
                          [(['molid624151', 'molid633011', 'a/11808', 'a/15905']),
-                          (['molid660165', 'molid645098', 'i/27249', 'a/21376'])
+                          (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
+                          (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
+                          (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
+
                           # (['IP1_0000', 'IP1_0001']),
                           # (['AP1_0100', 'IP1_0000']),
                           # (['HP1_0100', 'WP1_0010']),
@@ -247,9 +251,11 @@ import sys
                           # (['MP1_0019', 'FP1_0083']),
                           ])
 def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target, gr_name_src, gr_name_trgt):
-    graph_source, graph_target = [graph for graph in aids_graphs if graph.name in [graph_name_source, graph_name_target]]
+    graph_source = [graph for graph in aids_graphs if graph.name == graph_name_source][0]
+    graph_target = [graph for graph in aids_graphs if graph.name == graph_name_target][0]
     # print(graph_source)
     # print(graph_target)
+    n, m = len(graph_source), len(graph_target)
     cst_cost_node = 1.1
     cst_cost_edge = 0.1
     ged = GED(EditCostAIDS(cst_cost_node, cst_cost_node,
@@ -260,17 +266,26 @@ def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target,
     np.set_printoptions(precision=5, linewidth=1000, threshold=sys.maxsize)
     print(ged.C.base)
     print('@@@@@@@')
-    print(ged.C_star.base)
+    # print(ged.C_star.base)
+    # {gr_name_src}_{gr_name_trgt}
+    # np.savetxt(f'_c_{gr_name_src.replace("/", "_")}_{gr_name_trgt.replace("/", "_")}.csv', np.asarray(ged.C), fmt='%10.3f', delimiter=';')
+    # np.savetxt(f'_c_star_{gr_name_src.replace("/", "_")}_{gr_name_trgt.replace("/", "_")}.csv', np.asarray(ged.C_star), fmt='%10.3f', delimiter=';')
+    # print('transpose')
+    # test = np.asarray(ged.C)
+    # print(np.transpose(test[:n, :m]))
 
     print(f'###### diff {results - expected}')
+    print(f'res {results}')
+    print(f'exp {expected}')
     assert results == expected
-    # assert False
+    assert False
 
 # @pytest.mark.skip()
 # @pytest.mark.skip(reason='I have to had the expected accuracy')
 @pytest.mark.parametrize('graph_name_source_target',
                          [(['molecule_2767', 'molecule_2769']),
-                          # (['IP1_0000', 'IP1_0001']),
+                          (['molecule_2769', 'molecule_2767']),
+                           # (['IP1_0000', 'IP1_0001']),
                           # (['AP1_0100', 'IP1_0000']),
                           # (['HP1_0100', 'WP1_0010']),
                           # (['XP1_0005', 'KP1_0023']),
@@ -292,9 +307,11 @@ def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_so
     results = ged.compute_edit_distance(graph_source, graph_target)
     expected = dataframe_mutagenicity.loc[gr_name_src, gr_name_trgt]
     # import numpy as np
-    # np.savetxt('c.csv', np.asarray(ged.C), fmt='%10.3f', delimiter=';')
-    # np.savetxt('c_star.csv', np.asarray(ged.C_star), fmt='%10.3f', delimiter=';')
+    # np.savetxt(f'_c_{"X".join(graph_name_source_target)}.csv', np.asarray(ged.C), fmt='%10.3f', delimiter=';')
+    # np.savetxt(f'c_star_{"X".join(graph_name_source_target)}.csv', np.asarray(ged.C_star), fmt='%10.3f', delimiter=';')
     print(f'###### diff {results - expected}')
+    print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')
+    print(f'exp {expected}')
     assert results == expected
     # assert False
 

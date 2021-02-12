@@ -22,7 +22,7 @@ cdef class GED:
 
         self.C = np.zeros((self._n + self._m, self._n + self._m),
                           dtype=np.float64)
-
+        print(self._n, self._m)
         # Create substitute part
         for i in range(self._n):
             for j in range(self._m):
@@ -91,6 +91,7 @@ cdef class GED:
             double cost = 0.
 
         for i in range(self._n + self._m):
+            print(f'{i} -> {phi[i]}: {self.C[i][phi[i]]}')
             cost += self.C[i][phi[i]]
 
         return cost
