@@ -19,11 +19,9 @@ import networkx as nx
 
 @pytest.fixture()
 def letter_graphs():
-
     loader = LoaderLetter('HIGH')
     graphs = loader.load()
     return graphs
-    # find graph
 
 
 @pytest.fixture()
@@ -236,7 +234,7 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
     print(f'###### diff {results - expected}')
     # assert results == expected
     assert (results - expected) < accuracy
-
+import sys
 # @pytest.mark.skip(reason='I have to had the expected accuracy')
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
                          [(['molid624151', 'molid633011', 'a/11808', 'a/15905']),
@@ -259,6 +257,10 @@ def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target,
 
     results = ged.compute_edit_distance(graph_source, graph_target)
     expected = dataframe_aids.loc[gr_name_src, gr_name_trgt]
+    np.set_printoptions(precision=5, linewidth=1000, threshold=sys.maxsize)
+    print(ged.C.base)
+    print('@@@@@@@')
+    print(ged.C_star.base)
 
     print(f'###### diff {results - expected}')
     assert results == expected

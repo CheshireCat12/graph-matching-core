@@ -65,7 +65,7 @@ cdef class GED:
 
         self.C_star = np.zeros((self._n + self._m, self._n + self._m),
                                dtype=np.float64)
-        self.C_star[::1, ::1] = self.C
+        self.C_star[:, ::1] = self.C
 
         # Update the substitution part
         for i in range(self._n):
