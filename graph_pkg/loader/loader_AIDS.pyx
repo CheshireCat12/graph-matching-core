@@ -1,19 +1,13 @@
-from graph_pkg.graph.label.label_edge import LabelEdge
-from graph_pkg.graph.label.label_node_AIDS import LabelNodeAIDS
-from graph_pkg.loader.loader_base import LoaderBase
+cdef class LoaderAIDS(LoaderBase):
 
+    def __cinit__(self):
+        folder = './data/AIDS/data/'
+        self._init_folder(folder)
 
-class LoaderAIDS(LoaderBase):
-
-    _folder = './data/AIDS/data/'
-
-    def __init__(self):
-        super().__init__()
-
-    def _format_idx(self, idx):
+    cpdef int _format_idx(self, str idx):
         return int(idx[1:]) - 1
 
-    def _formatted_lbl_node(self, attr):
+    cpdef LabelBase _formatted_lbl_node(self, attr):
         symbol, chem, charge, x, y = attr
         symbol = str(symbol['string'])
         chem = int(chem['int'])
@@ -25,6 +19,6 @@ class LoaderAIDS(LoaderBase):
 
         return lbl_letter
 
-    def _formatted_lbl_edge(self, attr):
+    cpdef LabelBase _formatted_lbl_edge(self, attr):
         attr = attr['attr']
         return LabelEdge(int(attr['int']))

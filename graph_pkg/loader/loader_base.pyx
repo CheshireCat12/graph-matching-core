@@ -1,35 +1,43 @@
-from abc import ABC, abstractmethod
 from glob import glob
 from xmltodict import parse
 
-from graph_pkg.graph.edge import Edge
-from graph_pkg.graph.graph import Graph
-from graph_pkg.graph.node import Node
+cdef class LoaderBase:
 
+    def __cinit__(self):
+        self.__EXTENSION = '.gxl'
 
-class LoaderBase(ABC):
+    cdef void _init_folder(self, str folder):
+        self._folder = folder
 
-    _folder: str = NotImplemented
-    __EXTENSION = '.gxl'
+    cpdef int _format_idx(self, str idx):
+        raise NotImplementedError
 
-    def __init__(self):
-        # self._current_graph_text = None
-        self._parsed_data = None
-        self._constructed_graph = None
+    cpdef LabelBase _formatted_lbl_node(self, attr):
+        raise NotImplementedError
 
-    @abstractmethod
-    def _format_idx(self, idx):
-        pass
+    cpdef LabelBase _formatted_lbl_edge(self, attr):
+        raise NotImplementedError
 
-    @abstractmethod
-    def _formatted_lbl_node(self, attr):
-        pass
+    cpdef list load(self):
+        files = f'{self._folder}*{self.__EXTENSION}'
+        graph_files = glob(files)
+        print(sorted(graph_files)[0])
+        print(sorted(graph_files)[-1])
+        graphs = []
+        print('** Loading Graphs **')
+        for graph_file in sorted(graph_files):
+            with open(graph_file) as file:
+                graph_text = "".join(file.readlines())
+            self._parsed_data = parse(graph_text)
+            self._construct_graph()
 
-    @abstractmethod
-    def _formatted_lbl_edge(self, attr):
-        pass
+            graphs.append(self._constructed_graph)
+            # break
 
-    def _construct_graph(self):
+        print(f'==> {len(graphs)} graphs loaded')
+        return graphs
+
+    cpdef void _construct_graph(self):
         graph_dict = self._parsed_data['gxl']['graph']
 
         graph_idx = graph_dict['@id']
@@ -63,20 +71,3 @@ class LoaderBase(ABC):
             tmp_edge = Edge(idx_from, idx_to, lbl_edge)
 
             self._constructed_graph.add_edge(tmp_edge)
-
-    def load(self):
-        graph_files = glob(f'{self._folder}*{self.__EXTENSION}')
-
-        graphs = []
-        print('** Loading Graphs **')
-        for graph_file in sorted(graph_files):
-            with open(graph_file) as file:
-                graph_text = "".join(file.readlines())
-            self._parsed_data = parse(graph_text)
-            self._construct_graph()
-
-            graphs.append(self._constructed_graph)
-            # break
-
-        print(f'==> {len(graphs)} graphs loaded')
-        return graphs
