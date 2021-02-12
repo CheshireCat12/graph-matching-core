@@ -7,6 +7,7 @@ import pytest
 from graph_pkg.graph.label.label_edge import LabelEdge
 from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
 from graph_pkg.graph.label.label_node_AIDS import LabelNodeAIDS
+from graph_pkg.graph.label.label_node_mutagenicity import LabelNodeMutagenicity
 
 
 @pytest.mark.parametrize('in_args, expected',
@@ -43,16 +44,17 @@ def test_label_lettre_to_string(in_args):
                          [(LabelNodeLetter(1, 2), LabelNodeLetter(1, 2), True),
                           (LabelNodeLetter(1., 2.), LabelEdge(0), False),
                           (LabelEdge(0), LabelEdge(0), True),
-                          (LabelEdge(12), LabelEdge(2), False)])
+                          (LabelEdge(12), LabelEdge(2), False),
+                          (LabelNodeMutagenicity('C'), LabelNodeMutagenicity('C'), True),
+                          (LabelNodeMutagenicity('Cl'), LabelNodeMutagenicity('O'), False)
+                          ])
 def test_label_equality(lbl_1, lbl_2, expected):
     equality = lbl_1 == lbl_2
 
     assert equality == expected
 
-#
-# def test_label_AIDS():
-#     expected = ('C', 0, 1, 6., 5.)
-#     label = LabelNodeAIDS(*expected)
-#
-#     with pytest.raises(NotImplementedError) as execinfo:
-#         label.get_attributes()
+def test_label_AIDS():
+    expected = ('C', 0, 1, 6., 5.)
+    label = LabelNodeAIDS(*expected)
+
+    assert label.get_attributes() == expected

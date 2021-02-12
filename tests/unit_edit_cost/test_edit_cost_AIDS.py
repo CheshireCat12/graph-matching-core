@@ -1,8 +1,9 @@
 import pytest
 
 from graph_pkg.edit_cost.edit_cost_AIDS import EditCostAIDS
-from graph_pkg.graph.node import Node
 from graph_pkg.graph.label.label_node_AIDS import LabelNodeAIDS
+from graph_pkg.graph.node import Node
+
 
 @pytest.mark.parametrize('coord1, coord2, e_cost, expected',
                          [(('C', 1, 1, 0., 0.), ('C', 1, 1, 3., 4.), (1.1, 1.1, 0.1, 0.1, 'dirac'), 0.),

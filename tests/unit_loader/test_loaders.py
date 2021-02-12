@@ -1,8 +1,9 @@
 import pytest
 
-from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_AIDS import LoaderAIDS
+from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
+
 
 ############## LETTER ##############
 

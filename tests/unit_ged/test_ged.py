@@ -1,21 +1,23 @@
-import numpy as np
 import pickle
+import sys
+
+import networkx as nx
+import numpy as np
 import pytest
 
 from graph_pkg.algorithm.graph_edit_distance import GED
+from graph_pkg.edit_cost.edit_cost_AIDS import EditCostAIDS
 from graph_pkg.edit_cost.edit_cost_letter import EditCostLetter
+from graph_pkg.edit_cost.edit_cost_mutagenicity import EditCostMutagenicity
 from graph_pkg.graph.edge import Edge
 from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.label.label_edge import LabelEdge
 from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
 from graph_pkg.graph.node import Node
-from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_AIDS import LoaderAIDS
-from graph_pkg.edit_cost.edit_cost_AIDS import EditCostAIDS
+from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
-from graph_pkg.edit_cost.edit_cost_mutagenicity import EditCostMutagenicity
 
-import networkx as nx
 
 @pytest.fixture()
 def letter_graphs():
@@ -234,21 +236,13 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
     print(f'###### diff {results - expected}')
     # assert results == expected
     assert (results - expected) < accuracy
-import sys
 
-@pytest.mark.skip(reason='I have to had the expected accuracy')
+@pytest.mark.xfail(reason='I don\'t have the good value for AIDS to compare with')
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
                          [(['molid624151', 'molid633011', 'a/11808', 'a/15905']),
                           (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
                           (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
                           (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
-
-                          # (['IP1_0000', 'IP1_0001']),
-                          # (['AP1_0100', 'IP1_0000']),
-                          # (['HP1_0100', 'WP1_0010']),
-                          # (['XP1_0005', 'KP1_0023']),
-                          # (['EP1_0120', 'LP1_0099']),
-                          # (['MP1_0019', 'FP1_0083']),
                           ])
 def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target, gr_name_src, gr_name_trgt):
     graph_source = [graph for graph in aids_graphs if graph.name == graph_name_source][0]
@@ -282,15 +276,10 @@ def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target,
 
 # @pytest.mark.skip()
 # @pytest.mark.skip(reason='I have to had the expected accuracy')
+@pytest.mark.xfail(reason='I don\'t have the good value for mutagenicity to compare with')
 @pytest.mark.parametrize('graph_name_source_target',
                          [(['molecule_2767', 'molecule_2769']),
                           (['molecule_2769', 'molecule_2767']),
-                           # (['IP1_0000', 'IP1_0001']),
-                          # (['AP1_0100', 'IP1_0000']),
-                          # (['HP1_0100', 'WP1_0010']),
-                          # (['XP1_0005', 'KP1_0023']),
-                          # (['EP1_0120', 'LP1_0099']),
-                          # (['MP1_0019', 'FP1_0083']),
                           ])
 def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_source_target):
     gr_name_src, gr_name_trgt = ['mutagen/' + name for name in graph_name_source_target]

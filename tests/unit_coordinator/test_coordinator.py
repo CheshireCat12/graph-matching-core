@@ -1,5 +1,7 @@
 import pytest
+
 from graph_pkg.coordinator import Coordinator
+
 
 def test_default_letter():
     coordinator = Coordinator('letter_high', (0.9, 0.9, 2.3, 2.3, 'euclidean'))

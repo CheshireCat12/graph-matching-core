@@ -1,10 +1,10 @@
 import numpy as np
 import pytest
 
-# from graph_pkg.edit_cost.edit_cost_letter_minkowski import EditCostLetterMinkowski
 from graph_pkg.edit_cost.edit_cost_letter import EditCostLetter
-from graph_pkg.graph.node import Node
 from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
+from graph_pkg.graph.node import Node
+
 
 @pytest.mark.parametrize('coord1, coord2, epsilon',
                          [((0., 0.), (3., 4.), 1e-9),
