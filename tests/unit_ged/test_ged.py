@@ -294,7 +294,9 @@ def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target,
                           ])
 def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_source_target):
     gr_name_src, gr_name_trgt = ['mutagen/' + name for name in graph_name_source_target]
-    graph_source, graph_target = [graph for graph in mutagenicity_graphs if graph.name in graph_name_source_target]
+    graph_name_source, graph_name_target = graph_name_source_target
+    graph_source = [graph for graph in mutagenicity_graphs if graph.name == graph_name_source][0]
+    graph_target = [graph for graph in mutagenicity_graphs if graph.name == graph_name_target][0]
     # print(graph_source)
     # print(graph_target)
     cst_cost_node = 11.0
