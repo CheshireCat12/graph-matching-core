@@ -1,20 +1,13 @@
-from abc import ABC, abstractmethod
 from glob import glob
 from xmltodict import parse
 
-from graph_pkg.graph.edge import Edge
-from graph_pkg.graph.graph import Graph
-from graph_pkg.graph.node import Node
-
-
 cdef class LoaderBase:
 
-    # _folder = NotImplemented
-    # __EXTENSION = '.gxl'
-
-    def __cinit__(self, str folder):
-        self._folder = folder
+    def __cinit__(self):
         self.__EXTENSION = '.gxl'
+
+    cdef void _init_folder(self, str folder):
+        self._folder = folder
 
     cpdef int _format_idx(self, str idx):
         raise NotImplementedError
@@ -28,17 +21,14 @@ cdef class LoaderBase:
     cpdef list load(self):
         files = f'{self._folder}*{self.__EXTENSION}'
         graph_files = glob(files)
-        print(files)
-
-        print(graph_files)
+        print(sorted(graph_files)[0])
+        print(sorted(graph_files)[-1])
         graphs = []
         print('** Loading Graphs **')
         for graph_file in sorted(graph_files):
             with open(graph_file) as file:
                 graph_text = "".join(file.readlines())
-            print(graph_text)
             self._parsed_data = parse(graph_text)
-            print(self._parsed_data)
             self._construct_graph()
 
             graphs.append(self._constructed_graph)

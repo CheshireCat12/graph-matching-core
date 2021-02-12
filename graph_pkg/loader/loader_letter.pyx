@@ -1,18 +1,11 @@
-from graph_pkg.graph.label.label_edge import LabelEdge
-from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
 import os
 
 cdef class LoaderLetter(LoaderBase):
 
-    # _folder = './data/Letter/Letter/'
-
     def __cinit__(self, str spec):
-        super().__init__(os.path.join('./data/Letter/Letter/', spec, ''))
         folder = './data/Letter/Letter/'
-        print(folder)
-        folder = os.path.join(folder, spec, '')
-
-        print(folder)
+        folder_spec = os.path.join(folder, spec, '')
+        self._init_folder(folder_spec)
 
     cpdef int _format_idx(self, str idx):
         return int(idx[1:])
