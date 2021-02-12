@@ -27,7 +27,15 @@ cdef class EditCostLetter(EditCost):
     cpdef double cost_substitute_node(self, Node node1, Node node2) except? -1:
         # self.x1, self.y1 = node1.label.get_attributes()
         # self.x2, self.y2 = node2.label.get_attributes()
+        # cdef:
+        #     double x1, y1, x2, y2
+        #
+        # x1 = node1.label.x
+        # y1 = node1.label.y
+        # x2 = node2.label.x
+        # y2 = node2.label.y
 
+        # return self.metric(x1, y1, x2, y2)
         return self.metric(node1.label.x, node1.label.y, node2.label.x, node2.label.y) # self.x1, self.y1, self.x2, self.y2)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:

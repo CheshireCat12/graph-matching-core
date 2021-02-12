@@ -19,6 +19,9 @@ cdef class EditCostAIDS(EditCost):
     cpdef double cost_insert_node(self, Node node) except? -1:
         return self.c_insert_node
 
+    cdef double c_cost_insert_node(self, Node node):
+        return self.c_insert_node
+
     cpdef double cost_delete_node(self, Node node) except? -1:
         return self.c_delete_node
 

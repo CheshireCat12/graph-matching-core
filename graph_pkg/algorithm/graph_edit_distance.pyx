@@ -21,7 +21,7 @@ cdef class GED:
 
         self.C = np.zeros((self._n + self._m, self._n + self._m),
                           dtype=np.float64)
-        print(self._n, self._m)
+        # print(self._n, self._m)
         # Create substitute part
         for i in range(self._n):
             for j in range(self._m):
@@ -90,7 +90,7 @@ cdef class GED:
             double cost = 0.
 
         for i in range(self._n + self._m):
-            print(f'{i} -> {phi[i]}: {self.C[i][phi[i]]}')
+            # print(f'{i} -> {phi[i]}: {self.C[i][phi[i]]}')
             cost += self.C[i][phi[i]]
 
         return cost
@@ -100,6 +100,7 @@ cdef class GED:
     cdef double _compute_cost_edge_edit(self, int[::1] phi):
         cdef:
             int i, j
+            int phi_i, phi_j
             double cost = 0.
             Edge edge_source, edge_target
 
@@ -117,7 +118,7 @@ cdef class GED:
                         edge_target = self.graph_target.get_edge_by_node_idx(phi_i, phi_j)
 
                         cost += self.edit_cost.cost_substitute_edge(edge_source, edge_target)
-                        print(f'-Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
+                        # print(f'-Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
 
 
                     #check for edge deletion
@@ -126,7 +127,7 @@ cdef class GED:
 
                         cost += self.edit_cost.cost_delete_edge(edge_source)
 
-                        print(f'#deletion edge {(i, j)} --> empty')
+                        # print(f'#deletion edge {(i, j)} --> empty')
                 else:
                     # check for edge insertion
                     if self.graph_target.has_edge(phi_i, phi_j):
@@ -134,7 +135,7 @@ cdef class GED:
 
                         cost += self.edit_cost.cost_insert_edge(edge_target)
 
-                        print(f'*insertion edge empty --> {(phi_i, phi_j)}')
+                        # print(f'*insertion edge empty --> {(phi_i, phi_j)}')
                 # print(f'===== current cost: edge {cost}')
         return cost
 
@@ -161,8 +162,8 @@ cdef class GED:
         _, col_ind = linear_sum_assignment(self.C_star)
         # print(f'time LSAP: {time() - start} - {graph_source.name} - {graph_target.name}')
         phi = col_ind.astype(dtype=np.int32)
-        print(f'phi: {col_ind}')
-        self.phi = col_ind.astype(dtype=np.int32)
+        # print(f'phi: {col_ind}')
+        # self.phi = col_ind.astype(dtype=np.int32)
 
         edit_cost += self._compute_cost_node_edit(phi)
         edit_cost += self._compute_cost_edge_edit(phi)

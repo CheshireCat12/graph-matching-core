@@ -13,3 +13,5 @@ cdef class EditCostAIDS(EditCost):
 
         list metrics_available
         metricptr metric
+
+    cdef double c_cost_insert_node(self, Node node)
