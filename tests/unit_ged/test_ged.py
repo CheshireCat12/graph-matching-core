@@ -69,8 +69,8 @@ def define_graphs():
     ged = GED(EditCostLetter(1., 1., 1., 1., 'manhattan'))
 
     n, m = 4, 3
-    graph_source = Graph('gr_source', n)
-    graph_target = Graph('gr_target', m)
+    graph_source = Graph('gr_source', 'gr_source.gxl', n)
+    graph_target = Graph('gr_target', 'gr_targe.gxl', m)
 
     # Init graph source: add nodes and edges
     graph_source.add_node(Node(0, LabelNodeLetter(1, 0)))

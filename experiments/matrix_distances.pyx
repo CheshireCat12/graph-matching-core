@@ -16,7 +16,7 @@ cdef class MatrixDistances:
             Graph graph_source, graph_target
 
         distances = np.zeros((i, i), dtype=np.float64)
-        for i in range(1, n):
+        for i in range(n):
             graph_source = self.graphs[i]
 
             for j in range(i + 1, n):

@@ -12,10 +12,10 @@ from graph_pkg.graph.node import Node
 
 @pytest.fixture()
 def my_graph():
-    return Graph('gr1', 2)
+    return Graph('gr1', 'gr1.gxl', 2)
 
 def test_simple_graph():
-    my_graph = Graph('gr1', 1)
+    my_graph = Graph('gr1', 'gr1.gxl', 1)
 
     assert my_graph.name == 'gr1'
     assert len(my_graph) == 0
@@ -24,7 +24,7 @@ def test_simple_graph():
 @pytest.mark.parametrize('num_nodes',
                          [1, 5, 10])
 def test_add_node(num_nodes):
-    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
     nodes = []
 
     for i in range(num_nodes):
@@ -41,7 +41,7 @@ def test_add_node(num_nodes):
                           (5, 8),])
 def test_add_node_higher_than_num_nodes(num_nodes, error_idx):
 
-    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
     tmp_node = Node(error_idx, LabelNodeLetter(1, 1))
 
     with pytest.raises(AssertionError) as execinfo:
@@ -60,7 +60,7 @@ def test_add_node_higher_than_num_nodes(num_nodes, error_idx):
                                2: [Edge(2, 0, LabelEdge(0)), Edge(2, 1, LabelEdge(0)), None]})
                           ])
 def test_add_clique_edge(num_nodes, expected_edges):
-    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
 
     for i in range(num_nodes):
         tmp_node = Node(i, LabelNodeLetter(i, i))
@@ -81,7 +81,7 @@ def test_add_clique_edge(num_nodes, expected_edges):
                           (5, [Node(0, LabelNodeLetter(1, 1))], Edge(0, 23, LabelEdge(0)), 'The ending node 23 does not exist!')
                           ])
 def test_insert_invalid_edge(num_nodes, nodes, edge, expected_error_msg):
-    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
 
     for node in nodes:
         my_graph.add_node(node)
@@ -101,7 +101,7 @@ def test_insert_invalid_edge(num_nodes, nodes, edge, expected_error_msg):
                                         [1, 1, 0]], dtype=np.int32))
                           ])
 def test_adjacency_matrix(num_nodes, expected_matrix):
-    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
 
     for i in range(num_nodes):
         tmp_node = Node(i, LabelNodeLetter(i, i))
@@ -123,7 +123,7 @@ def test_adjacency_matrix(num_nodes, expected_matrix):
                           (3, np.array([2, 2, 2], dtype=np.int32))
                           ])
 def test_out_in_degrees(num_nodes, expected_matrix):
-    my_graph = Graph(f'gr{num_nodes}', num_nodes)
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
 
     for i in range(num_nodes):
         tmp_node = Node(i, LabelNodeLetter(i, i))

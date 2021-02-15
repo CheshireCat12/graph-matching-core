@@ -5,13 +5,15 @@ cimport numpy as np
 cdef class Graph:
     """A class that is used to work with nodes and edges of a graph"""
 
-    def __init__(self, str name, int num_nodes):
+    def __init__(self, str name, str filename, int num_nodes):
         self.name = name
+        self.filename = filename
         self.num_nodes_max = num_nodes
         self.num_nodes_current = 0
         self.nodes = [None] * num_nodes
         self._init_edges()
         self._init_adjacency_matrix()
+
 
     cdef void _init_edges(self):
         self.edges = {i: [None] * self.num_nodes_max for i in range(self.num_nodes_max)}

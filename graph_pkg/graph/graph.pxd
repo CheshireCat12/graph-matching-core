@@ -6,6 +6,7 @@ from graph_pkg.graph.node cimport Node
 cdef class Graph:
     cdef:
         readonly str name
+        readonly str filename
         list nodes
         dict edges
 

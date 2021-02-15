@@ -16,6 +16,7 @@ cdef class GED:
     @cython.wraparound(False)
     cdef void _create_c_matrix(self):
         cdef:
+
             int i, j
             double cost
 

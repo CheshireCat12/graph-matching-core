@@ -8,7 +8,6 @@ cdef class LoaderBase:
     cdef:
         str _folder
         str __EXTENSION
-        object _parsed_data
         Graph _constructed_graph
 
     cdef void _init_folder(self, str folder)
@@ -21,4 +20,4 @@ cdef class LoaderBase:
 
     cpdef list load(self)
 
-    cpdef void _construct_graph(self)
+    cpdef void _construct_graph(self, str graph_filename, object parsed_data)

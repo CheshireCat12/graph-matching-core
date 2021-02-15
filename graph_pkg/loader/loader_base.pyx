@@ -1,6 +1,7 @@
 from glob import glob
 from xmltodict import parse
 
+
 cdef class LoaderBase:
 
     def __cinit__(self):
@@ -19,17 +20,20 @@ cdef class LoaderBase:
         raise NotImplementedError
 
     cpdef list load(self):
+        cdef object parsed_data
+
         files = f'{self._folder}*{self.__EXTENSION}'
         graph_files = glob(files)
-        print(sorted(graph_files)[0])
-        print(sorted(graph_files)[-1])
+
         graphs = []
         print('** Loading Graphs **')
         for graph_file in sorted(graph_files):
             with open(graph_file) as file:
                 graph_text = "".join(file.readlines())
-            self._parsed_data = parse(graph_text)
-            self._construct_graph()
+                *_, graph_filename = graph_file.split('/')
+            parsed_data = parse(graph_text)
+
+            self._construct_graph(graph_filename, parsed_data)
 
             graphs.append(self._constructed_graph)
             # break
@@ -37,15 +41,15 @@ cdef class LoaderBase:
         print(f'==> {len(graphs)} graphs loaded')
         return graphs
 
-    cpdef void _construct_graph(self):
-        graph_dict = self._parsed_data['gxl']['graph']
+    cpdef void _construct_graph(self, str graph_filename, object parsed_data):
+        graph_dict = parsed_data['gxl']['graph']
 
         graph_idx = graph_dict['@id']
         graph_edge_mode = graph_dict['@edgemode']
         nodes = graph_dict['node']
         edges = graph_dict['edge'] if 'edge' in graph_dict.keys() else []
         num_nodes = len(nodes)
-        self._constructed_graph = Graph(graph_idx, num_nodes)
+        self._constructed_graph = Graph(graph_idx, graph_filename, num_nodes)
 
         # variable used to check if there is no gap in the indexes from the xml files
         idx_verification = 0
