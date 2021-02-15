@@ -139,5 +139,5 @@ def test_3_nodes_3_nodes(ged):
     print(ged.C.base)
     print(ged.C_star.base)
 
-    expected_dist = 4.6
+    expected_dist = 4.7
     assert round(dist, 2) == expected_dist
