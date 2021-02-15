@@ -164,7 +164,7 @@ cdef class GED:
         # print(f'time LSAP: {time() - start} - {graph_source.name} - {graph_target.name}')
         phi = col_ind.astype(dtype=np.int32)
         # print(f'phi: {col_ind}')
-        # self.phi = col_ind.astype(dtype=np.int32)
+        self.phi = col_ind.astype(dtype=np.int32)
 
         edit_cost += self._compute_cost_node_edit(phi)
         edit_cost += self._compute_cost_edge_edit(phi)

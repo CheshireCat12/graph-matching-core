@@ -12,4 +12,4 @@ cdef class MatrixDistances:
         GED ged
 
 
-    cpdef void create_matrix_distance_diagonal(self)
+    cpdef double[:, ::1] create_matrix_distance_diagonal(self)

@@ -55,8 +55,8 @@ cdef class Coordinator:
             list X_train, y_train
 
         X_train, y_train = self.loader_split.train_split()
-        print(X_train)
-        print("######")
+        # print(X_train)
+        # print("######")
         return self._split_dataset(X_train, y_train)
 
     cpdef tuple test_split(self):

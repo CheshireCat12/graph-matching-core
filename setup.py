@@ -13,6 +13,7 @@ install_requires = [
     'pytest-profiling',
     'networkx',
     'pandas',
+    'progress',
 ]
 
 
@@ -21,7 +22,7 @@ def extension_modules():
     ext = []
     files = glob('**/*.pyx', recursive=True)
     for file in files:
-        if file.startswith('graph_pkg'):
+        if file.startswith('graph_pkg') or file.startswith('experiments'):
             ext_name = file[:-4].replace('/', '.')
             source_name = './' + file
             new_extension = Extension(name=ext_name, sources=[source_name], include_dirs=[numpy.get_include()])

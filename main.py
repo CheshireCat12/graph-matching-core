@@ -1,16 +1,10 @@
-from graph_pkg.loader.loader_letter import LoaderLetter
-from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
-from graph_pkg.loader.loader_AIDS import LoaderAIDS
+from experiments.run_matrix_distances import run_letter, run_AIDS, run_mutagenicity
 
 
 def test_loader():
-    loader = LoaderLetter()
-    loader = LoaderMutagenicity()
-    # loader = LoaderAIDS()
-    graphs = loader.load()
-    print(graphs[0])
-    print(graphs[1])
-
+    # run_letter()
+    # run_AIDS()
+    run_mutagenicity()
 
 if __name__ == '__main__':
     test_loader()
