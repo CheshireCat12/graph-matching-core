@@ -67,11 +67,14 @@ def define_graphs():
 def test_simple_alpha(define_graphs):
     graph_source, graph_target = define_graphs
 
-    edit_cost = EditCostLetter(1., 1., 1., 1., 'euclidean')
-    ged = GED(edit_cost)
+    # edit_cost = EditCostLetter(1., 1., 1., 1., 'euclidean')
+    edit_cost_alpha = EditCostLetter(1., 1., 1., 1., 'euclidean', alpha=0.5)
 
-    cost = ged.compute_edit_distance(graph_source, graph_target)
-    cost_alpha = ged.compute_edit_distance(graph_source, graph_target, alpha=0.5)
+    # ged = GED(edit_cost)
+    ged_alpha = GED(edit_cost_alpha)
+
+    # cost = ged.compute_edit_distance(graph_source, graph_target)
+    cost_alpha = ged_alpha.compute_edit_distance(graph_source, graph_target)
 
     expected_cost_alpha = 2.
 
@@ -93,19 +96,24 @@ def test_simple_alpha(define_graphs):
                                 [np.inf, np.inf, 2., 0., 0., 0., 0.]])
     expected_C_star_alpha = expected_C_star / 2
 
-    assert np.array_equal(np.asarray(ged.C), expected_C_alpha)
-    assert np.array_equal(np.asarray(ged.C_star), expected_C_star_alpha)
+
+    print(ged_alpha.C.base)
+
+    assert np.array_equal(np.asarray(ged_alpha.C), expected_C_alpha)
+    assert np.array_equal(np.asarray(ged_alpha.C_star), expected_C_star_alpha)
     assert cost_alpha == expected_cost_alpha
 
-
+# @pytest.mark.skip()
 def test_alpha_0_25(define_graphs):
     graph_source, graph_target = define_graphs
 
     edit_cost = EditCostLetter(1., 1., 1., 1., 'euclidean')
+    edit_cost_alpha = EditCostLetter(1., 1., 1., 1., 'euclidean', alpha=0.25)
     ged = GED(edit_cost)
+    ged_alpha = GED(edit_cost_alpha)
 
     cost = ged.compute_edit_distance(graph_source, graph_target)
-    cost_alpha = ged.compute_edit_distance(graph_source, graph_target, alpha=0.25)
+    cost_alpha = ged_alpha.compute_edit_distance(graph_source, graph_target)
 
     expected_cost_alpha = 2.
 
@@ -126,14 +134,14 @@ def test_alpha_0_25(define_graphs):
                                       [np.inf, 1.75, np.inf, 0., 0., 0., 0.],
                                       [np.inf, np.inf, 1., 0., 0., 0., 0.]])
     # expected_C_star_alpha = expected_C_star / 2
-    print(ged.C_star.base)
+    print(ged_alpha.C_star.base)
 
-    assert np.array_equal(np.asarray(ged.C), expected_C_alpha)
-    assert np.array_equal(np.asarray(ged.C_star), expected_C_star_alpha)
+    assert np.array_equal(np.asarray(ged_alpha.C), expected_C_alpha)
+    assert np.array_equal(np.asarray(ged_alpha.C_star), expected_C_star_alpha)
     assert cost_alpha == expected_cost_alpha
 
 
-
+# @pytest.mark.skip()
 @pytest.mark.parametrize('graphs, graph_source_target, accuracy',
                          [(letter_graphs, ['AP1_0000', 'AP1_0001'], 1e-6),
                           (letter_graphs, ['IP1_0000', 'IP1_0001'], 1e-6),
@@ -148,10 +156,12 @@ def test_letter_alpha_0_5(graphs, graph_source_target, accuracy):
 
     cst_cost_node = 0.9
     cst_cost_edge = 2.3
-    ged = GED(EditCostLetter(cst_cost_node, cst_cost_node,
-                             cst_cost_edge, cst_cost_edge, 'euclidean'))
+    edit_cost = EditCostLetter(cst_cost_node, cst_cost_node, cst_cost_edge, cst_cost_edge, 'euclidean')
+    edit_cost_alpha = EditCostLetter(cst_cost_node, cst_cost_node, cst_cost_edge, cst_cost_edge, 'euclidean', alpha=0.5)
+    ged = GED(edit_cost)
+    ged_alpha = GED(edit_cost_alpha)
 
-    results = ged.compute_edit_distance(graph_source, graph_target, alpha=0.5)
+    results = ged_alpha.compute_edit_distance(graph_source, graph_target)
     expected = ged.compute_edit_distance(graph_source, graph_target) / 2.
 
     assert (results - expected) < accuracy
@@ -170,10 +180,14 @@ def test_aids_alpha(aids_graphs, graph_name_source, graph_name_target):
 
     cst_cost_node = 1.1
     cst_cost_edge = 0.1
-    ged = GED(EditCostAIDS(cst_cost_node, cst_cost_node,
-                           cst_cost_edge, cst_cost_edge, 'dirac'))
+    edit_cost = EditCostAIDS(cst_cost_node, cst_cost_node,
+                             cst_cost_edge, cst_cost_edge, 'dirac')
+    edit_cost_alpha = EditCostAIDS(cst_cost_node, cst_cost_node,
+                                   cst_cost_edge, cst_cost_edge, 'dirac', alpha=0.5)
+    ged = GED(edit_cost)
+    ged_alpha = GED(edit_cost_alpha)
 
-    results = ged.compute_edit_distance(graph_source, graph_target, alpha=0.5)
+    results = ged_alpha.compute_edit_distance(graph_source, graph_target)
     expected = ged.compute_edit_distance(graph_source, graph_target) / 2.
 
     assert results == expected
@@ -192,10 +206,14 @@ def test_mutagenicity_alpha(mutagenicity_graphs, graph_name_source_target):
 
     cst_cost_node = 11.0
     cst_cost_edge = 1.1
-    ged = GED(EditCostMutagenicity(cst_cost_node, cst_cost_node,
-                                   cst_cost_edge, cst_cost_edge, 'dirac'))
+    edit_cost = EditCostMutagenicity(cst_cost_node, cst_cost_node,
+                             cst_cost_edge, cst_cost_edge, 'dirac')
+    edit_cost_alpha = EditCostMutagenicity(cst_cost_node, cst_cost_node,
+                                   cst_cost_edge, cst_cost_edge, 'dirac', alpha=0.5)
+    ged = GED(edit_cost)
+    ged_alpha = GED(edit_cost_alpha)
 
-    results = ged.compute_edit_distance(graph_source, graph_target, alpha=0.5)
-    expected = ged.compute_edit_distance(graph_source, graph_target) / 2
+    results = ged_alpha.compute_edit_distance(graph_source, graph_target)
+    expected = ged.compute_edit_distance(graph_source, graph_target) / 2.
 
     assert results == expected

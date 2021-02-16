@@ -7,7 +7,7 @@ def load_df(filename):
 
     return df
 
-@pytest.mark.skip()
+# @pytest.mark.skip()
 def test_complete_ged_letter():
     results_filename = './data/goal/anthony_ged_dist_mat_alpha_node_cost0.9_edge_cost2.3.pkl'
     my_results_filename = './data/goal/res_letter_cost_node0.9_cost_edge2.3.pkl'

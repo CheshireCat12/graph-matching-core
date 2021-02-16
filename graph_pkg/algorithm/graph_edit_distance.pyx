@@ -15,18 +15,14 @@ cdef class GED:
     cpdef double compute_edit_distance(self,
                                        Graph graph_source,
                                        Graph graph_target,
-                                       double alpha=-1.,
                                        bint heuristic=False):
         cdef:
             int i, j
             int[::1] phi
             double edit_cost = 0.
 
-        assert alpha == -1. or 0. <= alpha <= 1., f'The parameter alpha is not valid!\nIt must be 0 <= alpha <= 1'
 
         self._init_graphs(graph_source, graph_target, heuristic)
-
-        self._init_alpha(alpha)
 
         self._create_c_matrix()
         self._create_c_star_matrix()
@@ -51,13 +47,6 @@ cdef class GED:
         self._n = len(self.graph_source)
         self._m = len(self.graph_target)
 
-    cdef void _init_alpha(self, double alpha):
-        if 0. <= alpha <= 1.:
-            self.alpha_node = alpha
-            self.alpha_edge = 1. - alpha
-        else:
-            self.alpha_node = 1.
-            self.alpha_edge = 1.
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -75,8 +64,7 @@ cdef class GED:
             for j in range(self._m):
                 cost = self.edit_cost.c_cost_substitute_node(self.graph_source.nodes[i],
                                                              self.graph_target.nodes[j])
-                # print(f'{i} - {j}:  cost {cost}')
-                self.C[i][j] = self.alpha_node * cost
+                self.C[i][j] = cost
 
         # Create node deletion part
         self.C[0:self._n:1, self._m:self._n+self._m:1] = np.inf
@@ -84,7 +72,7 @@ cdef class GED:
             j = self._m + i
             cost = self.edit_cost.c_cost_delete_node(self.graph_source.nodes[i])
 
-            self.C[i][j] = self.alpha_node * cost
+            self.C[i][j] = cost
 
         # Create node insertion part
         self.C[self._n:self._n+self._m:1, 0:self._m:1] = np.inf
@@ -92,7 +80,7 @@ cdef class GED:
             i = self._n + j
             cost = self.edit_cost.c_cost_insert_node(self.graph_target.nodes[j])
 
-            self.C[i][j] = self.alpha_node * cost
+            self.C[i][j] = cost
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -110,26 +98,31 @@ cdef class GED:
                                dtype=np.float64)
         self.C_star[:, ::1] = self.C
 
+        # Dirty fix
+        # Create dumb edges to get the correct values from the edit_cost class
+        edge_source = Edge(0, 1, LabelEdge(0))
+        edge_target = Edge(0, 1, LabelEdge(0))
+
         # Update the substitution part
         for i in range(self._n):
             for j in range(self._m):
-                cost = c_abs(out_degrees_source[i] - out_degrees_target[j]) * self.edit_cost.c_insert_edge
+                cost = c_abs(out_degrees_source[i] - out_degrees_target[j]) * self.edit_cost.c_cost_insert_edge(edge_source)
 
-                self.C_star[i][j] += self.alpha_edge * cost
+                self.C_star[i][j] += cost
 
         # Update the deletion part
         for i in range(self._n):
             j = self._m + i
-            cost = out_degrees_source[i] * self.edit_cost.c_delete_edge
+            cost = out_degrees_source[i] * self.edit_cost.c_cost_delete_edge(edge_source)
 
-            self.C_star[i][j] += self.alpha_edge * cost
+            self.C_star[i][j] += cost
 
         # Update the insertion part
         for j in range(self._m):
             i = self._n + j
-            cost = out_degrees_target[j] * self.edit_cost.c_insert_edge
+            cost = out_degrees_target[j] * self.edit_cost.c_cost_insert_edge(edge_target)
 
-            self.C_star[i][j] += self.alpha_edge * cost
+            self.C_star[i][j] += cost
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -165,14 +158,14 @@ cdef class GED:
                         edge_target = self.graph_target.get_edge_by_node_idx(phi_i, phi_j)
 
                         cost = self.edit_cost.c_cost_substitute_edge(edge_source, edge_target)
-                        cost_edit += self.alpha_edge * cost
+                        cost_edit += cost
 
                     #check for edge deletion
                     else:
                         edge_source = self.graph_source.get_edge_by_node_idx(i, j)
 
                         cost = self.edit_cost.c_cost_delete_edge(edge_source)
-                        cost_edit += self.alpha_edge * cost
+                        cost_edit += cost
 
                 else:
                     # check for edge insertion
@@ -180,7 +173,7 @@ cdef class GED:
                         edge_target = self.graph_target.get_edge_by_node_idx(phi_i, phi_j)
 
                         cost = self.edit_cost.c_cost_insert_edge(edge_target)
-                        cost_edit += self.alpha_edge * cost
+                        cost_edit += cost
 
         return cost_edit
 

@@ -5,12 +5,25 @@ cdef class EditCost:
                   double c_delete_node,
                   double c_insert_edge,
                   double c_delete_edge,
-                  str metric_name):
+                  str metric_name,
+                  double alpha=-1.):
         self.c_insert_node = c_insert_node
         self.c_delete_node = c_delete_node
         self.c_insert_edge = c_insert_edge
         self.c_delete_edge = c_delete_edge
         self.metric_name = metric_name
+        self._init_alpha(alpha)
+
+    cdef void _init_alpha(self, double alpha):
+        assert alpha == -1. or 0. <= alpha <= 1., f'The parameter alpha is not valid!\nIt must be 0 <= alpha <= 1'
+        if 0. <= alpha <= 1.:
+            self.alpha_node = alpha
+            self.alpha_edge = 1. - alpha
+        else:
+            self.alpha_node = 1.
+            self.alpha_edge = 1.
+
+        # print(f'node {self.alpha_node} - edge {self.alpha_edge}')
 
     cdef int _init_metric(self) except? -1:
         raise NotImplementedError

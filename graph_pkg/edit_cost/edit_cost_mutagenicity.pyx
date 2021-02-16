@@ -5,8 +5,9 @@ cdef class EditCostMutagenicity(EditCost):
                   double c_delete_node,
                   double c_insert_edge,
                   double c_delete_edge,
-                  str metric_name):
-        super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name)
+                  str metric_name,
+                  double alpha=-1.):
+        super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name, alpha)
         self.metrics_available = ['dirac']
         self._init_metric()
 
@@ -20,13 +21,13 @@ cdef class EditCostMutagenicity(EditCost):
         return self.c_cost_insert_node(node)
 
     cdef double c_cost_insert_node(self, Node node):
-        return self.c_insert_node
+        return self.alpha_node * self.c_insert_node
 
     cpdef double cost_delete_node(self, Node node) except? -1:
         return self.c_cost_delete_node(node)
 
     cdef double c_cost_delete_node(self, Node node):
-        return self.c_delete_node
+        return self.alpha_node * self.c_delete_node
 
     cpdef double cost_substitute_node(self, Node node1, Node node2) except? -1:
         """
@@ -46,22 +47,22 @@ cdef class EditCostMutagenicity(EditCost):
         self.chem_source = node_src.label.chem_int
         self.chem_target = node_trgt.label.chem_int
 
-        return self.metric(self.chem_source, self.chem_target) * (self.c_insert_node + self.c_delete_node)
+        return self.alpha_node * self.metric(self.chem_source, self.chem_target) * (self.c_insert_node + self.c_delete_node)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
         return self.c_cost_insert_edge(edge)
 
     cdef double c_cost_insert_edge(self, Edge edge):
-        return self.c_insert_edge
+        return self.alpha_edge * self.c_insert_edge
 
     cpdef double cost_delete_edge(self, Edge edge) except? -1:
         return self.c_cost_delete_edge(edge)
 
     cdef double c_cost_delete_edge(self, Edge edge):
-        return self.c_delete_edge
+        return self.alpha_edge * self.c_delete_edge
 
     cpdef double cost_substitute_edge(self, Edge edge1, Edge edge2) except? -1:
         return self.c_cost_substitute_edge(edge1, edge2)
 
     cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt):
-        return 0.
+        return self.alpha_edge * 0.

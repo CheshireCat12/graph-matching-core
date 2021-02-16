@@ -9,6 +9,9 @@ cdef class EditCost:
         readonly double c_insert_edge
         readonly double c_delete_edge
         readonly str metric_name
+        double alpha_node, alpha_edge
+
+    cdef void _init_alpha(self, double alpha)
 
     cdef int _init_metric(self) except? -1
 

@@ -44,7 +44,6 @@ cdef class MatrixDistances:
 
                 edit_cost = self.ged.compute_edit_distance(graph_source,
                                                            graph_target,
-                                                           alpha=-1.,
                                                            heuristic=True)
                 distances[i][j] = edit_cost
 
