@@ -40,8 +40,7 @@ extensions = extension_modules()
 
 for e in extensions:
     e.cython_directives = {'language_level': "3",  # all are Python-3
-                           'embedsignature': True,
-                           'force': True}
+                           'embedsignature': True}
 
 setup(name='graph_pkg',
       version='0.0.1',

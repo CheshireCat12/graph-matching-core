@@ -1,6 +1,6 @@
 cdef class EditCostMutagenicity(EditCost):
 
-    def __cinit__(self,
+    def __init__(self,
                   double c_insert_node,
                   double c_delete_node,
                   double c_insert_edge,
