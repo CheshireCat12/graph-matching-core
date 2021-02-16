@@ -35,7 +35,7 @@ cdef class EditCostAIDS(EditCost):
         If they are it returns 0.
         Otherwise it returns 2*Tau_node
         
-        See Kaspar
+        See Kaspar's thesis (p.88 - AIDS and Mutagenicity Graphs)
         :param node1: 
         :param node2: 
         :return: double - Cost to substitute node

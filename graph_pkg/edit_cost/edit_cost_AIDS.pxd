@@ -18,10 +18,10 @@ cdef class EditCostAIDS(EditCost):
 
     cdef double c_cost_delete_node(self, Node node)
 
-    cdef double c_cost_substitution_node(self, Node node, Node node)
+    cdef double c_cost_substitute_node(self, Node node_src, Node node_trgt)
 
-    cdef double c_cost_insert_edge(self, Node node)
+    cdef double c_cost_insert_edge(self, Edge edge)
 
-    cdef double c_cost_delete_edge(self, Node node)
+    cdef double c_cost_delete_edge(self, Edge edge)
 
-    cdef double c_cost_substitution_edge(self, Node node, Node node)
+    cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt)
