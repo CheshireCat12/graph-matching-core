@@ -7,7 +7,7 @@ def load_df(filename):
 
     return df
 
-# @pytest.mark.skip()
+@pytest.mark.skip()
 def test_complete_ged_letter():
     results_filename = './data/goal/anthony_ged_dist_mat_alpha_node_cost0.9_edge_cost2.3.pkl'
     my_results_filename = './data/goal/res_letter_cost_node0.9_cost_edge2.3.pkl'
@@ -31,7 +31,7 @@ def test_complete_ged_letter():
     assert counter_different_result == 0
 
 
-# @pytest.mark.skip()
+@pytest.mark.skip()
 def test_complete_ged_AIDS():
     results_filename = './data/goal/anthony_ged_dist_mat_alpha_node_cost1.1_edge_cost0.1.pkl'
     my_results_filename = './data/goal/res_AIDS_cost_node1.1_cost_edge0.1.pkl'
@@ -61,7 +61,7 @@ def test_complete_ged_AIDS():
 
     # assert False
 
-# @pytest.mark.skip()
+@pytest.mark.skip()
 def test_complete_ged_mutagenicity():
     results_filename = './data/goal/anthony_ged_dist_mat_alpha_node_cost11.0_edge_cost1.1.pkl'
     my_results_filename = './data/goal/res_mutagenicity_cost_node11.0_cost_edge1.1.pkl'

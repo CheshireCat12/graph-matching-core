@@ -7,13 +7,22 @@ cdef class GED:
 
     cdef:
         int _n, _m
+        double alpha_node, alpha_edge
         readonly int[::1] phi
-        double _free_edge_sub
         readonly double[:, ::1] C, C_star
 
         Graph graph_source, graph_target
         EditCost edit_cost
 
+    cpdef double compute_edit_distance(self,
+                                       Graph graph_source,
+                                       Graph graph_target,
+                                       double alpha= *,
+                                       bint heuristic= *)
+
+    cdef void _init_graphs(self, Graph graph_source, Graph graph_target, bint heuristic)
+
+    cdef void _init_alpha(self, double alpha)
 
     cdef void _create_c_matrix(self)
 
@@ -22,5 +31,3 @@ cdef class GED:
     cdef double _compute_cost_node_edit(self, int[::1] phi)
 
     cdef double _compute_cost_edge_edit(self, int[::1] phi)
-
-    cpdef double compute_edit_distance(self, Graph graph_source, Graph graph_target)
