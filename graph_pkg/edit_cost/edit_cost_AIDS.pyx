@@ -17,13 +17,13 @@ cdef class EditCostAIDS(EditCost):
             self.metric = dirac_AIDS
 
     cpdef double cost_insert_node(self, Node node) except? -1:
-        return self.c_insert_node
+        return self.c_cost_insert_node(node)
 
     cdef double c_cost_insert_node(self, Node node):
         return self.c_insert_node
 
     cpdef double cost_delete_node(self, Node node) except? -1:
-        return self.c_delete_node
+        return self.c_cost_delete_node(node)
 
     cdef double c_cost_delete_node(self, Node node):
         return self.c_delete_node
@@ -40,31 +40,28 @@ cdef class EditCostAIDS(EditCost):
         :param node2: 
         :return: double - Cost to substitute node
         """
-        self.symbol_source = node1.label.symbol_int
-        self.symbol_target = node2.label.symbol_int
-
-        return 0. if self.metric(self.symbol_source, self.symbol_target) == 0. else (self.c_insert_node + self.c_delete_node)
+        return self.c_cost_substitute_node(node1, node2)
 
     cdef double c_cost_substitute_node(self, Node node_src, Node node_trgt):
-        self.symbol_source = node_src.label.symbole_int
-        self.symbol_target = node_trgt.label.symbole_int
+        self.symbol_source = node_src.label.symbol_int
+        self.symbol_target = node_trgt.label.symbol_int
 
         return self.metric(self.symbol_source, self.symbol_target) * (self.c_insert_node + self.c_delete_node)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
-        return self.c_insert_edge
+        return self.c_cost_insert_edge(edge)
 
     cdef double c_cost_insert_edge(self, Edge edge):
         return self.c_insert_edge
 
     cpdef double cost_delete_edge(self, Edge edge) except? -1:
-        return self.c_delete_edge
+        return self.c_cost_delete_edge(edge)
 
     cdef double c_cost_delete_edge(self, Edge edge):
         return self.c_delete_edge
 
     cpdef double cost_substitute_edge(self, Edge edge1, Edge edge2) except? -1:
-        return 0.
+        return self.c_cost_substitute_edge(edge1, edge2)
 
     cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt):
         return 0.

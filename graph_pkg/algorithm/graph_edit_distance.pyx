@@ -26,8 +26,8 @@ cdef class GED:
         # Create substitute part
         for i in range(self._n):
             for j in range(self._m):
-                cost = self.edit_cost.cost_substitute_node(self.graph_source.nodes[i],
-                                                           self.graph_target.nodes[j])
+                cost = self.edit_cost.c_cost_substitute_node(self.graph_source.nodes[i],
+                                                             self.graph_target.nodes[j])
                 # print(f'{i} - {j}:  cost {cost}')
                 self.C[i][j] = cost
 
@@ -35,7 +35,7 @@ cdef class GED:
         self.C[0:self._n:1, self._m:self._n+self._m:1] = np.inf
         for i in range(self._n):
             j = self._m + i
-            cost = self.edit_cost.cost_delete_node(self.graph_source.nodes[i])
+            cost = self.edit_cost.c_cost_delete_node(self.graph_source.nodes[i])
 
             self.C[i][j] = cost
 
@@ -43,7 +43,7 @@ cdef class GED:
         self.C[self._n:self._n+self._m:1, 0:self._m:1] = np.inf
         for j in range(self._m):
             i = self._n + j
-            cost = self.edit_cost.cost_insert_node(self.graph_target.nodes[j])
+            cost = self.edit_cost.c_cost_insert_node(self.graph_target.nodes[j])
 
             self.C[i][j] = cost
 
@@ -118,7 +118,7 @@ cdef class GED:
                         edge_source = self.graph_source.get_edge_by_node_idx(i, j)
                         edge_target = self.graph_target.get_edge_by_node_idx(phi_i, phi_j)
 
-                        cost += self.edit_cost.cost_substitute_edge(edge_source, edge_target)
+                        cost += self.edit_cost.c_cost_substitute_edge(edge_source, edge_target)
                         # print(f'-Exchange edge {(i, j)} --> {(phi_i, phi_j)}')
 
 
@@ -126,7 +126,7 @@ cdef class GED:
                     else:
                         edge_source = self.graph_source.get_edge_by_node_idx(i, j)
 
-                        cost += self.edit_cost.cost_delete_edge(edge_source)
+                        cost += self.edit_cost.c_cost_delete_edge(edge_source)
 
                         # print(f'#deletion edge {(i, j)} --> empty')
                 else:
@@ -134,7 +134,7 @@ cdef class GED:
                     if self.graph_target.has_edge(phi_i, phi_j):
                         edge_target = self.graph_target.get_edge_by_node_idx(phi_i, phi_j)
 
-                        cost += self.edit_cost.cost_insert_edge(edge_target)
+                        cost += self.edit_cost.c_cost_insert_edge(edge_target)
 
                         # print(f'*insertion edge empty --> {(phi_i, phi_j)}')
                 # print(f'===== current cost: edge {cost}')

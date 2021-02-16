@@ -239,11 +239,11 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
 
 # @pytest.mark.xfail(reason='I don\'t have the good value for AIDS to compare with')
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
-                         [(['molid600779', 'molid409962', 'i/10151', 'i/10084'])
-                          # (['molid624151', 'molid633011', 'a/11808', 'a/15905']),
-                          # (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
-                          # (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
-                          # (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
+                         [(['molid600779', 'molid409962', 'i/10151', 'i/10084']),
+                          (['molid624151', 'molid633011', 'a/11808', 'a/15905']),
+                          (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
+                          (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
+                          (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
                           ])
 def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target, gr_name_src, gr_name_trgt):
     graph_source = [graph for graph in aids_graphs if graph.name == graph_name_source][0]
