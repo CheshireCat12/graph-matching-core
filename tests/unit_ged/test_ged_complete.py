@@ -61,7 +61,7 @@ def test_complete_ged_AIDS():
 
     # assert False
 
-@pytest.mark.skip()
+# @pytest.mark.skip()
 def test_complete_ged_mutagenicity():
     results_filename = './data/goal/anthony_ged_dist_mat_alpha_node_cost11.0_edge_cost1.1.pkl'
     my_results_filename = './data/goal/res_mutagenicity_cost_node11.0_cost_edge1.1.pkl'
