@@ -15,3 +15,13 @@ cdef class EditCostAIDS(EditCost):
         metricptr metric
 
     cdef double c_cost_insert_node(self, Node node)
+
+    cdef double c_cost_delete_node(self, Node node)
+
+    cdef double c_cost_substitution_node(self, Node node, Node node)
+
+    cdef double c_cost_insert_edge(self, Node node)
+
+    cdef double c_cost_delete_edge(self, Node node)
+
+    cdef double c_cost_substitution_edge(self, Node node, Node node)

@@ -25,17 +25,46 @@ cdef class EditCostAIDS(EditCost):
     cpdef double cost_delete_node(self, Node node) except? -1:
         return self.c_delete_node
 
+    cdef double c_cost_delete_node(self, Node node):
+        return self.c_delete_node
+
     cpdef double cost_substitute_node(self, Node node1, Node node2) except? -1:
+        """
+        Compute the substitution of the two given nodes.
+        It checks if the chemical symbols are the same.
+        If they are it returns 0.
+        Otherwise it returns 2*Tau_node
+        
+        See Kaspar
+        :param node1: 
+        :param node2: 
+        :return: double - Cost to substitute node
+        """
         self.symbol_source = node1.label.symbol_int
         self.symbol_target = node2.label.symbol_int
 
         return 0. if self.metric(self.symbol_source, self.symbol_target) == 0. else (self.c_insert_node + self.c_delete_node)
 
+    cdef double c_cost_substitute_node(self, Node node_src, Node node_trgt):
+        self.symbol_source = node_src.label.symbole_int
+        self.symbol_target = node_trgt.label.symbole_int
+
+        return self.metric(self.symbol_source, self.symbol_target) * (self.c_insert_node + self.c_delete_node)
+
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
+        return self.c_insert_edge
+
+    cdef double c_cost_insert_edge(self, Edge edge):
         return self.c_insert_edge
 
     cpdef double cost_delete_edge(self, Edge edge) except? -1:
         return self.c_delete_edge
 
+    cdef double c_cost_delete_edge(self, Edge edge):
+        return self.c_delete_edge
+
     cpdef double cost_substitute_edge(self, Edge edge1, Edge edge2) except? -1:
+        return 0.
+
+    cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt):
         return 0.

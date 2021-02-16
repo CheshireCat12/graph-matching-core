@@ -25,8 +25,11 @@ def extension_modules():
         if file.startswith('graph_pkg') or file.startswith('experiments'):
             ext_name = file[:-4].replace('/', '.')
             source_name = './' + file
-            new_extension = Extension(name=ext_name, sources=[source_name], include_dirs=[numpy.get_include()])
+            new_extension = Extension(name=ext_name,
+                                      sources=[source_name],
+                                      include_dirs=[numpy.get_include()])
             ext.append(new_extension)
+
             print(f'Create new Extension for: {ext_name.split(".")[-1]}')
 
     return ext

@@ -211,13 +211,13 @@ def test_letter_with_networkX(letter_graphs, name_graphs_to_test):
     # assert False
 
 @pytest.mark.parametrize('graph_source_target, accuracy',
-                         [(['AP1_0000', 'AP1_0001'], 1e-7),
-                          (['IP1_0000', 'IP1_0001'], 1e-7),
-                          (['AP1_0100', 'IP1_0000'], 1e-7),
-                          (['HP1_0100', 'WP1_0010'], 1e-7),
-                          (['XP1_0005', 'KP1_0023'], 1e-7),
-                          (['EP1_0120', 'LP1_0099'], 1e-7),
-                          (['MP1_0019', 'FP1_0083'], 1e-7),
+                         [(['AP1_0000', 'AP1_0001'], 1e-6),
+                          (['IP1_0000', 'IP1_0001'], 1e-6),
+                          (['AP1_0100', 'IP1_0000'], 1e-6),
+                          (['HP1_0100', 'WP1_0010'], 1e-6),
+                          (['XP1_0005', 'KP1_0023'], 1e-6),
+                          (['EP1_0120', 'LP1_0099'], 1e-6),
+                          (['MP1_0019', 'FP1_0083'], 1e-6),
                           ])
 def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target, accuracy):
     gr_name_src, gr_name_trgt = [name[0] + '/' + name for name in graph_source_target]
@@ -237,18 +237,19 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
     # assert results == expected
     assert (results - expected) < accuracy
 
-@pytest.mark.xfail(reason='I don\'t have the good value for AIDS to compare with')
+# @pytest.mark.xfail(reason='I don\'t have the good value for AIDS to compare with')
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
-                         [(['molid624151', 'molid633011', 'a/11808', 'a/15905']),
-                          (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
-                          (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
-                          (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
+                         [(['molid600779', 'molid409962', 'i/10151', 'i/10084'])
+                          # (['molid624151', 'molid633011', 'a/11808', 'a/15905']),
+                          # (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
+                          # (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
+                          # (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
                           ])
 def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target, gr_name_src, gr_name_trgt):
     graph_source = [graph for graph in aids_graphs if graph.name == graph_name_source][0]
     graph_target = [graph for graph in aids_graphs if graph.name == graph_name_target][0]
-    # print(graph_source)
-    # print(graph_target)
+    print(graph_source)
+    print(graph_target)
     n, m = len(graph_source), len(graph_target)
     cst_cost_node = 1.1
     cst_cost_edge = 0.1
@@ -260,7 +261,7 @@ def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target,
     np.set_printoptions(precision=5, linewidth=1000, threshold=sys.maxsize)
     print(ged.C.base)
     print('@@@@@@@')
-    # print(ged.C_star.base)
+    print(ged.C_star.base)
     # {gr_name_src}_{gr_name_trgt}
     # np.savetxt(f'_c_{gr_name_src.replace("/", "_")}_{gr_name_trgt.replace("/", "_")}.csv', np.asarray(ged.C), fmt='%10.3f', delimiter=';')
     # np.savetxt(f'_c_star_{gr_name_src.replace("/", "_")}_{gr_name_trgt.replace("/", "_")}.csv', np.asarray(ged.C_star), fmt='%10.3f', delimiter=';')
@@ -272,14 +273,17 @@ def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target,
     print(f'res {results}')
     print(f'exp {expected}')
     assert results == expected
-    assert False
+    # assert False
 
 # @pytest.mark.skip()
 # @pytest.mark.skip(reason='I have to had the expected accuracy')
-@pytest.mark.xfail(reason='I don\'t have the good value for mutagenicity to compare with')
+# @pytest.mark.xfail(reason='I don\'t have the good value for mutagenicity to compare with')
 @pytest.mark.parametrize('graph_name_source_target',
-                         [(['molecule_2767', 'molecule_2769']),
+                         [
+                          (['molecule_2767', 'molecule_2769']),
                           (['molecule_2769', 'molecule_2767']),
+                          (['molecule_1897', 'molecule_1349']),
+                          (['molecule_1897', 'molecule_1051']),
                           ])
 def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_source_target):
     gr_name_src, gr_name_trgt = ['mutagen/' + name for name in graph_name_source_target]

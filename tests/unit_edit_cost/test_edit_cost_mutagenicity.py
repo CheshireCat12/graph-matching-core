@@ -11,7 +11,10 @@ from graph_pkg.graph.node import Node
                           (('H',), ('C',), (11., 11., 1.1, 1.1, 'dirac'), 22.),
                           (('H',), ('O',), (11., 11., 1.1, 1.1, 'dirac'), 22.),
                           (('Cl',), ('O',), (11., 11., 1.1, 1.1, 'dirac'), 22.),
-                          (('Cl',), ('Cl',), (11., 11., 1.1, 1.1, 'dirac'), 0.)])
+                          (('Cl',), ('Cl',), (11., 11., 1.1, 1.1, 'dirac'), 0.),
+                          (('Cl',), ('Na',), (11., 11., 1.1, 1.1, 'dirac'), 22.),
+
+                          ])
 def test_euclidean_norm(coord1, coord2, e_cost, expected):
     node0 = Node(0, LabelNodeMutagenicity(*coord1))
     node1 = Node(1, LabelNodeMutagenicity(*coord2))
