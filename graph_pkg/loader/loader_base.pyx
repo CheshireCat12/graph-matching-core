@@ -1,15 +1,15 @@
-from glob import glob
-from xmltodict import parse
 import os
+from glob import glob
+
+from xmltodict import parse
+
+from graph_pkg.utils.constants cimport EXTENSION_GRAPHS
 
 cdef class LoaderBase:
 
     def __init__(self, str folder):
         self._folder = folder
-        self.__EXTENSION = '*.gxl'
-
-    cdef void _init_folder(self, str folder):
-        self._folder = folder
+        print(self._folder)
 
     cpdef int _format_idx(self, str idx):
         raise NotImplementedError
@@ -23,7 +23,7 @@ cdef class LoaderBase:
     cpdef list load(self):
         cdef object parsed_data
 
-        files = os.path.join(self._folder, self.__EXTENSION)
+        files = os.path.join(self._folder, EXTENSION_GRAPHS)
         graph_files = glob(files)
 
         if not graph_files:

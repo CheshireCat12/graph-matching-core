@@ -10,8 +10,6 @@ cdef class LoaderBase:
         str __EXTENSION
         Graph _constructed_graph
 
-    cdef void _init_folder(self, str folder)
-
     cpdef int _format_idx(self, str idx)
 
     cpdef LabelBase _formatted_lbl_node(self, attr)

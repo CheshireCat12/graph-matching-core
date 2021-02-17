@@ -1,6 +1,6 @@
 cdef class LoaderAIDS(LoaderBase):
 
-    def __init__(self, str folder='./data/AIDS/data/'):
+    def __init__(self, str folder='./data/AIDS/data'):
         super().__init__(folder)
 
     cpdef int _format_idx(self, str idx):

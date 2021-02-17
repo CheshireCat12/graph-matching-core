@@ -1,4 +1,8 @@
 cdef:
+    ### File Extensions ###
+    EXTENSION_GRAPHS = '*.gxl'
+    EXTENSION_SPLITS = '.cxl'
+
     ### Datatset and Labels folder ###
     dict DEFAULT_FOLDERS = {'letter': './data/Letter/Letter/HIGH/',
                             'AIDS': './data/AIDS/data/',
@@ -27,4 +31,5 @@ cdef:
     }
 
 def get_default_lbls_to_code():
+    """Access to the DEFAULT_LABELS_TO_CODE from python."""
     return DEFAULT_LABELS_TO_CODE

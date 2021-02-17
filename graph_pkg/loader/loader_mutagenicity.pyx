@@ -1,4 +1,3 @@
-
 cdef class LoaderMutagenicity(LoaderBase):
 
     def __init__(self, str folder='./data/Mutagenicity/data/'):
