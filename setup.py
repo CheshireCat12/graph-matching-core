@@ -14,8 +14,8 @@ install_requires = [
     'networkx',
     'pandas',
     'progress',
+    'pyyaml',
 ]
-
 
 def extension_modules():
     import numpy

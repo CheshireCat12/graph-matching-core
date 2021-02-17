@@ -21,21 +21,21 @@ def test_split_train(folder_dataset, expected_size, first_name_expected, first_l
 
 @pytest.mark.parametrize('folder_dataset, expected_size',
                          [('./data/Letter/Letter/HIGH/', 750),
-                          ('./data/AIDS/data/', 1500),
-                          ('./data/Mutagenicity/data/', 2337)
-                          ])
-def test_split_test(folder_dataset, expected_size):
-    loader = LoaderTrainTestValSplit(folder_dataset)
-    data = loader.load_test_split()
-    assert len(data) == expected_size
-
-
-@pytest.mark.parametrize('folder_dataset, expected_size',
-                         [('./data/Letter/Letter/HIGH/', 750),
                           ('./data/AIDS/data/', 250),
                           ('./data/Mutagenicity/data/', 500)
                           ])
 def test_split_val(folder_dataset, expected_size):
     loader = LoaderTrainTestValSplit(folder_dataset)
     data = loader.load_val_split()
+    assert len(data) == expected_size
+
+
+@pytest.mark.parametrize('folder_dataset, expected_size',
+                         [('./data/Letter/Letter/HIGH/', 750),
+                          ('./data/AIDS/data/', 1500),
+                          ('./data/Mutagenicity/data/', 2337)
+                          ])
+def test_split_test(folder_dataset, expected_size):
+    loader = LoaderTrainTestValSplit(folder_dataset)
+    data = loader.load_test_split()
     assert len(data) == expected_size

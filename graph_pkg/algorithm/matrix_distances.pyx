@@ -1,6 +1,7 @@
 cimport cython
 import numpy as np
 cimport numpy as np
+from progress.bar import Bar
 
 cdef class MatrixDistances:
     """
@@ -25,7 +26,7 @@ cdef class MatrixDistances:
         
         :param graphs_train: list of graphs
         :param graphs_test: list of graphs
-        :param heuristic: bool - if the biggest if taken as source
+        :param heuristic: bool - if the biggest is taken as source
         :return: distances between the graphs in the given lists
         """
         cdef:
@@ -38,15 +39,18 @@ cdef class MatrixDistances:
         m = len(graphs_test)
         distances = np.full((n, m), fill_value=np.inf, dtype=np.float64)
 
+        bar = Bar('Processing', max=n)
         for i in range(n):
-            graph_source = self.graphs[i]
+            graph_source = graphs_train[i]
 
             for j in range(m):
-                graph_target = self.graphs[j]
+                graph_target = graphs_test[j]
 
                 edit_cost = self.ged.compute_edit_distance(graph_source,
                                                            graph_target,
                                                            heuristic=heuristic)
                 distances[i][j] = edit_cost
 
+            bar.next()
+        bar.finish()
         return distances
