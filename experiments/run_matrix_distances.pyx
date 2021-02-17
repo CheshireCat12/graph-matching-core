@@ -16,14 +16,15 @@ cpdef str _gr_name_mutagenicity(str filename, str name, dict classes):
     return f'{classes[filename]}/{name}'
 
 
-cpdef dict _get_classes(Coordinator coordinator):
+cpdef dict _get_classes(CoordinatorClassifier coordinator):
     # get the classes to create the graph name the same way mathias did it
-    _, y_train = coordinator.train_split()
-    _, y_test = coordinator.test_split()
-    _, y_val = coordinator.val_split()
-    classes = dict(y_train, **y_test)
-    classes.update(y_val)
+    X_train, y_train = coordinator.train_split()
+    X_test, y_test = coordinator.test_split()
+    X_val, y_val = coordinator.val_split()
+    Xs = X_train + X_test + X_val
+    ys = y_train + y_test + y_val
 
+    classes = {x.filename: lbl for x, lbl in zip(Xs, ys)}
     return classes
 
 
@@ -31,7 +32,7 @@ cpdef void run_letter():
     cdef:
         double[:, ::1] distances
 
-    coordinator = Coordinator('letter_high', (0.9, 0.9, 2.3, 2.3, 'euclidean'), '.')
+    coordinator = Coordinator('letter', (0.9, 0.9, 2.3, 2.3, 'euclidean'), './data/Letter/Letter/HIGH/')
     distances = run(coordinator)
     np_distances = np.asarray(distances)
 
@@ -45,7 +46,7 @@ cpdef void run_AIDS():
     cdef:
         double[:, ::1] distances
 
-    coordinator = Coordinator('AIDS', (1.1, 1.1, 0.1, 0.1, 'dirac'), './data/AIDS/data/')
+    coordinator = CoordinatorClassifier('AIDS', (1.1, 1.1, 0.1, 0.1, 'dirac'), './data/AIDS/data/')
 
     distances = run(coordinator)
     np_distances = np.asarray(distances)
