@@ -9,13 +9,14 @@ from graph_pkg.loader.loader_train_test_val_split import LoaderTrainTestValSplit
                           ])
 def test_split_train(folder_dataset, expected_size, first_name_expected, first_lbl_expected, last_name_expected, last_lbl_expected):
     loader = LoaderTrainTestValSplit(folder_dataset)
-    X_train, y_train = loader.train_split()
-    assert len(X_train) == expected_size
-    assert len(y_train) == expected_size
-    assert X_train[0] == first_name_expected
-    assert y_train[0] == first_lbl_expected
-    assert X_train[-1] == last_name_expected
-    assert y_train[-1] == last_lbl_expected
+    data = loader.load_train_split()
+    first_graph, first_lbl = data[0]
+    last_graph, last_lbl = data[-1]
+    assert len(data) == expected_size
+    assert first_graph == first_name_expected
+    assert first_lbl == first_lbl_expected
+    assert last_graph == last_name_expected
+    assert last_lbl == last_lbl_expected
 
 
 @pytest.mark.parametrize('folder_dataset, expected_size',
@@ -25,9 +26,8 @@ def test_split_train(folder_dataset, expected_size, first_name_expected, first_l
                           ])
 def test_split_test(folder_dataset, expected_size):
     loader = LoaderTrainTestValSplit(folder_dataset)
-    X_train, y_train = loader.test_split()
-    assert len(X_train) == expected_size
-    assert len(y_train) == expected_size
+    data = loader.load_test_split()
+    assert len(data) == expected_size
 
 
 @pytest.mark.parametrize('folder_dataset, expected_size',
@@ -37,6 +37,5 @@ def test_split_test(folder_dataset, expected_size):
                           ])
 def test_split_val(folder_dataset, expected_size):
     loader = LoaderTrainTestValSplit(folder_dataset)
-    X_train, y_train = loader.val_split()
-    assert len(X_train) == expected_size
-    assert len(y_train) == expected_size
+    data = loader.load_val_split()
+    assert len(data) == expected_size

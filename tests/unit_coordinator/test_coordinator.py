@@ -28,16 +28,4 @@ def test_error_dataset(dataset, folder_dataset, expected_msg):
     assert error_msg == expected_msg
 
 
-# @pytest.mark.parametrize('dataset, folder_dataset, cost, expected_size',
-#                          [('letter_high', './data/Letter/Letter/HIGH/', 'euclidean', 750),
-#                           ('AIDS', './data/AIDS/data/', 'dirac', 250),
-#                           ('mutagenicity', './data/Mutagenicity/data/', 'dirac',  1500)
-#                           ])
-# def test_train_split(dataset, folder_dataset, cost, expected_size):
-#     coordinator = Coordinator(dataset, (0.9, 0.9, 2.3, 2.3, cost), folder_dataset)
-#
-#     X_train, y_train = coordinator.train_split()
-#
-#
-#     assert len(X_train) == expected_size
-#     assert len(y_train) == expected_size
+

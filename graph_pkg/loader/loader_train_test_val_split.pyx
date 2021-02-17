@@ -4,11 +4,13 @@ from xmltodict import parse
 
 cdef class LoaderTrainTestValSplit:
 
-    def __cinit__(self, str folder_dataset):
+    def __init__(self, str folder_dataset):
         self.folder_dataset = folder_dataset
         self.__EXTENSION = '.cxl'
 
-    cdef tuple _init_splits(self, str filename):
+    cdef list _init_splits(self, str filename):
+        cdef list data = []
+
         split_file = glob(f'{self.folder_dataset}{filename}{self.__EXTENSION}')[0]
 
         with open(split_file) as file:
@@ -19,20 +21,36 @@ cdef class LoaderTrainTestValSplit:
         if 'Mutagenicity' in self.folder_dataset:
             index = 'mutagenicity'
         splits = parsed_data['GraphCollection'][index]['print']
-        X, y = [], []
 
         for split in splits:
-            X.append(split['@file'])
-            y.append(split['@class'])
+            data.append((split['@file'], split['@class']))
 
-        return X, y
+        return data
 
 
-    cpdef tuple train_split(self):
+    cpdef list load_train_split(self):
+        """
+        Gather the training set.
+        It returns a list of tuple containing the data and their corresponding labels
+        
+        :return: list((data, label)) 
+        """
         return self._init_splits('train')
 
-    cpdef tuple test_split(self):
+    cpdef list load_test_split(self):
+        """
+        Gather the test set.
+        It returns a list of tuple containing the data and their corresponding labels
+
+        :return: list((data, label)) 
+        """
         return self._init_splits('test')
 
-    cpdef tuple val_split(self):
+    cpdef list load_val_split(self):
+        """
+        Gather the validation set.
+        It returns a list of tuple containing the data and their corresponding labels
+
+        :return: list((data, label)) 
+        """
         return self._init_splits('validation')

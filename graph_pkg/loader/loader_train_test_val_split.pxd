@@ -7,10 +7,10 @@ cdef class LoaderTrainTestValSplit:
         list X_test, y_test
         list X_val, y_val
 
-    cdef tuple _init_splits(self, str filename)
+    cdef list _init_splits(self, str filename)
 
-    cpdef tuple train_split(self)
+    cpdef list load_train_split(self)
 
-    cpdef tuple test_split(self)
+    cpdef list load_test_split(self)
 
-    cpdef tuple val_split(self)
+    cpdef list load_val_split(self)
