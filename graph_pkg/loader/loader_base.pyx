@@ -1,11 +1,12 @@
 from glob import glob
 from xmltodict import parse
-
+import os
 
 cdef class LoaderBase:
 
-    def __cinit__(self):
-        self.__EXTENSION = '.gxl'
+    def __init__(self, str folder):
+        self._folder = folder
+        self.__EXTENSION = '*.gxl'
 
     cdef void _init_folder(self, str folder):
         self._folder = folder
@@ -22,7 +23,7 @@ cdef class LoaderBase:
     cpdef list load(self):
         cdef object parsed_data
 
-        files = f'{self._folder}*{self.__EXTENSION}'
+        files = os.path.join(self._folder, self.__EXTENSION)
         graph_files = glob(files)
 
         graphs = []

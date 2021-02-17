@@ -1,12 +1,10 @@
 
 cdef class LoaderMutagenicity(LoaderBase):
 
-    def __cinit__(self):
-        folder = './data/Mutagenicity/data/'
-        self._init_folder(folder)
+    def __init__(self, str folder='./data/Mutagenicity/data/'):
+        super().__init__(folder)
 
     cpdef int _format_idx(self, str idx):
-
         return int(idx) - 1
 
     cpdef LabelBase _formatted_lbl_node(self, attr):

@@ -2,10 +2,9 @@ import os
 
 cdef class LoaderLetter(LoaderBase):
 
-    def __cinit__(self, str spec):
-        folder = './data/Letter/Letter/'
-        folder_spec = os.path.join(folder, spec, '')
-        self._init_folder(folder_spec)
+    def __init__(self, str folder='./data/Letter/Letter/HIGH'):
+        super().__init__(folder)
+        # self._init_folder(folder)
 
     cpdef int _format_idx(self, str idx):
         return int(idx[1:])

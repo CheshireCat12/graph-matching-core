@@ -9,17 +9,17 @@ from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 
 @pytest.fixture()
 def graphs_letter_low():
-    loader_letter = LoaderLetter('LOW')
+    loader_letter = LoaderLetter('./data/Letter/Letter/LOW')
     graphs = loader_letter.load()
 
     return graphs
 
-@pytest.mark.parametrize('spec_letter, num_graphs',
-                         [('LOW', 2250),
-                          ('MED', 2250),
-                          ('HIGH', 2250)])
-def test_all_letters(spec_letter, num_graphs):
-    loader_letter = LoaderLetter(spec_letter)
+@pytest.mark.parametrize('folder, num_graphs',
+                         [('./data/Letter/Letter/LOW/', 2250),
+                          ('./data/Letter/Letter/MED', 2250),
+                          ('./data/Letter/Letter/HIGH', 2250)])
+def test_all_letters(folder, num_graphs):
+    loader_letter = LoaderLetter(folder)
     graphs = loader_letter.load()
 
     assert len(graphs) == num_graphs

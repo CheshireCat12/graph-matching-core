@@ -1,6 +1,6 @@
 cdef class Coordinator:
 
-    def __cinit__(self, str dataset, tuple params_edit_cost, str folder_dataset):
+    def __init__(self, str dataset, tuple params_edit_cost, str folder_dataset):
         self.dataset = dataset
         self.params_edit_cost = params_edit_cost
         self.folder_dataset = folder_dataset
