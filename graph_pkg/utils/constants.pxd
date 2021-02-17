@@ -1,0 +1,3 @@
+cdef:
+    dict DEFAULT_FOLDERS
+    dict DEFAULT_FOLDERS_LABELS

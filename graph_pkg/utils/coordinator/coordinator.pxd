@@ -12,9 +12,10 @@ from graph_pkg.loader.loader_train_test_val_split cimport LoaderTrainTestValSpli
 cdef class Coordinator:
 
     cdef:
-        readonly str dataset
+        str _dataset
         readonly tuple params_edit_cost
-        readonly str folder_dataset
+        readonly str _folder_dataset
+        readonly str _folder_labels
         readonly list graphs
         readonly list dataset_available
 
@@ -25,7 +26,7 @@ cdef class Coordinator:
 
     cdef int _init_system(self) except? -1
 
-    cdef void _init_letter(self, str spec)
+    cdef void _init_letter(self)
 
     cdef void _init_AIDS(self)
 

@@ -26,6 +26,9 @@ cdef class LoaderBase:
         files = os.path.join(self._folder, self.__EXTENSION)
         graph_files = glob(files)
 
+        if not graph_files:
+            raise FileNotFoundError(f'No graphs found in {self._folder}')
+
         graphs = []
         print('** Loading Graphs **')
         for graph_file in sorted(graph_files):

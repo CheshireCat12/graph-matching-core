@@ -81,3 +81,16 @@ def test_loader_AIDS_value(graphs_mutagenicity, idx_graph, gr_name, num_nodes):
 
     assert graph.name == gr_name
     assert len(graph) == num_nodes
+
+#################### Loader with wrong folder ###############
+
+def test_loader_with_wrong_folder():
+    folder = './data/Letter/Letter'
+    loader = LoaderLetter(folder)
+    with pytest.raises(FileNotFoundError) as execinfo:
+        loader.load()
+    print(execinfo.value.args)
+
+    msg_error = execinfo.value.args[0]
+    msg_expected = f'No graphs found in {folder}'
+    assert msg_error == msg_expected

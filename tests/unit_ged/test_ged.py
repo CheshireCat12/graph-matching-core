@@ -20,7 +20,7 @@ from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 
 @pytest.fixture()
 def letter_graphs():
-    loader = LoaderLetter('HIGH')
+    loader = LoaderLetter()
     graphs = loader.load()
     return graphs
 

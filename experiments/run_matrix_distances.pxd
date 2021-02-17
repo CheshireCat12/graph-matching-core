@@ -1,4 +1,4 @@
-from graph_pkg.coordinator cimport Coordinator
+from graph_pkg.utils.coordinator.coordinator cimport Coordinator
 
 
 cpdef str _gr_name_to_df_name(str name)

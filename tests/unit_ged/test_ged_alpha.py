@@ -18,7 +18,7 @@ from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 
 
-loader = LoaderLetter('HIGH')
+loader = LoaderLetter()
 letter_graphs = loader.load()
 
 @pytest.fixture()
