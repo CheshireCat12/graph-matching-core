@@ -14,7 +14,8 @@ cdef class MatrixDistances:
     @cython.wraparound(False)
     cpdef double[:, ::1] calc_matrix_distances(self,
                                                list graphs_train,
-                                               list graphs_test):
+                                               list graphs_test,
+                                               bint heuristic=False):
         """
         Compute all the distances between the graphs in the lists given 
         in parameter.
@@ -24,6 +25,7 @@ cdef class MatrixDistances:
         
         :param graphs_train: list of graphs
         :param graphs_test: list of graphs
+        :param heuristic: bool - if the biggest if taken as source
         :return: distances between the graphs in the given lists
         """
         cdef:
@@ -44,7 +46,7 @@ cdef class MatrixDistances:
 
                 edit_cost = self.ged.compute_edit_distance(graph_source,
                                                            graph_target,
-                                                           heuristic=True)
+                                                           heuristic=heuristic)
                 distances[i][j] = edit_cost
 
         return distances

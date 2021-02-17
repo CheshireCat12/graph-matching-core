@@ -10,4 +10,5 @@ cdef class MatrixDistances:
 
     cpdef double[:, ::1] calc_matrix_distances(self,
                                                list graphs_train,
-                                               list graphs_test)
+                                               list graphs_test,
+                                               bint heuristic=*)

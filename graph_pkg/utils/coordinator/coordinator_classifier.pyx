@@ -1,4 +1,4 @@
-from graph_pkg.utils.constants cimport DEFAULT_FOLDERS_LABELS
+from graph_pkg.utils.constants cimport DEFAULT_FOLDERS_LABELS, DEFAULT_LABELS_TO_CODE
 
 
 cdef class CoordinatorClassifier(Coordinator):
@@ -25,6 +25,10 @@ cdef class CoordinatorClassifier(Coordinator):
         def __get__(self):
             return {graph.filename: graph for graph in self.graphs}
 
+    property lbl_to_code:
+        def __get__(self):
+            return DEFAULT_LABELS_TO_CODE[self.dataset]
+
     cpdef tuple _split_dataset(self, list data, bint conv_lbl_to_code=False):
         cdef:
             list graphs_split = []
@@ -33,6 +37,9 @@ cdef class CoordinatorClassifier(Coordinator):
 
         for graph_filename, label in data:
             graph = self.graph_filename_to_graph[graph_filename]
+
+            if conv_lbl_to_code:
+                label = self.lbl_to_code[label]
 
             graphs_split.append(graph)
             labels_split.append(label)
@@ -51,18 +58,18 @@ cdef class CoordinatorClassifier(Coordinator):
             list data
 
         data = self.loader_split.load_train_split()
-        return self._split_dataset(data)
+        return self._split_dataset(data, conv_lbl_to_code)
 
     cpdef tuple test_split(self, bint conv_lbl_to_code=False):
         cdef:
             list data
 
         data = self.loader_split.load_test_split()
-        return self._split_dataset(data)
+        return self._split_dataset(data, conv_lbl_to_code)
 
     cpdef tuple val_split(self, bint conv_lbl_to_code=False):
         cdef:
             list data
 
         data = self.loader_split.load_val_split()
-        return self._split_dataset(data)
+        return self._split_dataset(data, conv_lbl_to_code)

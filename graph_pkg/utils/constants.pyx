@@ -25,3 +25,6 @@ cdef:
         'AIDS': AIDS_LBL_TO_CODE,
         'mutagenicity': MUTAGENICITY_TO_CODE,
     }
+
+def get_default_lbls_to_code():
+    return DEFAULT_LABELS_TO_CODE
