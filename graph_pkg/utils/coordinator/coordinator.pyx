@@ -11,6 +11,9 @@ cdef class Coordinator:
         self.folder_dataset = folder_dataset
         self._init_system()
 
+        print('** Coordinator Loaded **')
+        print(self)
+
     property dataset:
         def __get__(self):
             return self._dataset
@@ -56,3 +59,19 @@ cdef class Coordinator:
     cdef void _init_mutagenicity(self):
         self.loader = LoaderMutagenicity(self.folder_dataset)
         self.edit_cost = EditCostMutagenicity(*self.params_edit_cost)
+
+    def __repr__(self):
+        return f'Coordinator - Dataset: {self.dataset}; ' \
+               f'Parameters Cost: {self.edit_cost}; ' \
+               f'Dataset Folder: {self.folder_dataset}; '
+
+    def __str__(self):
+        indent_ = '   '
+        split_char = ';\n'
+        edit_cst = f'\n{indent_*3}' +  f'\n{indent_*3}'.join(str(self.edit_cost).split(';\n'))
+
+        return f'{indent_}Parameters:\n' \
+               f'{indent_*2}Dataset: {self.dataset}\n' \
+               f'{indent_*2}Parameters Cost: {edit_cst}\n' \
+               f'{indent_*2}Folder dataset: {self.folder_dataset}\n'
+    # \n{str(self.edit_cost).split(split_char)}\n' \

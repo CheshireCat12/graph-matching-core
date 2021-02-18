@@ -9,7 +9,6 @@ cdef class LoaderBase:
 
     def __init__(self, str folder):
         self._folder = folder
-        print(self._folder)
 
     cpdef int _format_idx(self, str idx):
         raise NotImplementedError

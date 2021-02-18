@@ -73,3 +73,10 @@ cdef class CoordinatorClassifier(Coordinator):
 
         data = self.loader_split.load_val_split()
         return self._split_dataset(data, conv_lbl_to_code)
+
+    def __repr__(self):
+        return super().__repr__() + f'Folder Labels: {self.folder_labels}'
+
+    def __str__(self):
+        indent = '   '
+        return super().__str__() + f'{indent * 2}Folder Labels : {self.folder_labels}\n'
