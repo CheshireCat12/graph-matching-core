@@ -2,6 +2,7 @@ data/
 *.html
 *.profile
 prof/
+results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

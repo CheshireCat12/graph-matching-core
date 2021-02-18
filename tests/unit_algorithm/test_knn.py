@@ -5,7 +5,7 @@ from graph_pkg.utils.coordinator.coordinator_classifier import CoordinatorClassi
 
 @pytest.fixture()
 def parameters():
-    with open('./configuration/basic_configuration.yml') as file:
+    with open('./configuration/configuration_knn.yml') as file:
         parameters = yaml.load(file, Loader=yaml.FullLoader)
 
     return parameters

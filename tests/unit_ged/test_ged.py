@@ -41,7 +41,7 @@ def mutagenicity_graphs():
 
 @pytest.fixture()
 def dataframe_letter():
-    with open('./data/goal/anthony_ged_dist_mat_alpha_node_cost0.9_edge_cost2.3.pkl', 'rb') as file:
+    with open('./results/goal/anthony_ged_dist_mat_alpha_node_cost0.9_edge_cost2.3.pkl', 'rb') as file:
         df = pickle.load(file)
 
     return df
@@ -49,7 +49,7 @@ def dataframe_letter():
 
 @pytest.fixture()
 def dataframe_aids():
-    with open('./data/goal/anthony_ged_dist_mat_alpha_node_cost1.1_edge_cost0.1.pkl', 'rb') as file:
+    with open('./results/goal/anthony_ged_dist_mat_alpha_node_cost1.1_edge_cost0.1.pkl', 'rb') as file:
         df = pickle.load(file)
 
     return df
@@ -57,7 +57,7 @@ def dataframe_aids():
 
 @pytest.fixture()
 def dataframe_mutagenicity():
-    with open('./data/goal/anthony_ged_dist_mat_alpha_node_cost11.0_edge_cost1.1.pkl', 'rb') as file:
+    with open('./results/goal/anthony_ged_dist_mat_alpha_node_cost11.0_edge_cost1.1.pkl', 'rb') as file:
         df = pickle.load(file)
 
     return df
@@ -115,16 +115,26 @@ def test_simple_ged(define_graphs):
                                 [2., np.inf, np.inf, 0., 0., 0., 0.],
                                 [np.inf, 3., np.inf, 0., 0., 0., 0.],
                                 [np.inf, np.inf, 2., 0., 0., 0., 0.]])
-    np.set_printoptions(precision=2)
-    print('c')
-    print(ged.C.base)
-    print('c_star')
-    print(ged.C_star.base)
+    # np.set_printoptions(precision=2)
+    # print('c')
+    # print(ged.C.base)
+    # print('c_star')
+    # print(ged.C_star.base)
 
     assert np.array_equal(np.asarray(ged.C), expected_C)
     assert np.array_equal(np.asarray(ged.C_star), expected_C_star)
     assert len(graph_source) == 4
     assert len(graph_target) == 3
+    assert cost == expected_cost
+
+
+def test_ged_same_graph(define_graphs):
+    ged, graph_source, graph_target = define_graphs
+
+    cost = ged.compute_edit_distance(graph_source, graph_source)
+
+    expected_cost = 0.
+
     assert cost == expected_cost
 
 

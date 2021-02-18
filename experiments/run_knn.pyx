@@ -4,19 +4,31 @@ from graph_pkg.algorithm.knn cimport KNNClassifier
 import numpy as np
 cimport numpy as np
 
-cpdef void run_knn():
+
+cpdef void _do_prediction(KNNClassifier knn, list graphs, list labels, int k, str set):
+    # Do the prediction
+    predictions = knn.predict(graphs, k=k)
+
+    # transform the predictions and the labels to np.array
+    predictions = np.asarray(predictions)
+    lbls_test = np.array(labels, dtype=np.int32)
+
+    # Count the number of correctly classified element
+    correctly_classified = np.sum(predictions == lbls_test)
+    accuracy = 100 * (correctly_classified / len(graphs))
+
+    print(f'{set} Accuracy {accuracy}')
+
+
+cpdef void run_knn(dict parameters):
     cdef:
         CoordinatorClassifier coordinator
         KNNClassifier knn
         int[::1] predictions
         double accuracy
 
-    with open('./configuration/basic_configuration.yml') as file:
-        parameters = yaml.load(file, Loader=yaml.FullLoader)
-
-    dataset = 'letter'
-    params_coordinator = parameters[dataset]['coordinator']
-    k = parameters[dataset]['k']
+    params_coordinator = parameters['coordinator']
+    k = parameters['k']
 
     coordinator = CoordinatorClassifier(**params_coordinator)
     graphs_train, labels_train = coordinator.train_split(conv_lbl_to_code=True)
@@ -26,18 +38,5 @@ cpdef void run_knn():
     knn = KNNClassifier(coordinator.ged)
     knn.train(graphs_train, labels_train)
 
-    predictions = knn.predict(graphs_val, k=k)
-    predictions = np.asarray(predictions)
-    lbls_test = np.array(labels_val, dtype=np.int32)
-    correctly_classified = np.sum(predictions == lbls_test)
-    accuracy = 100 * (correctly_classified / len(graphs_val))
-    print(f'Val Accuracy {accuracy}')
-
-    predictions = knn.predict(graphs_test, k=k)
-    predictions = np.asarray(predictions)
-    lbls_test = np.array(labels_test, dtype=np.int32)
-    correctly_classified = np.sum(predictions == lbls_test)
-    accuracy = 100 * (correctly_classified / len(graphs_test))
-    print(f'Test Accuracy {accuracy}')
-
-
+    _do_prediction(knn, graphs_val, labels_val, k, 'Validation')
+    _do_prediction(knn, graphs_test, labels_test, k, 'Test')

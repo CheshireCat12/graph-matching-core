@@ -3,7 +3,6 @@ cimport numpy as np
 from collections import Counter
 
 
-
 cdef class KNNClassifier:
     """
     Basic KNN classifier.
@@ -65,9 +64,5 @@ cdef class KNNClassifier:
         # Get the array of the prediction of all the elements of X.
         prediction = np.array([Counter(arr).most_common()[0][0]
                                for arr in labels_k_nearest.T])
-        # print(distances.base)
-        # print(idx_k_nearest)
-        # print(labels_k_nearest)
-        # print(prediction)
 
         return prediction

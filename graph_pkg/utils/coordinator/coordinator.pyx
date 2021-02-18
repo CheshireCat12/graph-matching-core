@@ -74,4 +74,3 @@ cdef class Coordinator:
                f'{indent_*2}Dataset: {self.dataset}\n' \
                f'{indent_*2}Parameters Cost: {edit_cst}\n' \
                f'{indent_*2}Folder dataset: {self.folder_dataset}\n'
-    # \n{str(self.edit_cost).split(split_char)}\n' \

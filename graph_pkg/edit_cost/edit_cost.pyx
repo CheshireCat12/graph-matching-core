@@ -23,9 +23,10 @@ cdef class EditCost:
             self.alpha_node = 1.
             self.alpha_edge = 1.
 
-        # print(f'node {self.alpha_node} - edge {self.alpha_edge}')
-
     def __repr__(self):
+        return f'cost_node{self.c_insert_node}_cost_edge{self.c_insert_edge}_alpha{self.alpha_node}'
+
+    def __str__(self):
         return f'Cost Insert/Delete Node: {self.c_insert_node};\n' \
                f'Cost Insert/Delete Edge: {self.c_insert_edge};\n' \
                f'Alpha Node: {self.alpha_node}, Alpha Edge: {self.alpha_edge};\n' \
