@@ -64,9 +64,9 @@ cpdef void run_mutagenicity():
     cdef:
         double[:, ::1] distances
 
-    coordinator = Coordinator('mutagenicity',
-                              (11.0, 11.0, 1.1, 1.1, 'dirac'),
-                              './data/Mutagenicity/data/')
+    coordinator = CoordinatorClassifier('mutagenicity',
+                                        (11.0, 11.0, 1.1, 1.1, 'dirac'),
+                                        './data/Mutagenicity/data/')
 
     distances = run(coordinator)
     np_distances = np.asarray(distances)

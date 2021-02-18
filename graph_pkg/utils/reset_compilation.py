@@ -1,5 +1,18 @@
 from glob import glob
 import os
+os.system('')
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\x1b[0;31;40m'
+    WARNING = '\33[1;31m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 
 def _delete_files(files):
     for file in files:
@@ -7,12 +20,16 @@ def _delete_files(files):
         print(f'File {file} Deleted successfully')
 
 def _confirm_deletion(files, msg_confirm):
-    rtrn_line = '\n'
+    rtrn_line = '\n\t'
+    msg_warning = '    !!Caution the following files are going to be deleted!!'
+    nb_equal = len(msg_warning) + 4
+    print(f'\n\n{msg_warning}\n'
+          f'{"="*nb_equal}\n'
+          f'{bcolors.WARNING}\t{rtrn_line.join(files)}{bcolors.ENDC}\n')
 
-    print(f'\n\n'
-          f'!!Caution the following files are going to be deleted!!\n'
-          f'Nb files to delete: {len(files)}\n\n'
-          f'{rtrn_line.join(files)}\n')
+    print(f'Summary\n'
+          f'{"="*nb_equal}\n'
+          f'    Nb files to delete: {len(files)}\n')
     confirm = input(f'To confirm the file deletion type \'{msg_confirm}\': ')
     if confirm != msg_confirm:
         return
