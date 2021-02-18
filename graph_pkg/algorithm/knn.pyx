@@ -51,7 +51,7 @@ cdef class KNNClassifier:
         cdef:
             double[:, ::1] distances
 
-        print('** Start prediction')
+        print('\n-- Start prediction --')
         distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
                                                         graphs_pred)
         distances = np.asarray(distances)

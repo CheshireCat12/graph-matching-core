@@ -28,7 +28,7 @@ cdef class EditCost:
     def __repr__(self):
         return f'Cost Insert/Delete Node: {self.c_insert_node};\n' \
                f'Cost Insert/Delete Edge: {self.c_insert_edge};\n' \
-               f'Alpha Node: {self.alpha_edge}, Alpha Edge: {self.alpha_edge};\n' \
+               f'Alpha Node: {self.alpha_node}, Alpha Edge: {self.alpha_edge};\n' \
                f'Metric Function: {self.metric_name}'
 
     cdef int _init_metric(self) except? -1:

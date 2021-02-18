@@ -70,7 +70,7 @@ cdef class Coordinator:
         split_char = ';\n'
         edit_cst = f'\n{indent_*3}' +  f'\n{indent_*3}'.join(str(self.edit_cost).split(';\n'))
 
-        return f'{indent_}Parameters:\n' \
+        return f'{indent_}Parameters Coordinator:\n' \
                f'{indent_*2}Dataset: {self.dataset}\n' \
                f'{indent_*2}Parameters Cost: {edit_cst}\n' \
                f'{indent_*2}Folder dataset: {self.folder_dataset}\n'

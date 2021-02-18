@@ -79,4 +79,6 @@ cdef class CoordinatorClassifier(Coordinator):
 
     def __str__(self):
         indent = '   '
-        return super().__str__() + f'{indent * 2}Folder Labels : {self.folder_labels}\n'
+        str_parent = super().__str__().split('\n')
+        str_parent[0] = f'{indent}Paramters CoordinatorClassifier:'
+        return '\n'.join(str_parent) + f'{indent * 2}Folder Labels : {self.folder_labels}\n'
