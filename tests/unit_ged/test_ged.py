@@ -115,6 +115,7 @@ def test_simple_ged(define_graphs):
                                 [2., np.inf, np.inf, 0., 0., 0., 0.],
                                 [np.inf, 3., np.inf, 0., 0., 0., 0.],
                                 [np.inf, np.inf, 2., 0., 0., 0., 0.]])
+    np.set_printoptions(precision=2)
     print('c')
     print(ged.C.base)
     print('c_star')
@@ -147,12 +148,15 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
 
     results = ged.compute_edit_distance(graph_source, graph_target)
     expected = dataframe_letter.loc[gr_name_src, gr_name_trgt]
+    np.set_printoptions(precision=2)
+    print(np.asarray(ged.C))
 
     print(f'res {results}')
     print(f'exp {expected}')
     print(f'###### diff {results - expected}')
     # assert results == expected
     assert (results - expected) < accuracy
+    # assert False
 
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
                          [(['molid600779', 'molid409962', 'i/10151', 'i/10084']),

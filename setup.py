@@ -15,6 +15,7 @@ install_requires = [
     'pandas',
     'progress',
     'pyyaml',
+    'lapjv',
 ]
 
 def extension_modules():

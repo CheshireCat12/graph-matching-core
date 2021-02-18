@@ -27,8 +27,10 @@ cdef class GED:
         self._create_c_matrix()
         self._create_c_star_matrix()
 
+
         _, col_ind = linear_sum_assignment(self.C_star)
         self.phi = col_ind.astype(dtype=np.int32)
+
 
         edit_cost += self._compute_cost_node_edit(self.phi)
         edit_cost += self._compute_cost_edge_edit(self.phi)
