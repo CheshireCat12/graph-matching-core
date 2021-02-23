@@ -23,6 +23,7 @@ def test_euclidean_norm(coord1, coord2, epsilon):
     assert abs(result - np.linalg.norm(arr1 - arr2)) < epsilon
     # assert result == np.linalg.norm(arr1 - arr2)
 
+
 #     # assert result == np.linalg.norm(arr1 - arr2)
 #     # assert abs(result - np.linalg.norm(arr1 - arr2)) == 0.1
 
