@@ -3,7 +3,7 @@ from cpython.object cimport Py_EQ
 
 cdef class LabelBase:
 
-    def __cinit__(self):
+    def __init__(self):
         pass
 
     cpdef tuple get_attributes(self):

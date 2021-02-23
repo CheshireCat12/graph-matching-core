@@ -1,7 +1,7 @@
 
 cdef class Node:
 
-    def __cinit__(self, unsigned int idx, LabelBase label):
+    def __init__(self, unsigned int idx, LabelBase label):
         self.idx = idx
         self.label = label
 

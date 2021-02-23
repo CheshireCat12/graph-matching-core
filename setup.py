@@ -15,7 +15,7 @@ install_requires = [
     'pandas',
     'progress',
     'pyyaml',
-    'lapjv',
+    'fast-pagerank',
 ]
 
 def extension_modules():

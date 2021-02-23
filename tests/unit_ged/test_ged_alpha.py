@@ -169,11 +169,11 @@ def test_letter_alpha_0_5(graphs, graph_source_target, accuracy):
 
 @pytest.mark.parametrize('graph_name_source, graph_name_target',
                          [
-                          # (['molid600779', 'molid409962']),
-                          # (['molid624151', 'molid633011']),
-                          # (['molid633011', 'molid624151']),
-                          # (['molid660165', 'molid645098']),
-                          # (['molid645098', 'molid660165']),
+                          (['molid600779', 'molid409962']),
+                          (['molid624151', 'molid633011']),
+                          (['molid633011', 'molid624151']),
+                          (['molid660165', 'molid645098']),
+                          (['molid645098', 'molid660165']),
                           (['molid624151', 'molid633011']),
                           ])
 def test_aids_alpha(aids_graphs, graph_name_source, graph_name_target):
@@ -185,16 +185,14 @@ def test_aids_alpha(aids_graphs, graph_name_source, graph_name_target):
     edit_cost = EditCostAIDS(cst_cost_node, cst_cost_node,
                              cst_cost_edge, cst_cost_edge, 'dirac')
     edit_cost_alpha = EditCostAIDS(cst_cost_node, cst_cost_node,
-                                   cst_cost_edge, cst_cost_edge, 'dirac', alpha=0.35)
+                                   cst_cost_edge, cst_cost_edge, 'dirac', alpha=0.5)
     ged = GED(edit_cost)
     ged_alpha = GED(edit_cost_alpha)
 
     results = ged_alpha.compute_edit_distance(graph_source, graph_target)
     expected = ged.compute_edit_distance(graph_source, graph_target) / 2.
-    print(f'result {results}')
 
     assert results == expected
-    assert False
 
 @pytest.mark.parametrize('graph_name_source_target',
                          [

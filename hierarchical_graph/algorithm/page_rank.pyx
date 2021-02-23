@@ -6,13 +6,14 @@ import scipy.spatial
 import scipy.sparse.linalg
 
 
-cpdef double[::1] pagerank_power(int[:, ::1] adjacency_mat, double dump_fact=0.85, int max_iter=100, double tolerance=1e-6):
+
+cpdef double[::1] pagerank_power(int[:, ::1] adjacency_mat, double damp_fact=0.85, int max_iter=100, double tolerance=1e-6):
     """
     Compute the page rank from the given adjacency matrix.
     Code from : https://asajadi.github.io/fast-pagerank/
     
     :param adjacency_mat: 
-    :param dump_fact: 
+    :param damp_fact: 
     :param tolerance: 
     :return: np.array[double] - PageRank score of the nodes
     """
@@ -21,19 +22,12 @@ cpdef double[::1] pagerank_power(int[:, ::1] adjacency_mat, double dump_fact=0.8
 
     n, *_ = adjacency_mat.shape
     adj = np.asarray(adjacency_mat, dtype=np.int32)
-    adj[3][4] = 0
-    adj[4][3] = 0
     print(adj)
 
-
     r = adj.sum(axis=1)
-    print(r)
 
     k = r.nonzero()[0]
-    print(k)
-    D_1 = sprs.csr_matrix((1/r[k], (k, k)), shape=(n, n))
-    print('D')
-    print(D_1)
+    D_1 = sprs.csr_matrix((1 / r[k], (k, k)), shape=(n, n))
 
     personalize = np.ones(n)
     personalize = personalize.reshape(n, 1)
@@ -41,10 +35,8 @@ cpdef double[::1] pagerank_power(int[:, ::1] adjacency_mat, double dump_fact=0.8
     print('s')
     print(s)
 
-    z_T = (((1 - dump_fact) * (r == 0)) / n)[np.newaxis, :]
-    W = dump_fact * adj.T @ D_1
-    print(z_T)
-    print(W)
+    z_T = (((1 - damp_fact) * (r != 0) + (r == 0)) / n)[np.newaxis, :]
+    W = damp_fact * adj.T @ D_1
 
     x = s
     old_x = np.zeros((n, 1))

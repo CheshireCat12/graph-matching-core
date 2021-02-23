@@ -1,6 +1,6 @@
 cdef class LabelNodeLetter(LabelBase):
 
-    def __cinit__(self, double x, double y):
+    def __init__(self, double x, double y):
         self.x = x
         self.y = y
 

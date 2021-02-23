@@ -2,7 +2,7 @@ import math
 
 cdef class LabelNodeAIDS(LabelBase):
 
-    def __cinit__(self, str symbol, int chem, int charge, float x, float y):
+    def __init__(self, str symbol, int chem, int charge, float x, float y):
         self.symbol = symbol
         self.symbol_int = int.from_bytes(symbol.encode(), 'little') # sum(ord(letter) for letter in symbol)
         self.chem = chem

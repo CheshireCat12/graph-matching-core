@@ -8,7 +8,7 @@ cdef class LabelEdge(LabelBase):
     # def __cinit__(self):
     #     self.valence = 0
 
-    def __cinit__(self, valence):
+    def __init__(self, valence):
         self.valence = valence
 
     cpdef tuple get_attributes(self):
