@@ -14,6 +14,9 @@ cdef class LabelBase:
         """
         raise NotImplementedError
 
+    def json_attributes(self):
+        raise NotImplementedError
+
     def __richcmp__(self, LabelBase other, int op):
         assert isinstance(other, LabelBase), f'The element {str(other)} is not an Label!'
         cdef:
@@ -30,5 +33,8 @@ cdef class LabelBase:
             assert False
 
     def __repr__(self):
+        return f'{", ".join(str(element) for element in self.get_attributes())}'
+
+    def __str__(self):
         return f'Label attributes: {", ".join(str(element) for element in self.get_attributes())}'
 

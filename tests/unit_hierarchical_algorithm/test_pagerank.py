@@ -33,6 +33,7 @@ def test_pagerank_by_hand():
     graph2.add_edge(3, 4)
 
     expected = np.array([val for _, val in nx.pagerank_scipy(graph2).items()])
+    print(results)
 
     assert np.linalg.norm(results - expected) < 1e-6
 

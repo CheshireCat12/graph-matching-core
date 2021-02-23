@@ -10,6 +10,7 @@
       <excludeFolder url="file://$MODULE_DIR$/.eggs" />
       <excludeFolder url="file://$MODULE_DIR$/prof" />
       <excludeFolder url="file://$MODULE_DIR$/results" />
+      <excludeFolder url="file://$MODULE_DIR$/draw/sigma.js/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from graph_pkg.utils.functions.load_config import load_config
 from experiments.run_complete_ged import run_complete_ged
 from experiments.run_knn import run_knn
+from experiments.run_draw import run_draw
 
 def run_experiment(args):
     parameters = load_config(args.exp)
@@ -11,12 +12,14 @@ def run_experiment(args):
         run_complete_ged(parameters[args.dataset])
     elif args.exp == 'knn':
         run_knn(parameters[args.dataset])
+    elif args.exp == 'draw':
+        run_draw(parameters[args.dataset])
 
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Run Experiments')
     parser.add_argument('-e', '--exp', type=str, required=True,
-                        choices=['complete_ged', 'knn'],
+                        choices=['complete_ged', 'knn', 'draw'],
                         help='Choose the experiment to run.')
     parser.add_argument('-d', '--dataset', type=str,
                         default='letter',

@@ -2,6 +2,7 @@ cimport cython
 import numpy as np
 cimport numpy as np
 
+
 cdef class Graph:
     """A class that is used to work with nodes and edges of a graph"""
 
@@ -105,6 +106,26 @@ cdef class Graph:
             edges_set.update(edges_lst)
 
         return edges_set
+
+    def graph_to_json(self):
+        json_ = "{"
+
+        json_ += '"edges":['
+        for idx, edge in enumerate(self._set_edge()):
+            if edge is None:
+                continue
+            json_ += f'{{"source":"{edge.idx_node_start}","target":"{edge.idx_node_end}","id":"{idx}"}},'
+
+        json_ = json_[:-1]
+        json_ += '],'
+
+        json_ += '"nodes":['
+        for node in self.nodes:
+            json_ += f'{{"label":"{repr(node.label)}","id":"{node.idx}",{node.label.json_attributes()},"color":"rgb(60,45,92)","size":8}},'
+        json_ = json_[:-1]
+        json_ += ']}'
+
+        return json_
 
     def __str__(self):
         eof = ",\n\t\t"
