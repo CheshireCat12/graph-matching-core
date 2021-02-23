@@ -95,7 +95,9 @@ cdef class Graph:
 
         :return: list of out degrees per nodes
         """
-        return np.asarray(self.adjacency_matrix, dtype=np.int16).sum(axis=0)
+        # TODO: implement the in_degree to take into account the undirected/directed graphs
+        raise NotImplementedError()
+        # return np.asarray(self.adjacency_matrix, dtype=np.int16).sum(axis=0)
 
     def _set_edge(self):
         edges_set = set()
