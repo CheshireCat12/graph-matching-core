@@ -53,16 +53,16 @@ cdef class EditCostAIDS(EditCost):
         return self.c_cost_insert_edge(edge)
 
     cdef double c_cost_insert_edge(self, Edge edge):
-        return self.alpha_node * self.c_insert_edge
+        return self.alpha_edge * self.c_insert_edge
 
     cpdef double cost_delete_edge(self, Edge edge) except? -1:
         return self.c_cost_delete_edge(edge)
 
     cdef double c_cost_delete_edge(self, Edge edge):
-        return self.alpha_node * self.c_delete_edge
+        return self.alpha_edge * self.c_delete_edge
 
     cpdef double cost_substitute_edge(self, Edge edge1, Edge edge2) except? -1:
         return self.c_cost_substitute_edge(edge1, edge2)
 
     cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt):
-        return self.alpha_node * 0.
+        return self.alpha_edge * 0.

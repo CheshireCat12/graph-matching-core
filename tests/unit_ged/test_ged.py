@@ -139,7 +139,8 @@ def test_ged_same_graph(define_graphs):
 
 
 @pytest.mark.parametrize('graph_source_target, accuracy',
-                         [(['AP1_0000', 'AP1_0001'], 1e-6),
+                         [
+                          (['AP1_0000', 'AP1_0001'], 1e-6),
                           (['IP1_0000', 'IP1_0001'], 1e-6),
                           (['AP1_0100', 'IP1_0000'], 1e-6),
                           (['HP1_0100', 'WP1_0010'], 1e-6),

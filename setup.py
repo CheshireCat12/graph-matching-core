@@ -22,8 +22,9 @@ def extension_modules():
     import numpy
     ext = []
     files = glob('**/*.pyx', recursive=True)
+    packages = ['graph_pkg', 'experiments', 'hierarchical_graph']
     for file in files:
-        if file.startswith('graph_pkg') or file.startswith('experiments'):
+        if any(file.startswith(pkg) for pkg in packages): # file.startswith('graph_pkg') or file.startswith('experiments'):
             ext_name = file[:-4].replace('/', '.')
             source_name = './' + file
             new_extension = Extension(name=ext_name,
