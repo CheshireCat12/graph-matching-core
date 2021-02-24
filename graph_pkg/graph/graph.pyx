@@ -105,6 +105,7 @@ cdef class Graph:
         for key, edges_lst in self.edges.items():
             edges_set.update(edges_lst)
 
+        edges_set.remove(None)
         return edges_set
 
     def graph_to_json(self):

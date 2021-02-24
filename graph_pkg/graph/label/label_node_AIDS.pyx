@@ -12,3 +12,9 @@ cdef class LabelNodeAIDS(LabelBase):
 
     cpdef tuple get_attributes(self):
         return self.symbol, self.chem, self.charge, self.x, self.y
+
+    def sigma_attributes(self):
+        return f'Element: {self.symbol}'
+
+    def sigma_position(self):
+        return self.x, self.y

@@ -1,4 +1,6 @@
 from argparse import ArgumentParser
+from collections import namedtuple
+from bunch import Bunch
 
 from graph_pkg.utils.functions.load_config import load_config
 from experiments.run_complete_ged import run_complete_ged
@@ -13,7 +15,9 @@ def run_experiment(args):
     elif args.exp == 'knn':
         run_knn(parameters[args.dataset])
     elif args.exp == 'draw':
-        run_draw(parameters[args.dataset])
+        # Fusion the selected dataset parameters with the general parameters
+        prmtrs = Bunch({**parameters[args.dataset], **parameters['general']})
+        run_draw(prmtrs)
 
 
 if __name__ == '__main__':

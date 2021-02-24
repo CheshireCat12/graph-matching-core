@@ -15,6 +15,8 @@ install_requires = [
     'pandas',
     'progress',
     'pyyaml',
+    'notebook',
+    'bunch',
 ]
 
 def extension_modules():

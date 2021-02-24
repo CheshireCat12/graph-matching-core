@@ -14,7 +14,10 @@ cdef class LabelBase:
         """
         raise NotImplementedError
 
-    def json_attributes(self):
+    def sigma_attributes(self):
+        raise NotImplementedError
+
+    def sigma_position(self):
         raise NotImplementedError
 
     def __richcmp__(self, LabelBase other, int op):

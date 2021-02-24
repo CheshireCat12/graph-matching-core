@@ -7,6 +7,9 @@ cdef class LabelNodeLetter(LabelBase):
     cpdef tuple get_attributes(self):
         return self.x, self.y
 
-    def json_attributes(self):
-        return f'"x":{self.x}, "y":{self.y}'
+    def sigma_attributes(self):
+        return f'x:{self.x}, y:{self.y}'
+
+    def sigma_position(self):
+        return self.x, self.y
 

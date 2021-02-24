@@ -22,7 +22,6 @@ cpdef double[::1] pagerank_power(int[:, ::1] adjacency_mat, double damp_fact=0.8
 
     n, *_ = adjacency_mat.shape
     adj = np.asarray(adjacency_mat, dtype=np.int32)
-    print(adj)
 
     r = adj.sum(axis=1)
 
@@ -32,8 +31,6 @@ cpdef double[::1] pagerank_power(int[:, ::1] adjacency_mat, double damp_fact=0.8
     personalize = np.ones(n)
     personalize = personalize.reshape(n, 1)
     s = (personalize / personalize.sum()) * n
-    print('s')
-    print(s)
 
     z_T = (((1 - damp_fact) * (r != 0) + (r == 0)) / n)[np.newaxis, :]
     W = damp_fact * adj.T @ D_1
