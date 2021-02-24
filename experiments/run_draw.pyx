@@ -24,9 +24,11 @@ def run_draw(parameters):
         centrality_score = _get_centrality_score(graph.adjacency_matrix, parameters.centrality_measure)
         data = graph_to_sigma_with_score(graph, centrality_score)
 
-        filename = os.path.join(parameters['folder_results'], f'{graph.name}.json')
+        filename = os.path.join(parameters['folder_results'], f'{parameters.centrality_measure}_{graph.name}.json')
         with open(filename, 'w') as fp:
             json.dump(data, fp)
+
+    print('-- Graphs correctly generated')
 
 
 def _get_centrality_score(adjacency_matrix, centrality_measure):
