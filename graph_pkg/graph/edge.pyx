@@ -9,6 +9,12 @@ cdef class Edge:
         self.idx_node_end = idx_node_end
         self.weight = weight
 
+    cdef void update_idx_node_start(self, unsigned int new_idx_node_start):
+        self.idx_node_start = new_idx_node_start
+
+    cdef void update_idx_node_end(self, unsigned int new_idx_node_end):
+        self.idx_node_end = new_idx_node_end
+
     cpdef Edge reversed(self):
         return Edge(self.idx_node_end, self.idx_node_start, self.weight)
 

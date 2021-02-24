@@ -7,3 +7,5 @@ cdef class Node:
     cdef:
         readonly unsigned int idx
         readonly LabelBase label
+
+    cdef void update_idx(self, unsigned int new_idx)

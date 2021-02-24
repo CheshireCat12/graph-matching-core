@@ -20,6 +20,26 @@ def test_simple_graph():
     assert my_graph.name == 'gr1'
     assert len(my_graph) == 0
 
+@pytest.mark.skip()
+@pytest.mark.parametrize('num_nodes',
+                         [4])
+def test_remove_node(num_nodes):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+    nodes = []
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeLetter(1, 1))
+        nodes.append(tmp_node)
+        my_graph.add_node(tmp_node)
+
+    for idx_start, idx_end in combinations(range(num_nodes), 2):
+        tmp_edge = Edge(idx_start, idx_end, LabelEdge(0))
+        my_graph.add_edge(tmp_edge)
+
+    my_graph.remove_node_by_idx(0)
+    assert my_graph.get_nodes() == nodes
+    assert len(my_graph) == num_nodes
+    assert False
 
 @pytest.mark.parametrize('num_nodes',
                          [1, 5, 10])

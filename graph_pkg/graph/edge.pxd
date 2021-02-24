@@ -11,4 +11,9 @@ cdef class Edge:
         readonly unsigned int idx_node_end
         readonly LabelBase weight
 
+    cdef void update_idx_node_start(self, unsigned int new_idx_node_start)
+
+    cdef void update_idx_node_end(self, unsigned int new_idx_node_end)
+
     cpdef Edge reversed(self)
+

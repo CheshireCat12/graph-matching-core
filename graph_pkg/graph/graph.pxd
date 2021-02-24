@@ -42,8 +42,10 @@ cdef class Graph:
 
     # cpdef void add_edge(self, int idx_node_start, int idx_node_end)
     #
-    # cpdef void remove_node_by_idx(self, int idx_node)
+    cpdef void remove_node_by_idx(self, int idx_node)
     #
     # cpdef void remove_edge_by_node_idx(self, int idx_node_start, int idx_node_end)
-    #
-    # cpdef void remove_all_edges_by_node_idx(self, int idx_node)
+
+    cpdef void remove_all_edges_by_node_idx(self, int idx_node)
+
+    cdef void __del_edge(self, int idx_node, list edges)

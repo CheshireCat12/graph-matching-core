@@ -5,6 +5,9 @@ cdef class Node:
         self.idx = idx
         self.label = label
 
+    cdef void update_idx(self, unsigned int new_idx):
+        self.idx = new_idx
+
     def __richcmp__(self, Node other, int op):
         assert isinstance(other, Node), f'The element {str(other)} is not a Node!'
 

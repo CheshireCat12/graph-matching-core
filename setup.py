@@ -17,7 +17,6 @@ install_requires = [
     'pyyaml',
     'notebook',
     'bunch',
-    'pdfcrowd',
 ]
 
 def extension_modules():

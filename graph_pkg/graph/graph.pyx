@@ -53,7 +53,7 @@ cdef class Graph:
         !! Caution, there is no verification if the indices exist!!
         :param idx_node_start: 
         :param idx_node_end: 
-        :return: Edge corresponding to the given nodes'idx
+        :return: Edge corresponding to the given nodes_idx
         """
         return self.edges[idx_node_start][idx_node_end]
 
@@ -99,6 +99,54 @@ cdef class Graph:
         # TODO: implement the in_degree to take into account the undirected/directed graphs
         raise NotImplementedError()
         # return np.asarray(self.adjacency_matrix, dtype=np.int16).sum(axis=0)
+
+    cpdef void remove_node_by_idx(self, int idx_node):
+        assert self._does_node_exist(idx_node), f'The node {idx_node} can\'t be deleted'
+
+        cdef Node node
+
+        del self.nodes[idx_node]
+        for node in self.nodes:
+            if node.idx > idx_node:
+                node.update_idx(node.idx-1)
+        self.num_nodes_current -= 1
+
+        self.remove_all_edges_by_node_idx(idx_node)
+
+        print(self.nodes)
+
+    cpdef void remove_all_edges_by_node_idx(self, int idx_node):
+        del self.edges[idx_node]
+        tmp_edges = {}
+        for key, edges in self.edges.items():
+            self.__del_edge(idx_node, edges)
+
+            if key > idx_node:
+                key -= 1
+            tmp_edges[key] = edges
+
+        self.edges = tmp_edges
+        self.adjacency_matrix = np.delete(self.adjacency_matrix, idx_node, 0)
+        self.adjacency_matrix = np.delete(self.adjacency_matrix, idx_node, 1)
+
+        print(self.edges)
+        print(self.adjacency_matrix.base)
+
+    cdef void __del_edge(self, int idx_node, list edges):
+        cdef Edge edge
+        cdef int idx_to_pop
+        for idx, edge in enumerate(edges):
+
+            if edge is None:
+                continue
+            if edge.idx_node_end == idx_node:
+                idx_to_pop = idx
+            if edge.idx_node_start > idx_node:
+                edge.update_idx_node_start(edge.idx_node_start-1)
+            if edge.idx_node_end > idx_node:
+                edge.update_idx_node_end(edge.idx_node_end-1)
+
+        edges.pop(idx_to_pop)
 
     def _set_edge(self):
         edges_set = set()
