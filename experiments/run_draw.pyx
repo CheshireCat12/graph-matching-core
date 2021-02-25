@@ -1,5 +1,5 @@
 from graph_pkg.utils.coordinator.coordinator import Coordinator
-from hierarchical_graph.algorithm.page_rank import pagerank_power
+from hierarchical_graph.algorithm.pagerank import pagerank_power
 from hierarchical_graph.utils.functions import graph_to_sigma_with_score
 import os
 import json
