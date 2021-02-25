@@ -20,7 +20,7 @@ def test_simple_graph():
     assert my_graph.name == 'gr1'
     assert len(my_graph) == 0
 
-@pytest.mark.skip()
+# @pytest.mark.skip()
 @pytest.mark.parametrize('num_nodes',
                          [4])
 def test_remove_node(num_nodes):
@@ -37,9 +37,18 @@ def test_remove_node(num_nodes):
         my_graph.add_edge(tmp_edge)
 
     my_graph.remove_node_by_idx(0)
+    nodes.pop(0)
+
+    # expected edges
+    expected_adjacency_mat = np.array([[0, 1, 1],
+                                       [1, 0, 1],
+                                       [1, 1, 0]])
+
+    print(f'--{nodes}')
+    print(my_graph.get_nodes())
     assert my_graph.get_nodes() == nodes
-    assert len(my_graph) == num_nodes
-    assert False
+    assert len(my_graph) == num_nodes - 1
+    assert np.array_equiv(expected_adjacency_mat, my_graph.adjacency_matrix)
 
 @pytest.mark.parametrize('num_nodes',
                          [1, 5, 10])
