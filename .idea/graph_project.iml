@@ -11,6 +11,9 @@
       <excludeFolder url="file://$MODULE_DIR$/prof" />
       <excludeFolder url="file://$MODULE_DIR$/results" />
       <excludeFolder url="file://$MODULE_DIR$/draw/sigma.js/build" />
+      <excludeFolder url="file://$MODULE_DIR$/draw/.ipynb_checkpoints" />
+      <excludeFolder url="file://$MODULE_DIR$/draw/sigma.js" />
+      <excludeFolder url="file://$MODULE_DIR$/draw/sigma.js/src" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
