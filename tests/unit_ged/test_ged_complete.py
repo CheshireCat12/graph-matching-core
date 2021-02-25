@@ -19,9 +19,9 @@ my_results_mutagenicity = './results/complete_ged/mutagenicity/result_cost_node1
 # @pytest.mark.skip()
 @pytest.mark.parametrize('results, my_results, epsilon',
                          [
-                          # (results_letter, my_results_letter, 1e-6),
-                          # (results_AIDS, my_results_AIDS, 1e-9),
-                          (results_mutagenicity, my_results_mutagenicity, 1e-9),
+                          (results_letter, my_results_letter, 1e-6),
+                          (results_AIDS, my_results_AIDS, 1e-9),
+                          # (results_mutagenicity, my_results_mutagenicity, 1e-9),
                           ])
 def test_all(results, my_results, epsilon):
     df_expected = load_df(results)

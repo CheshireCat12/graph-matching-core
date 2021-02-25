@@ -20,22 +20,23 @@ cpdef void _do_prediction(KNNClassifier knn, list graphs, list labels, int k, st
     print(f'{set} Accuracy {accuracy}')
 
 
-cpdef void run_knn(dict parameters):
+cpdef void run_knn(parameters):
     cdef:
         CoordinatorClassifier coordinator
         KNNClassifier knn
         int[::1] predictions
         double accuracy
 
-    params_coordinator = parameters['coordinator']
-    k = parameters['k']
+    params_coordinator = parameters.coordinator
+    k = parameters.k
+    parallel = parameters.parallel
 
     coordinator = CoordinatorClassifier(**params_coordinator)
     graphs_train, labels_train = coordinator.train_split(conv_lbl_to_code=True)
     graphs_val, labels_val = coordinator.val_split(conv_lbl_to_code=True)
     graphs_test, labels_test = coordinator.test_split(conv_lbl_to_code=True)
 
-    knn = KNNClassifier(coordinator.ged)
+    knn = KNNClassifier(coordinator.ged, parallel)
     knn.train(graphs_train, labels_train)
 
     _do_prediction(knn, graphs_val, labels_val, k, 'Validation')
