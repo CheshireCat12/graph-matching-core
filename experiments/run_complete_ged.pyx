@@ -9,22 +9,25 @@ from graph_pkg.utils.coordinator.coordinator_classifier cimport CoordinatorClass
 from graph_pkg.algorithm.matrix_distances cimport MatrixDistances
 
 
-cpdef void run_complete_ged(dict parameters):
+cpdef void run_complete_ged(parameters):
     cdef:
         double[:, ::1] distances
 
-    coordinator = CoordinatorClassifier(**parameters['coordinator'])
-    distances = run(coordinator)
-    np_distances = np.asarray(distances)
+    coordinator = CoordinatorClassifier(**parameters.coordinator)
+    parallel = parameters.parallel
 
+    distances = run(coordinator, parallel)
+    np_distances = np.asarray(distances)
 
     classes = _get_classes(coordinator)
 
     dataset = parameters['coordinator']['dataset']
     if dataset == 'letter':
-        graph_names = [_gr_name_letter(graph.name) for graph in coordinator.graphs]
+        graph_names = [_gr_name_letter(graph.name)
+                       for graph in coordinator.graphs]
     elif dataset == 'AIDS':
-        graph_names = [_gr_name_AIDS(graph.filename, classes) for graph in coordinator.graphs]
+        graph_names = [_gr_name_AIDS(graph.filename, classes)
+                       for graph in coordinator.graphs]
     elif dataset == 'mutagenicity':
         graph_names = [_gr_name_mutagenicity(graph.filename, graph.name, classes)
                        for graph in coordinator.graphs]
@@ -35,6 +38,8 @@ cpdef void run_complete_ged(dict parameters):
     Path(parameters['folder_results']).mkdir(parents=True, exist_ok=True)
     df.to_pickle(path=os.path.join(parameters['folder_results'],
                                    f'result_{repr(coordinator.ged.edit_cost)}.pkl'))
+
+    print('\nRun Success!')
 
 
 
@@ -62,15 +67,16 @@ cpdef dict _get_classes(CoordinatorClassifier coordinator):
     return classes
 
 
-cpdef double[:, ::1] run(Coordinator coordinator):
+cpdef double[:, ::1] run(Coordinator coordinator, bint parallel=False):
     cdef:
         double[:, ::1] distances
 
-    matrix_distances = MatrixDistances(coordinator.ged)
+    matrix_distances = MatrixDistances(coordinator.ged, parallel)
 
     print('# Start distance computation')
     start_time = time()
-    distances = matrix_distances.calc_matrix_distances(coordinator.graphs, coordinator.graphs)
+    distances = matrix_distances.calc_matrix_distances(coordinator.graphs,
+                                                       coordinator.graphs)
     print(f'# Computation time: {time() - start_time:3f} s')
 
     return distances

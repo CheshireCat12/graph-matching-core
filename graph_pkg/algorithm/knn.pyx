@@ -10,7 +10,7 @@ cdef class KNNClassifier:
     Returns the majority class of the k neighbors.
     """
 
-    def __init__(self, GED ged):
+    def __init__(self, GED ged, bint parallel=False):
         """
         Initialize the KNN with the graph edit distance class.
         The ged is used to compute the distance between 2 graphs.
@@ -18,7 +18,7 @@ cdef class KNNClassifier:
         :param ged: GED
         """
         self.ged = ged
-        self.mat_dist = MatrixDistances(ged)
+        self.mat_dist = MatrixDistances(ged, parallel)
 
     cpdef void train(self, list graphs_train, list labels_train):
         """

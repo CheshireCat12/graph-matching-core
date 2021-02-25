@@ -10,6 +10,9 @@ cdef class EditCost:
         readonly double c_delete_edge
         readonly str metric_name
         double alpha_node, alpha_edge
+        # change_alpha is used during the serialization of the EditCost to
+        # check which alpha value is used
+        bint change_alpha
 
     cdef void _init_alpha(self, double alpha)
 

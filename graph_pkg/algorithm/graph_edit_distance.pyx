@@ -24,7 +24,10 @@ cdef class GED:
 
         self._init_graphs(graph_source, graph_target, heuristic)
 
+        # print(self.graph_source)
+
         self._create_c_matrix()
+        # print(self.C.base)
         self._create_c_star_matrix()
 
 
@@ -34,6 +37,8 @@ cdef class GED:
 
         edit_cost += self._compute_cost_node_edit(self.phi)
         edit_cost += self._compute_cost_edge_edit(self.phi)
+
+        # print(edit_cost)
 
         return edit_cost
 
@@ -66,6 +71,7 @@ cdef class GED:
             for j in range(self._m):
                 cost = self.edit_cost.c_cost_substitute_node(self.graph_source.nodes[i],
                                                              self.graph_target.nodes[j])
+                # print(f'cost sub {cost}')
                 self.C[i][j] = cost
 
         # Create node deletion part
@@ -109,7 +115,7 @@ cdef class GED:
         for i in range(self._n):
             for j in range(self._m):
                 cost = c_abs(out_degrees_source[i] - out_degrees_target[j]) * self.edit_cost.c_cost_insert_edge(edge_source)
-
+                # print(f'cost C star {cost}')
                 self.C_star[i][j] += cost
 
         # Update the deletion part
@@ -178,5 +184,19 @@ cdef class GED:
                         cost_edit += cost
 
         return cost_edit
+
+
+    def __reduce__(self):
+        d = dict()
+        d['edit_cost'] =self.edit_cost
+
+        return (rebuild, (d,))
+
+def rebuild(data):
+    cdef:
+        GED ged
+    ged = GED(data['edit_cost'])
+
+    return ged
 
 

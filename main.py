@@ -10,14 +10,15 @@ from experiments.run_draw import run_draw
 def run_experiment(args):
     parameters = load_config(args.exp)
 
+    # Fusion the selected dataset parameters with the general parameters
+    parameters = Bunch({**parameters[args.dataset], **parameters['general']})
+
     if args.exp == 'complete_ged':
-        run_complete_ged(parameters[args.dataset])
+        run_complete_ged(parameters)
     elif args.exp == 'knn':
-        run_knn(parameters[args.dataset])
+        run_knn(parameters)
     elif args.exp == 'draw':
-        # Fusion the selected dataset parameters with the general parameters
-        prmtrs = Bunch({**parameters[args.dataset], **parameters['general']})
-        run_draw(prmtrs)
+        run_draw(parameters)
 
 
 if __name__ == '__main__':

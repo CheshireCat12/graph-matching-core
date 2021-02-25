@@ -17,6 +17,7 @@ cdef class Graph:
 
 
     cdef void _init_edges(self):
+        self.num_edges = 0
         self.edges = {i: [None] * self.num_nodes_max for i in range(self.num_nodes_max)}
 
     cdef void _init_adjacency_matrix(self):
@@ -191,3 +192,29 @@ cdef class Graph:
 
     def __len__(self):
         return self.num_nodes_current
+
+    def __reduce__(self):
+        """Define how instance of Graph are pickled."""
+        d = dict()
+        d['name'] = self.name
+        d['filename'] = self.filename
+        d['nodes'] = self.nodes
+        d['edges'] = self.edges
+        d['num_nodes_max'] = self.num_nodes_max
+        d['num_nodes_current'] = self.num_nodes_current
+        d['num_edges'] = self.num_edges
+        d['adjacency_matrix'] = np.asarray(self.adjacency_matrix)
+        return (rebuild, (d,))
+
+
+def rebuild(data):
+    cdef:
+        Graph g
+    g = Graph(data['name'], data['filename'], data['num_nodes_max'])
+    g.nodes = data['nodes']
+    g.edges = data['edges']
+    g.num_nodes_current = data['num_nodes_current']
+    g.num_edges = data['num_edges']
+    g.adjacency_matrix = data['adjacency_matrix']
+
+    return g

@@ -152,6 +152,8 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
     gr_name_src, gr_name_trgt = [name[0] + '/' + name for name in graph_source_target]
     graph_source, graph_target = [graph for graph in letter_graphs if graph.name in graph_source_target]
 
+    # print(graph_source)
+    # print(graph_target)
     cst_cost_node = 0.9
     cst_cost_edge = 2.3
     ged = GED(EditCostLetter(cst_cost_node, cst_cost_node,
@@ -161,6 +163,7 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
     expected = dataframe_letter.loc[gr_name_src, gr_name_trgt]
     np.set_printoptions(precision=2)
     print(np.asarray(ged.C))
+    print(np.asarray(ged.C_star))
 
     print(f'res {results}')
     print(f'exp {expected}')

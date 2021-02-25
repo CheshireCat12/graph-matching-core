@@ -66,3 +66,20 @@ cdef class EditCostMutagenicity(EditCost):
 
     cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt):
         return self.alpha_edge * 0.
+
+    def __reduce__(self):
+        d = dict()
+        d['c_insert_node'] = self.c_insert_node
+        d['c_delete_node'] = self.c_delete_node
+        d['c_insert_edge'] = self.c_insert_edge
+        d['c_delete_edge'] = self.c_delete_edge
+        d['metric_name'] = self.metric_name
+        d['alpha'] = self.alpha_node if self.change_alpha else -1
+
+        return (rebuild, (d,))
+
+def rebuild(data):
+    cdef EditCost edit_cost
+    edit_cost = EditCostMutagenicity(**data)
+
+    return edit_cost

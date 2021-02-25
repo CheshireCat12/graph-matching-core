@@ -19,3 +19,5 @@ mutagenicity:
     folder_dataset: ./data/Mutagenicity/data/
     folder_labels: ./data/Mutagenicity/data/
   k: 5
+general:
+  parallel: True

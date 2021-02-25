@@ -17,6 +17,8 @@ install_requires = [
     'pyyaml',
     'notebook',
     'bunch',
+    'psutil',
+    'tqdm'
 ]
 
 def extension_modules():

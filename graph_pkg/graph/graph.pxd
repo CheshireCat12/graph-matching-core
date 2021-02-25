@@ -7,14 +7,14 @@ cdef class Graph:
     cdef:
         readonly str name
         readonly str filename
-        list nodes
-        dict edges
+        public list nodes
+        public dict edges
 
         readonly unsigned int num_nodes_max
-        unsigned int num_nodes_current
-        unsigned int num_edges
+        public unsigned int num_nodes_current
+        public int num_edges
 
-        readonly int[:, ::1] adjacency_matrix
+        public int[:, ::1] adjacency_matrix
 
     cdef void _init_edges(self)
 

@@ -16,11 +16,11 @@ my_results_AIDS = './results/complete_ged/AIDS/result_cost_node1.1_cost_edge0.1_
 my_results_mutagenicity = './results/complete_ged/mutagenicity/result_cost_node11.0_cost_edge1.1_alpha1.0.pkl'
 
 
-@pytest.mark.skip()
+# @pytest.mark.skip()
 @pytest.mark.parametrize('results, my_results, epsilon',
                          [
-                          (results_letter, my_results_letter, 1e-6),
-                          (results_AIDS, my_results_AIDS, 1e-9),
+                          # (results_letter, my_results_letter, 1e-6),
+                          # (results_AIDS, my_results_AIDS, 1e-9),
                           (results_mutagenicity, my_results_mutagenicity, 1e-9),
                           ])
 def test_all(results, my_results, epsilon):

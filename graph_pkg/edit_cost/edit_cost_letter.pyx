@@ -35,6 +35,7 @@ cdef class EditCostLetter(EditCost):
         return self.c_cost_substitute_node(node1, node2)
 
     cdef double c_cost_substitute_node(self, Node node_src, Node node_trgt):
+        # print(self.metric(node_src.label.x, node_src.label.y, node_trgt.label.x, node_trgt.label.y))
         return self.alpha_node * self.metric(node_src.label.x, node_src.label.y, node_trgt.label.x, node_trgt.label.y)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
@@ -47,6 +48,9 @@ cdef class EditCostLetter(EditCost):
         return self.c_cost_delete_edge(edge)
 
     cdef double c_cost_delete_edge(self, Edge edge):
+        # print('cost_delete_edge', self.alpha_edge * self.c_delete_edge)
+        # print(self.c_delete_edge)
+        # print(self.alpha_edge)
         return self.alpha_edge * self.c_delete_edge
 
     cpdef double cost_substitute_edge(self, Edge edge1, Edge edge2) except? -1:
@@ -54,3 +58,20 @@ cdef class EditCostLetter(EditCost):
 
     cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt):
         return self.alpha_edge * 0.
+
+    def __reduce__(self):
+        d = dict()
+        d['c_insert_node'] = self.c_insert_node
+        d['c_delete_node'] = self.c_delete_node
+        d['c_insert_edge'] = self.c_insert_edge
+        d['c_delete_edge'] = self.c_delete_edge
+        d['metric_name'] = self.metric_name
+        d['alpha'] = self.alpha_node if self.change_alpha else -1
+
+        return (rebuild, (d,))
+
+def rebuild(data):
+    cdef EditCost edit_cost
+    edit_cost = EditCostLetter(**data)
+
+    return edit_cost

@@ -19,9 +19,11 @@ cdef class EditCost:
         if 0. <= alpha <= 1.:
             self.alpha_node = alpha
             self.alpha_edge = 1. - alpha
+            self.change_alpha = True
         else:
             self.alpha_node = 1.
             self.alpha_edge = 1.
+            self.change_alpha = False
 
     def __repr__(self):
         return f'cost_node{self.c_insert_node}_cost_edge{self.c_insert_edge}_alpha{self.alpha_node}'
@@ -70,3 +72,21 @@ cdef class EditCost:
 
     cdef double c_cost_substitute_edge(self, Edge edge_src, Edge edge_trgt):
         pass
+
+
+    def __reduce__(self):
+        d = dict()
+        d['c_insert_node'] = self.c_insert_node
+        d['c_delete_node'] = self.c_delete_node
+        d['c_insert_edge'] = self.c_insert_edge
+        d['c_delete_edge'] = self.c_delete_edge
+        d['metric_name'] = self.metric_name
+        d['alpha'] = self.alpha_node if self.change_alpha else -1
+
+        return (rebuild, (d,))
+
+def rebuild(data):
+    cdef EditCost edit_cost
+    edit_cost = EditCost(**data)
+
+    return edit_cost

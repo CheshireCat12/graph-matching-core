@@ -19,3 +19,5 @@ mutagenicity:
     folder_dataset: ./data/Mutagenicity/data/
     folder_labels: ./data/Mutagenicity/data/
   folder_results: ./results/complete_ged/mutagenicity
+general:
+  parallel: True
