@@ -48,7 +48,7 @@ for e in extensions:
                            'embedsignature': True}
 
 setup(name='graph_pkg',
-      version='0.0.1',
+      version='0.1.1',
       description='A graph module',
       author='Anthony Gillioz',
       author_email='anthony.gillioz@outlook.com',
