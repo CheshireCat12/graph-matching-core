@@ -19,10 +19,10 @@ install_requires = [
     'progress',
     'pyyaml',
     'notebook',
-    'bunch',
     'psutil',
     'gitpython',
-    'tqdm'
+    'easydict',
+    'bunch',
 ]
 
 
