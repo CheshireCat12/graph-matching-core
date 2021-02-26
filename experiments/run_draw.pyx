@@ -27,7 +27,7 @@ def run_draw(parameters):
                                                  parameters.centrality_measure)
         sigma_js.save_to_sigma_with_score(graph,
                                           centrality_score,
-                                          parameters.centrality_measure)
+                                          parameters.centrality_measure, level=0)
 
     print('-- Graphs correctly generated')
 

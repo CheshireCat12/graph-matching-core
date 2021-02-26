@@ -27,56 +27,56 @@ class SigmaJS:
 <button id="layout" type="button">Layout</button>
 <button id="export" type="export">Export</button>
 </body>
-<script src="../../../external/sigma.js/src/sigma.core.js"></script>
-<script src="../../../external/sigma.js/src/conrad.js"></script>
-<script src="../../../external/sigma.js/src/utils/sigma.utils.js"></script>
-<script src="../../../external/sigma.js/src/utils/sigma.polyfills.js"></script>
-<script src="../../../external/sigma.js/src/sigma.settings.js"></script>
-<script src="../../../external/sigma.js/src/classes/sigma.classes.dispatcher.js"></script>
-<script src="../../../external/sigma.js/src/classes/sigma.classes.configurable.js"></script>
-<script src="../../../external/sigma.js/src/classes/sigma.classes.graph.js"></script>
-<script src="../../../external/sigma.js/src/classes/sigma.classes.camera.js"></script>
-<script src="../../../external/sigma.js/src/classes/sigma.classes.quad.js"></script>
-<script src="../../../external/sigma.js/src/classes/sigma.classes.edgequad.js"></script>
-<script src="../../../external/sigma.js/src/captors/sigma.captors.mouse.js"></script>
-<script src="../../../external/sigma.js/src/captors/sigma.captors.touch.js"></script>
-<script src="../../../external/sigma.js/src/renderers/sigma.renderers.canvas.js"></script>
-<script src="../../../external/sigma.js/src/renderers/sigma.renderers.webgl.js"></script>
-<script src="../../../external/sigma.js/src/renderers/sigma.renderers.svg.js"></script>
-<script src="../../../external/sigma.js/src/renderers/sigma.renderers.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
-<script src="../../../external/sigma.js/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
-<script src="../../../external/sigma.js/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
-<script src="../../../external/sigma.js/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/svg/sigma.svg.utils.js"></script>
-<script src="../../../external/sigma.js/src/renderers/svg/sigma.svg.nodes.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/svg/sigma.svg.edges.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/svg/sigma.svg.edges.curve.js"></script>
-<script src="../../../external/sigma.js/src/renderers/svg/sigma.svg.labels.def.js"></script>
-<script src="../../../external/sigma.js/src/renderers/svg/sigma.svg.hovers.def.js"></script>
-<script src="../../../external/sigma.js/src/middlewares/sigma.middlewares.rescale.js"></script>
-<script src="../../../external/sigma.js/src/middlewares/sigma.middlewares.copy.js"></script>
-<script src="../../../external/sigma.js/src/misc/sigma.misc.animation.js"></script>
-<script src="../../../external/sigma.js/src/misc/sigma.misc.bindEvents.js"></script>
-<script src="../../../external/sigma.js/src/misc/sigma.misc.bindDOMEvents.js"></script>
-<script src="../../../external/sigma.js/src/misc/sigma.misc.drawHovers.js"></script>
-<script src="../../../external/sigma.js/plugins/sigma.layout.forceAtlas2/worker.js"></script>
-<script src="../../../external/sigma.js/plugins/sigma.layout.forceAtlas2/supervisor.js"></script>
-<script src="../../../external/sigma.js/plugins/sigma.exporters.svg/sigma.exporters.svg.js"></script>
-<script src="../../../external/sigma.js/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/sigma.core.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/conrad.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/utils/sigma.utils.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/utils/sigma.polyfills.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/sigma.settings.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/classes/sigma.classes.dispatcher.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/classes/sigma.classes.configurable.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/classes/sigma.classes.graph.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/classes/sigma.classes.camera.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/classes/sigma.classes.quad.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/classes/sigma.classes.edgequad.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/captors/sigma.captors.mouse.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/captors/sigma.captors.touch.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/sigma.renderers.canvas.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/sigma.renderers.webgl.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/sigma.renderers.svg.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/sigma.renderers.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.curve.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.arrow.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.edgehovers.curvedArrow.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/canvas/sigma.canvas.extremities.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/svg/sigma.svg.utils.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/svg/sigma.svg.nodes.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/svg/sigma.svg.edges.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/svg/sigma.svg.edges.curve.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/svg/sigma.svg.labels.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/renderers/svg/sigma.svg.hovers.def.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/middlewares/sigma.middlewares.rescale.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/middlewares/sigma.middlewares.copy.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/misc/sigma.misc.animation.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/misc/sigma.misc.bindEvents.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/misc/sigma.misc.bindDOMEvents.js"></script>
+<script src="$extra_level../../../external/sigma.js/src/misc/sigma.misc.drawHovers.js"></script>
+<script src="$extra_level../../../external/sigma.js/plugins/sigma.layout.forceAtlas2/worker.js"></script>
+<script src="$extra_level../../../external/sigma.js/plugins/sigma.layout.forceAtlas2/supervisor.js"></script>
+<script src="$extra_level../../../external/sigma.js/plugins/sigma.exporters.svg/sigma.exporters.svg.js"></script>
+<script src="$extra_level../../../external/sigma.js/plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
 <script> $js_text </script>
 </html>
 ''')
@@ -184,27 +184,36 @@ dragListener.bind('dragend', function(event) {
     def save_to_sigma_with_score(self,
                                  Graph graph,
                                  double[::1] centrality_score,
-                                 str name_centrality_measure):
+                                 str name_centrality_measure,
+                                 int level=-1):
         json_graph = self.graph_to_json_with_score(graph, centrality_score)
 
         if self.save_json:
             self._write_to_file(json_graph,
                                 graph.name,
                                 name_centrality_measure,
-                                extension='json')
+                                extension='json',
+                                level=level)
 
-        html_graph = self.graph_to_html(json_graph, graph.name)
+        html_graph = self.graph_to_html(json_graph, graph.name, level)
 
         if self.save_html:
             self._write_to_file(html_graph,
                                 graph.name,
                                 name_centrality_measure,
-                                extension='html')
+                                extension='html',
+                                level=level)
 
-    def _write_to_file(self, data, str graph_name, str centrality_measure, str extension='html'):
-        Path(self.folder_results).mkdir(parents=True, exist_ok=True)
-        filename = os.path.join(self.folder_results,
-                                f'{centrality_measure}_{graph_name}.{extension}')
+    def _write_to_file(self, data, str graph_name, str centrality_measure, str extension='html', int level=-1):
+        folder = self.folder_results
+        prefix = ''
+        if level >= 0:
+            folder = os.path.join(folder, f'{centrality_measure}_{graph_name}', '')
+            prefix = f'{level}_'
+
+        Path(folder).mkdir(parents=True, exist_ok=True)
+        filename = os.path.join(folder,
+                                f'{prefix}{centrality_measure}_{graph_name}.{extension}')
 
         with open(filename, mode='w') as fp:
             if extension == 'json':
@@ -244,17 +253,20 @@ dragListener.bind('dragend', function(event) {
 
         return graph_data
 
-    def graph_to_html(self, dict graph, str graph_name):
+    def graph_to_html(self, dict graph, str graph_name, int level=-1):
         if self.dataset == 'mutagenicity':
             self._create_layout_mutagenicity(graph)
+
+        prefix = f'{level}_' if level >= 0 else ''
 
         js_text = self._JS_TEMPLATE.substitute({'graph_data': json.dumps(graph),
                                                'container': 'graph-div',
                                                'threshold': self._THRESHOLDS[self.dataset],
                                                'filename': f'{graph_name}.svg'
                                                })
-        html = self._HTML_TEMPLATE.substitute({'graph_name': graph_name,
-                                            'js_text': js_text})
+        html = self._HTML_TEMPLATE.substitute({'graph_name': f'{prefix}{graph_name}',
+                                               'extra_level': '../' * (level >= 0),
+                                               'js_text': js_text})
         return html
 
 
