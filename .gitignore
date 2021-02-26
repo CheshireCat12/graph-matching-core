@@ -6,6 +6,7 @@ results/
 sigma.js/
 package-lock.json
 draw/src/
+external/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

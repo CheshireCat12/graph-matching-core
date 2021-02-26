@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from glob import glob
-
+import os
 from setuptools import setup, Extension
+from setuptools.command.install import install
+from setuptools.command.develop import develop
+
 
 install_requires = [
     'cython',
@@ -18,16 +21,54 @@ install_requires = [
     'notebook',
     'bunch',
     'psutil',
+    'gitpython',
     'tqdm'
 ]
 
+
+# Install the external libraries (e.g. sigma.js used for the visualization of the graphs).
+def friendly(command_subclass):
+    """
+    A decorator to customized setuptools install command
+    - Download the external libraries.
+    """
+    origin_run = command_subclass.run
+
+    def modified_run(self):
+        origin_run(self)
+
+        dir_ = './external/sigma.js/'
+        github_repo = 'https://github.com/jacomyal/sigma.js.git'
+        if not os.path.isdir(dir_):
+            import git
+            git.Repo.clone_from(github_repo, dir_, branch='master')
+
+    command_subclass.run = modified_run
+    return command_subclass
+
+
+@friendly
+class CustomDevelopCommand(develop):
+    pass
+
+
+@friendly
+class CustomInstallCommand(install):
+    pass
+
+
+
 def extension_modules():
+    """
+    Find the cython extension modules to install
+    :return:
+    """
     import numpy
     ext = []
     files = glob('**/*.pyx', recursive=True)
     packages = ['graph_pkg', 'experiments', 'hierarchical_graph']
     for file in files:
-        if any(file.startswith(pkg) for pkg in packages): # file.startswith('graph_pkg') or file.startswith('experiments'):
+        if any(file.startswith(pkg) for pkg in packages):
             ext_name = file[:-4].replace('/', '.')
             source_name = './' + file
             new_extension = Extension(name=ext_name,
@@ -57,5 +98,9 @@ setup(name='graph_pkg',
           'setuptools>=18.0',  # automatically handles Cython extensions
           'cython>=0.28.4',
       ],
-      ext_modules=extensions
+      ext_modules=extensions,
+      cmdclass={
+          'develop': CustomDevelopCommand,
+          'install': CustomInstallCommand,
+      },
       )

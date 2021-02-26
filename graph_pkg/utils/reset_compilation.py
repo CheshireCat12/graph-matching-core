@@ -39,7 +39,7 @@ def _confirm_deletion(files, msg_confirm):
 def main():
     msg_confirm_c = 'confirm.c'
     msg_confirm_so = 'confirm.so'
-    delete_folders = ['graph_pkg', 'experiments']
+    delete_folders = ['graph_pkg', 'experiments', 'hierarchical_graph']
 
     c_files = glob('**/*.c', recursive=True)
     so_files = glob('**/*.so', recursive=True)
