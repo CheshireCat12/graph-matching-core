@@ -117,7 +117,7 @@ cdef class Graph:
         # Uncomment if you want to add back a node to the graph
         # !! You have to modify the add/remove edges as well
         # self.nodes.append(None)
-        print(self.nodes)
+        # print(self.nodes)
 
     cpdef void remove_all_edges_by_node_idx(self, int idx_node):
         del self.edges[idx_node]
@@ -133,14 +133,15 @@ cdef class Graph:
         self.adjacency_matrix = np.delete(self.adjacency_matrix, idx_node, 0)
         self.adjacency_matrix = np.delete(self.adjacency_matrix, idx_node, 1)
 
-        print(self.edges)
-        print(self.adjacency_matrix.base)
+        # print(self.edges)
+        # print(self.adjacency_matrix.base)
 
     cdef void __del_edge(self, int idx_node, list edges):
         cdef Edge edge
-        cdef int idx_to_pop
+        cdef int idx_to_pop= -1
+        # print(edges)
         for idx, edge in enumerate(edges):
-
+            # print(edge)
             if edge is None:
                 continue
             if edge.idx_node_end == idx_node:
@@ -150,7 +151,11 @@ cdef class Graph:
             if edge.idx_node_end > idx_node:
                 edge.update_idx_node_end(edge.idx_node_end-1)
 
-        edges.pop(idx_to_pop)
+        # print(idx_node)
+        # print(idx_to_pop)
+        if idx_to_pop >= 0:
+            edges.pop(idx_to_pop)
+
 
     def _set_edge(self):
         edges_set = set()

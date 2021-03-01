@@ -183,15 +183,17 @@ dragListener.bind('dragend', function(event) {
                                  Graph graph,
                                  double[::1] centrality_score,
                                  str name_centrality_measure,
-                                 int level=-1):
-        json_graph = self.graph_to_json_with_score(graph, centrality_score)
+                                 int level=-1,
+                                 str extra_info=''):
+        json_graph = self.graph_to_json_with_score(graph, centrality_score, name_centrality_measure)
 
         if self.save_json:
             self._write_to_file(json_graph,
                                 graph.name,
                                 name_centrality_measure,
                                 extension='json',
-                                level=level)
+                                level=level,
+                                extra_info=extra_info)
 
         html_graph = self.graph_to_html(json_graph, graph.name, level)
 
@@ -200,14 +202,27 @@ dragListener.bind('dragend', function(event) {
                                 graph.name,
                                 name_centrality_measure,
                                 extension='html',
-                                level=level)
+                                level=level,
+                                extra_info=extra_info)
 
-    def _write_to_file(self, data, str graph_name, str centrality_measure, str extension='html', int level=-1):
+    def _write_to_file(self,
+                       data,
+                       str graph_name,
+                       str centrality_measure,
+                       str extension='html',
+                       int level=-1,
+                       str extra_info=''):
         folder = self.folder_results
         prefix = ''
+
+        if extra_info:
+            prefix += f'{extra_info}_'
+
         if level >= 0:
             folder = os.path.join(folder, f'{centrality_measure}_{graph_name}', '')
-            prefix = f'{level}_'
+            prefix += f'{level}_'
+
+
 
         Path(folder).mkdir(parents=True, exist_ok=True)
         filename = os.path.join(folder,
@@ -222,7 +237,9 @@ dragListener.bind('dragend', function(event) {
                 raise ValueError(f'The extension {extension} is not accepted!')
 
 
-    def graph_to_json_with_score(self, Graph graph, double[::1] centrality_score):
+    def graph_to_json_with_score(self, Graph graph,
+                                 double[::1] centrality_score,
+                                 str name_centrality_measure):
         cdef:
             Edge edge
             Node node
@@ -231,7 +248,7 @@ dragListener.bind('dragend', function(event) {
 
         for node, score in zip(graph.nodes, centrality_score):
             score = _round_3(score)
-            lbl = f'PageRank: {score}; {node.label.sigma_attributes()}'
+            lbl = f'{name_centrality_measure}: {score}; {node.label.sigma_attributes()}'
             x, y = [_round_3(val) for val in node.label.sigma_position()]
             graph_data['nodes'].append({
                 'id': f'{node.idx}',

@@ -5,14 +5,16 @@ cdef class Coordinator:
     def __init__(self,
                  str dataset,
                  tuple params_edit_cost,
-                 str folder_dataset=''):
+                 str folder_dataset='',
+                 bint verbose=False):
         self.dataset = dataset
         self.params_edit_cost = params_edit_cost
         self.folder_dataset = folder_dataset
         self._init_system()
 
         print('** Coordinator Loaded **')
-        print(self)
+        if verbose:
+            print(self)
 
     property dataset:
         def __get__(self):

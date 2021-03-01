@@ -6,7 +6,7 @@ import scipy.sparse as sprs
 cdef class PageRank(CentralityMeasure):
 
     def __init__(self, double damp_factor=0.85, int max_iter=100, double tolerance=1e-6):
-        super(PageRank, self).__init__()
+        super(PageRank, self).__init__('pagerank')
 
         self.damp_factor = 0.85
         self.max_iter=100
