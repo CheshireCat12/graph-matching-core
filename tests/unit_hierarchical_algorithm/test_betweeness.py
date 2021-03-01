@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import networkx as nx
-from hierarchical_graph.algorithm.betweeness import betweeness
+from hierarchical_graph.centrality_measure.betweeness import Betweeness
 from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.node import Node
 from graph_pkg.graph.edge import Edge
@@ -20,7 +20,8 @@ def test_betweeness_by_hand():
     graph.add_edge(Edge(1, 2, LabelEdge(0)))
     graph.add_edge(Edge(2, 3, LabelEdge(0)))
 
-    results = betweeness(graph)
+    betweeness = Betweeness()
+    results = betweeness.calc_centrality_score(graph)
     results = np.asarray(results)
 
     graph2 = nx.Graph()
@@ -61,7 +62,8 @@ def test_betweeness_by_hand_big():
     graph.add_edge(Edge(3, 4, LabelEdge(0)))
     graph.add_edge(Edge(3, 5, LabelEdge(0)))
 
-    results = betweeness(graph)
+    betweeness = Betweeness()
+    results = betweeness.calc_centrality_score(graph)
     results = np.asarray(results)
 
     ### Add edge to nx.graph

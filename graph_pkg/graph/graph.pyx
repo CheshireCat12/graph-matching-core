@@ -114,6 +114,9 @@ cdef class Graph:
 
         self.remove_all_edges_by_node_idx(idx_node)
 
+        # Uncomment if you want to add back a node to the graph
+        # !! You have to modify the add/remove edges as well
+        # self.nodes.append(None)
         print(self.nodes)
 
     cpdef void remove_all_edges_by_node_idx(self, int idx_node):

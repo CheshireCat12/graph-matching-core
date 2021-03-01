@@ -50,6 +50,19 @@ def test_remove_node(num_nodes):
     assert len(my_graph) == num_nodes - 1
     assert np.array_equiv(expected_adjacency_mat, my_graph.adjacency_matrix)
 
+def test_copy_graph(my_graph):
+    my_graph.add_node(Node(0, LabelNodeLetter(1, 1)))
+    my_graph.add_node(Node(1, LabelNodeLetter(2, 3)))
+
+    my_graph.add_edge(Edge(0, 1, LabelEdge(0)))
+
+    import copy
+    new_graph = copy.deepcopy(my_graph)
+    my_graph.remove_node_by_idx(0)
+    print(new_graph)
+    print(my_graph)
+    # assert False
+
 @pytest.mark.parametrize('num_nodes',
                          [1, 5, 10])
 def test_add_node(num_nodes):

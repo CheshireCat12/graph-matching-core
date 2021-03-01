@@ -4,15 +4,13 @@ import os
 from string import Template
 from pathlib import Path
 
-from graph_pkg.graph.graph cimport Graph
-from graph_pkg.graph.edge cimport Edge
-from graph_pkg.graph.node cimport Node
+
 
 
 def _round_3(num):
     return round(num, 3)
 
-class SigmaJS:
+cdef class SigmaJS:
     """Class to transform the Graphs into html with the sigma.js library."""
 
     _HTML_TEMPLATE = Template('''

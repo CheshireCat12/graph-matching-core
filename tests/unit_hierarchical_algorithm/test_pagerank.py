@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import networkx as nx
-from hierarchical_graph.algorithm.pagerank import pagerank_power
+from hierarchical_graph.centrality_measure.pagerank import PageRank
 from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.node import Node
 from graph_pkg.graph.edge import Edge
@@ -20,7 +20,8 @@ def test_pagerank_by_hand():
     graph.add_edge(Edge(1, 2, LabelEdge(0)))
     graph.add_edge(Edge(2, 3, LabelEdge(0)))
 
-    results = pagerank_power(graph.adjacency_matrix)
+    pagerank = PageRank()
+    results = pagerank.calc_centrality_score(graph)
     results = np.asarray(results)
 
     graph2 = nx.Graph()
@@ -60,7 +61,8 @@ def test_pagerank_by_hand_big():
     graph.add_edge(Edge(3, 4, LabelEdge(0)))
     graph.add_edge(Edge(3, 5, LabelEdge(0)))
 
-    results = pagerank_power(graph.adjacency_matrix)
+    pagerank = PageRank()
+    results = pagerank.calc_centrality_score(graph)
     results = np.asarray(results)
 
     ### Add edge to nx.graph

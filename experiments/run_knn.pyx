@@ -3,11 +3,13 @@ from graph_pkg.utils.coordinator.coordinator_classifier cimport CoordinatorClass
 from graph_pkg.algorithm.knn cimport KNNClassifier
 import numpy as np
 cimport numpy as np
-
+from time import time
 
 cpdef void _do_prediction(KNNClassifier knn, list graphs, list labels, int k, str set):
+    start_time = time()
     # Do the prediction
     predictions = knn.predict(graphs, k=k)
+    print(f'Prediction time: {time() - start_time:.3f}')
 
     # transform the predictions and the labels to np.array
     predictions = np.asarray(predictions)

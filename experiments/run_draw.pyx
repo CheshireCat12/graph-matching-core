@@ -1,6 +1,6 @@
 from graph_pkg.utils.coordinator.coordinator import Coordinator
-from hierarchical_graph.algorithm.pagerank import pagerank_power
-from hierarchical_graph.algorithm.betweeness import betweeness
+from hierarchical_graph.centrality_measure.pagerank import PageRank
+from hierarchical_graph.centrality_measure.betweeness import Betweeness
 from hierarchical_graph.utils.sigma_js import SigmaJS
 import os
 import json
@@ -33,9 +33,12 @@ def run_draw(parameters):
 
 
 def _get_centrality_score(graph, centrality_measure):
-    if centrality_measure == 'pagerank':
-        return pagerank_power(graph.adjacency_matrix)
-    elif centrality_measure == 'betweeness':
-        return betweeness(graph)
 
-    raise ValueError(f'Centrality measure: {centrality_measure} not accepted!')
+    if centrality_measure == 'pagerank':
+        measure = PageRank()
+    elif centrality_measure == 'betweeness':
+        measure = Betweeness()
+    else:
+        raise ValueError(f'Centrality measure: {centrality_measure} not accepted!')
+
+    return measure.calc_centrality_score(graph)
