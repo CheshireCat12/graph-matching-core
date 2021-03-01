@@ -214,19 +214,20 @@ dragListener.bind('dragend', function(event) {
                        str extra_info=''):
         folder = self.folder_results
         prefix = ''
+        suffix = ''
 
         if extra_info:
             prefix += f'{extra_info}_'
 
         if level >= 0:
             folder = os.path.join(folder, f'{centrality_measure}_{graph_name}', '')
-            prefix += f'{level}_'
+            suffix = f'_{level}'
 
 
 
         Path(folder).mkdir(parents=True, exist_ok=True)
         filename = os.path.join(folder,
-                                f'{prefix}{centrality_measure}_{graph_name}.{extension}')
+                                f'{prefix}{centrality_measure}_{graph_name}{suffix}.{extension}')
 
         with open(filename, mode='w') as fp:
             if extension == 'json':

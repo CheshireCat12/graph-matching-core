@@ -20,7 +20,7 @@ cdef class HierarchicalGraph:
 
         current_level = 0
 
-        while current_level < 20:
+        while current_level < 40:
             graphs_original = self.level_graphs[current_level]
             graphs_copy = [copy.deepcopy(graph) for graph in graphs_original]
 
@@ -30,6 +30,11 @@ cdef class HierarchicalGraph:
                     continue
 
                 centrality_score = np.asarray(self.measure.calc_centrality_score(graph))
+
+                # Round the values when removing multiple nodes at once
+                if strategy == 'multiple_by_one':
+                    centrality_score = np.round(centrality_score, decimals=3)
+
                 self.sigma_js.save_to_sigma_with_score(graph,
                                                        centrality_score,
                                                        self.measure.name,
@@ -44,7 +49,9 @@ cdef class HierarchicalGraph:
                     node_idx_to_delete = idx_to_delete[::-1]
                 else:
                     raise ValueError(f'Strategy: {strategy} not accepted!')
-
+                # print(centrality_score)
+                # print(np.round(centrality_score, decimals=3))
+                # print(node_idx_to_delete)
 
                 for idx in node_idx_to_delete:
                     graph.remove_node_by_idx(idx)

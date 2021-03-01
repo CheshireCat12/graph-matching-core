@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from collections import namedtuple
 from bunch import Bunch
 
 from graph_pkg.utils.functions.load_config import load_config
@@ -16,6 +15,7 @@ __EXPERIMENTS = {'complete_ged': run_complete_ged,
 def print_fancy_title(text, size_max=50):
     """
     Print the title in a fancy manner :)
+
     :param text:
     :param size_max:
     :return:
