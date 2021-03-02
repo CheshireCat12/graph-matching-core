@@ -21,7 +21,8 @@ cdef class SigmaJS:
 </head>
 <body>
 <h1>$graph_name</h1>
-<div id="graph-div" style="height:800px"></div>
+<p>$extra_info_nodes</p>
+<div id="graph-div" style="height:800px;border-style: solid;border-width: 1px;"></div>
 <button id="layout" type="button">Layout</button>
 <button id="export" type="export">Export</button>
 </body>
@@ -184,7 +185,8 @@ dragListener.bind('dragend', function(event) {
                                  double[::1] centrality_score,
                                  str name_centrality_measure,
                                  int level=-1,
-                                 str extra_info=''):
+                                 str extra_info='',
+                                 str extra_info_nodes='No info'):
         json_graph = self.graph_to_json_with_score(graph, centrality_score, name_centrality_measure)
 
         if self.save_json:
@@ -195,7 +197,7 @@ dragListener.bind('dragend', function(event) {
                                 level=level,
                                 extra_info=extra_info)
 
-        html_graph = self.graph_to_html(json_graph, graph.name, level)
+        html_graph = self.graph_to_html(json_graph, graph.name, level, extra_info_nodes)
 
         if self.save_html:
             self._write_to_file(html_graph,
@@ -269,18 +271,19 @@ dragListener.bind('dragend', function(event) {
 
         return graph_data
 
-    def graph_to_html(self, dict graph, str graph_name, int level=-1):
+    def graph_to_html(self, dict graph, str graph_name, int level=-1, str extra_info_nodes='No info'):
         if self.dataset == 'mutagenicity':
             self._create_layout_mutagenicity(graph)
 
         prefix = f'{level}_' if level >= 0 else ''
 
         js_text = self._JS_TEMPLATE.substitute({'graph_data': json.dumps(graph),
-                                               'container': 'graph-div',
-                                               'threshold': self._THRESHOLDS[self.dataset],
-                                               'filename': f'{graph_name}.svg'
+                                                'container': 'graph-div',
+                                                'threshold': self._THRESHOLDS[self.dataset],
+                                                'filename': f'{graph_name}.svg',
                                                })
         html = self._HTML_TEMPLATE.substitute({'graph_name': f'{prefix}{graph_name}',
+                                               'extra_info_nodes': extra_info_nodes,
                                                'extra_level': '../' * (level >= 0),
                                                'js_text': js_text})
         return html

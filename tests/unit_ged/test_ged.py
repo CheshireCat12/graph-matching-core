@@ -3,6 +3,7 @@ import sys
 
 import numpy as np
 import pytest
+import random
 
 from graph_pkg.algorithm.graph_edit_distance import GED
 from graph_pkg.edit_cost.edit_cost_AIDS import EditCostAIDS
@@ -12,6 +13,7 @@ from graph_pkg.graph.edge import Edge
 from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.label.label_edge import LabelEdge
 from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
+from graph_pkg.graph.label.label_node_mutagenicity import LabelNodeMutagenicity
 from graph_pkg.graph.node import Node
 from graph_pkg.loader.loader_AIDS import LoaderAIDS
 from graph_pkg.loader.loader_letter import LoaderLetter
@@ -257,3 +259,62 @@ def test_heuristic_inverse(mutagenicity_graphs, graph_name_source_target):
     # assert False
 
 
+@pytest.mark.parametrize('graph_name_source_target',
+                         [
+                             (['molecule_2767', 'molecule_2769']),
+                             (['molecule_2769', 'molecule_2767']),
+                             (['molecule_1897', 'molecule_1349']),
+                             (['molecule_1897', 'molecule_1051']),
+                         ])
+def test_mutagenicity_with_deleted_nodes(mutagenicity_graphs, dataframe_mutagenicity, graph_name_source_target):
+    gr_name_src, gr_name_trgt = ['mutagen/' + name for name in graph_name_source_target]
+    graph_name_source, graph_name_target = graph_name_source_target
+    graph_source = [graph for graph in mutagenicity_graphs if graph.name == graph_name_source][0]
+    graph_target = [graph for graph in mutagenicity_graphs if graph.name == graph_name_target][0]
+
+    cst_cost_node = 11.0
+    cst_cost_edge = 1.1
+    ged = GED(EditCostMutagenicity(cst_cost_node, cst_cost_node,
+                                   cst_cost_edge, cst_cost_edge, 'dirac'))
+
+    # Reproduce the source graph with more nodes
+    new_gr_src = Graph(gr_name_src, 'gr.xls', len(graph_source)+2)
+    for node in graph_source.nodes:
+        new_gr_src.add_node(node)
+
+    for idx, edges in graph_source.get_edges().items():
+        for edge in edges:
+            if edge is None:
+                continue
+            new_gr_src.add_edge(edge)
+
+    new_gr_src.add_node(Node(len(graph_source), LabelNodeMutagenicity('C')))
+    new_gr_src.add_node(Node(len(graph_source)+1, LabelNodeMutagenicity('N')))
+
+    # Add random Edges
+    for _ in range(4):
+        new_gr_src.add_edge(Edge(len(graph_source),
+                                 random.randint(0, len(graph_source)-1),
+                                 LabelEdge(0)))
+
+    for _ in range(6):
+        new_gr_src.add_edge(Edge(len(graph_source) + 1,
+                                 random.randint(0, len(graph_source)),
+                                 LabelEdge(0)))
+
+
+
+
+    new_gr_src.remove_node_by_idx(len(graph_source))
+    new_gr_src.remove_node_by_idx(len(graph_source))
+
+    results = ged.compute_edit_distance(new_gr_src, graph_target)
+    expected = dataframe_mutagenicity.loc[gr_name_src, gr_name_trgt]
+    # import numpy as np
+    # np.savetxt(f'_c_{"X".join(graph_name_source_target)}.csv', np.asarray(ged.C), fmt='%10.3f', delimiter=';')
+    # np.savetxt(f'c_star_{"X".join(graph_name_source_target)}.csv', np.asarray(ged.C_star), fmt='%10.3f', delimiter=';')
+    print(f'###### diff {results - expected}')
+    print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')
+    print(f'exp {expected}')
+    assert results == expected
+    # assert False

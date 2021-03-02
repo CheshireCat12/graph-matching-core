@@ -29,6 +29,7 @@ cdef class GED:
         self._create_c_matrix()
         # print(self.C.base)
         self._create_c_star_matrix()
+        # print(f'C_star')
 
 
         _, col_ind = linear_sum_assignment(self.C_star)
@@ -53,7 +54,6 @@ cdef class GED:
 
         self._n = len(self.graph_source)
         self._m = len(self.graph_target)
-
 
     @cython.boundscheck(False)
     @cython.wraparound(False)

@@ -6,11 +6,13 @@ from experiments.run_complete_ged import run_complete_ged
 from experiments.run_knn import run_knn
 from experiments.run_draw import run_draw
 from experiments.run_hierarchical import run_hierarchical
+from experiments.run_h_knn import run_h_knn
 
 __EXPERIMENTS = {'complete_ged': run_complete_ged,
                  'knn': run_knn,
                  'draw': run_draw,
-                 'hierarchical': run_hierarchical}
+                 'hierarchical': run_hierarchical,
+                 'h_knn': run_h_knn}
 
 def print_fancy_title(text, size_max=50):
     """

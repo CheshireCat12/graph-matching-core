@@ -38,4 +38,4 @@ def run_hierarchical(parameters):
                            save_html=parameters.save_to_html)
 
         hierarchical_graph = HierarchicalGraph(selected_graphs[1:], measure, sigma_js)
-        hierarchical_graph.create_hierarchy(parameters.strategy)
+        hierarchical_graph.create_hierarchy_sigma(parameters.strategy)

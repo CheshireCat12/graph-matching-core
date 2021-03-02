@@ -59,8 +59,10 @@ cdef class Graph:
         return self.edges[idx_node_start][idx_node_end]
 
     cpdef int add_edge(self, Edge edge) except? -1:
-        assert self._does_node_exist(edge.idx_node_start), f'The starting node {edge.idx_node_start} does not exist!'
-        assert self._does_node_exist(edge.idx_node_end), f'The ending node {edge.idx_node_end} does not exist!'
+        assert self._does_node_exist(edge.idx_node_start), \
+            f'The starting node {edge.idx_node_start} does not exist!'
+        assert self._does_node_exist(edge.idx_node_end), \
+            f'The ending node {edge.idx_node_end} does not exist!'
 
         cdef Edge reversed_edge = edge.reversed()
         self.edges[edge.idx_node_start][edge.idx_node_end] = edge
@@ -112,6 +114,10 @@ cdef class Graph:
                 node.update_idx(node.idx-1)
         self.num_nodes_current -= 1
 
+        # Reduce the number max of nodes authorized
+        # It is not a bug, it is a feature!
+        self.num_nodes_max -= 1
+
         self.remove_all_edges_by_node_idx(idx_node)
 
         # Uncomment if you want to add back a node to the graph
@@ -139,6 +145,7 @@ cdef class Graph:
     cdef void __del_edge(self, int idx_node, list edges):
         cdef Edge edge
         cdef int idx_to_pop= -1
+        cdef int idx
         # print(edges)
         for idx, edge in enumerate(edges):
             # print(edge)

@@ -9,4 +9,8 @@ cdef class HierarchicalGraph:
         CentralityMeasure measure
         SigmaJS sigma_js
 
-    cpdef void create_hierarchy(self, strategy=*)
+    cpdef list create_hierarchy_percent(self, list graphs,
+                                        double percentage_remaining=*,
+                                        bint verbose=*)
+
+    cpdef void create_hierarchy_sigma(self, strategy=*)

@@ -141,3 +141,43 @@ def test_3_nodes_3_nodes(ged):
 
     expected_dist = 4.7
     assert round(dist, 2) == expected_dist
+
+def test_with_deleted_node(ged):
+    gr_src = Graph('gr1', 'gr1.gxl', 3)
+    gr_trgt = Graph('gr2', 'gr2.gxl', 3)
+
+    gr_src = Graph('gr1', 'gr1.gxl', 5)
+    gr_src.add_node(Node(0, LabelNodeAIDS('O', 1, 1, 2., 2.)))
+    gr_src.add_node(Node(1, LabelNodeAIDS('C', 1, 1, 2., 2.)))
+    gr_src.add_node(Node(2, LabelNodeAIDS('O', 1, 1, 2., 2.)))
+    # print(gr_src)
+    gr_src.add_node(Node(3, LabelNodeAIDS('Cl', 1, 1, 2., 2.)))
+    gr_src.add_node(Node(4, LabelNodeAIDS('N', 1, 1, 2.4, 2.)))
+
+    gr_src.add_edge(Edge(0, 3, LabelEdge(0)))
+    gr_src.add_edge(Edge(1, 3, LabelEdge(0)))
+
+    gr_src.add_edge(Edge(4, 2, LabelEdge(0)))
+    gr_src.add_edge(Edge(3, 4, LabelEdge(0)))
+
+    gr_src.remove_node_by_idx(4)
+    gr_src.remove_node_by_idx(3)
+    print(gr_src)
+
+    gr_trgt.add_node(Node(0, LabelNodeAIDS('H', 1, 1, 2., 2.)))
+    gr_trgt.add_node(Node(1, LabelNodeAIDS('Ca', 1, 1, 2., 2.)))
+    gr_trgt.add_node(Node(2, LabelNodeAIDS('C', 1, 1, 2., 2.)))
+
+    gr_trgt.add_edge(Edge(0, 1, LabelEdge(0)))
+    gr_trgt.add_edge(Edge(1, 2, LabelEdge(0)))
+    gr_trgt.add_edge(Edge(2, 0, LabelEdge(0)))
+
+
+    dist = ged.compute_edit_distance(gr_src, gr_trgt)
+
+    print(ged.C.base)
+    print(ged.C_star.base)
+
+    expected_dist = 4.7
+    print(dist)
+    assert round(dist, 2) == expected_dist

@@ -12,7 +12,7 @@ cdef class Coordinator:
         self.folder_dataset = folder_dataset
         self._init_system()
 
-        print('** Coordinator Loaded **')
+        print('\n** Coordinator Loaded **')
         if verbose:
             print(self)
 
