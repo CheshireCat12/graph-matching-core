@@ -1,11 +1,9 @@
+import random
+
 from graph_pkg.utils.coordinator.coordinator import Coordinator
 from hierarchical_graph.centrality_measure.pagerank import PageRank
 from hierarchical_graph.centrality_measure.betweeness import Betweeness
 from hierarchical_graph.utils.sigma_js import SigmaJS
-import os
-import json
-from pathlib import Path
-import random
 
 
 def run_draw(parameters):
