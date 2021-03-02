@@ -39,10 +39,12 @@ cdef class HierarchicalGraph:
         for graph in graphs:
             tmp_graph = copy.deepcopy(graph)
             num_nodes_to_del = int(ceil((1.0 - percentage_remaining) * len(tmp_graph)))
-
+            # print(num_nodes_to_del)
+            # print(graph)
             # One node at a time and recompute the centrality score every turn
             for idx_tmp in range(num_nodes_to_del):
                 centrality_score = np.asarray(self.measure.calc_centrality_score(tmp_graph))
+                # print(centrality_score)
 
                 idx_to_delete, *_ = np.where(centrality_score == centrality_score.min())
 
@@ -50,6 +52,8 @@ cdef class HierarchicalGraph:
 
                 for idx_del in idx_to_delete:
                     tmp_graph.remove_node_by_idx(idx_del)
+
+                # print('test')
 
             # print(f'Original {len(graph)}')
             # print(f'Reduced  {len(tmp_graph)}')

@@ -59,7 +59,7 @@ cpdef void run_h_knn(parameters):
     k = parameters.k
     parallel = parameters.parallel
 
-    percentages = [1.0]#, 0.8, 0.6, 0.4, 0.2]
+    percentages = [1.0, 0.8, 0.6, 0.4, 0.2]
     measures = ['betweeness', 'pagerank']
 
     for measure, percentage  in product(measures, percentages):

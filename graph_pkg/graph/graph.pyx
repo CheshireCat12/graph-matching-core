@@ -110,6 +110,8 @@ cdef class Graph:
 
         del self.nodes[idx_node]
         for node in self.nodes:
+            if node is None:
+                continue
             if node.idx > idx_node:
                 node.update_idx(node.idx-1)
         self.num_nodes_current -= 1
