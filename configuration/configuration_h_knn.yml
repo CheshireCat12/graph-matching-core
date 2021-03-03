@@ -21,7 +21,8 @@ mutagenicity:
   k: 5
   folder_results: ./results/h_knn/mutagenicity
 general:
-  percentage: 1.0
   parallel: True
+  percentage: 1.0
   centrality_measure: pagerank
+  deletion_strategy: compute_once
   save_to_html: False

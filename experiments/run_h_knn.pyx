@@ -20,7 +20,9 @@ __MEASURES = {
 
 cpdef void _write_results(double acc, double exec_time, parameters):
     Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
-    name = f'percent_remain_{parameters.percentage}_measure_{parameters.centrality_measure}.txt'
+    name = f'percent_remain_{parameters.percentage}_' \
+           f'measure_{parameters.centrality_measure}_' \
+           f'del_strat_{parameters.deletion_strategy}.txt'
     filename = os.path.join(parameters.folder_results, name)
     with open(filename, mode='a+') as fp:
         fp.write(str(parameters))
@@ -59,36 +61,45 @@ cpdef void run_h_knn(parameters):
     k = parameters.k
     parallel = parameters.parallel
 
-    percentages = [1.0, 0.8, 0.6, 0.4, 0.2]
-    measures = ['betweeness', 'pagerank']
+    percentages = [0.2] # [0.8, 0.6, 0.4, 0.2]
+    measures = ['pagerank'] # ['betweeness', 'pagerank']
+    deletion_strategies = ['compute_once']
+    alphas = [0.1 * i for i in range(1, 10)]
 
-    for measure, percentage  in product(measures, percentages):
+    params_edit_cost = params_coordinator['params_edit_cost']
+
+    for measure, percentage, del_strat, alpha  in product(measures, percentages, deletion_strategies, alphas):
         print(f'\n{"+"*30}')
-        print(f'\n+ Percentage: {percentage}; Measure: {measure} +\n')
+        print(f'\n+ Percentage: {percentage}; Measure: {measure}; Delete Strat: {del_strat}; Alpha: {alpha} +\n')
 
         # Init the hyperparameters to test
         parameters.percentage = percentage
         parameters.centrality_measure = measure
+        parameters.deletion_strategy = del_strat
+        parameters.coordinator['params_edit_cost'] = (*params_edit_cost, alpha)
 
-        coordinator = CoordinatorClassifier(**params_coordinator)
+        coordinator = CoordinatorClassifier(**parameters.coordinator)
         graphs_train, labels_train = coordinator.train_split(conv_lbl_to_code=True)
         graphs_val, labels_val = coordinator.val_split(conv_lbl_to_code=True)
         graphs_test, labels_test = coordinator.test_split(conv_lbl_to_code=True)
 
         measure = __MEASURES[parameters.centrality_measure]
 
-        h_graph = HierarchicalGraph(graphs_train[:3], measure)
+        h_graph = HierarchicalGraph(graphs_train, measure)
 
 
         graphs_train_reduced = h_graph.create_hierarchy_percent(graphs_train,
-                                                        parameters.percentage,
-                                                        verbose=True)
+                                                                parameters.percentage,
+                                                                parameters.deletion_strategy,
+                                                                verbose=True)
         graphs_val_reduced = h_graph.create_hierarchy_percent(graphs_val,
-                                                      parameters.percentage,
-                                                      verbose=True)
+                                                              parameters.percentage,
+                                                              parameters.deletion_strategy,
+                                                              verbose=True)
         graphs_test_reduced = h_graph.create_hierarchy_percent(graphs_test,
-                                                       parameters.percentage,
-                                                       verbose = True)
+                                                               parameters.percentage,
+                                                               parameters.deletion_strategy,
+                                                               verbose = True)
 
         knn = KNNClassifier(coordinator.ged, parallel)
         knn.train(graphs_train_reduced, labels_train)

@@ -11,6 +11,13 @@ cdef class HierarchicalGraph:
 
     cpdef list create_hierarchy_percent(self, list graphs,
                                         double percentage_remaining=*,
+                                        str deletion_strategy=*,
                                         bint verbose=*)
+
+    cpdef void _update_graph_compute_once(self, Graph,
+                                          int num_nodes_to_del)
+
+    cpdef void _update_graph_recomputing(self, Graph graph,
+                                            int num_nodes_to_del)
 
     cpdef void create_hierarchy_sigma(self, strategy=*)
