@@ -145,6 +145,7 @@ document.getElementById('export').onclick = function() {
   // console.log(output);
 };
 
+
 // Initialize the dragNodes plugin:
 var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
 
