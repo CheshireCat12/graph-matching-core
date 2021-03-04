@@ -1,10 +1,10 @@
 from graph_pkg.graph.label.label_base cimport LabelBase
 from graph_pkg.graph.label.label_edge cimport LabelEdge
-from graph_pkg.graph.label.label_node_mutagenicity cimport LabelNodeMutagenicity
+from graph_pkg.graph.label.label_node_NCI1 cimport LabelNodeNCI1
 from graph_pkg.loader.loader_base cimport LoaderBase
 
 
-cdef class LoaderMutagenicity(LoaderBase):
+cdef class LoaderNCI1(LoaderBase):
 
     cpdef int _format_idx(self, str idx)
 

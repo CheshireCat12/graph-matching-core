@@ -6,7 +6,8 @@ cdef:
     ### Datatset and Labels folder ###
     dict DEFAULT_FOLDERS = {'letter': './data/Letter/Letter/HIGH/',
                             'AIDS': './data/AIDS/data/',
-                            'mutagenicity': './data/Mutagenicity/data/'}
+                            'mutagenicity': './data/Mutagenicity/data/',
+                            'NCI1': './data/NCI1/data/'}
 
     dict DEFAULT_FOLDERS_LABELS = DEFAULT_FOLDERS
 

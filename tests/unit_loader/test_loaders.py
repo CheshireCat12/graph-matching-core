@@ -3,6 +3,7 @@ import pytest
 from graph_pkg.loader.loader_AIDS import LoaderAIDS
 from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
+from graph_pkg.loader.loader_NCI1 import LoaderNCI1
 
 
 ############## LETTER ##############
@@ -76,8 +77,32 @@ def test_loader_mutagenicity_len(graphs_mutagenicity):
                          [(0, 'molecule_1', 43),
                           (-1, 'molecule_999', 32),
                           ])
-def test_loader_AIDS_value(graphs_mutagenicity, idx_graph, gr_name, num_nodes):
+def test_loader_mutagenicity_value(graphs_mutagenicity, idx_graph, gr_name, num_nodes):
     graph = graphs_mutagenicity[idx_graph]
+
+    assert graph.name == gr_name
+    assert len(graph) == num_nodes
+
+######################### NCI1 #######################
+
+@pytest.fixture()
+def graphs_NCI1():
+    loader = LoaderNCI1()
+    graphs = loader.load()
+
+    return graphs
+
+
+def test_loader_NCI1_len(graphs_NCI1):
+    assert len(graphs_NCI1) == 4110
+
+
+@pytest.mark.parametrize('idx_graph, gr_name, num_nodes',
+                         [(0, 'molecule_0', 21),
+                          (-1, 'molecule_999', 26),
+                          ])
+def test_loader_NCI1_value(graphs_NCI1, idx_graph, gr_name, num_nodes):
+    graph = graphs_NCI1[idx_graph]
 
     assert graph.name == gr_name
     assert len(graph) == num_nodes

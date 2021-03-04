@@ -46,9 +46,13 @@ def parse_xml(nodes_per_graph, edges_per_graph, folder):
         graph.set('edgeids', 'true')
         graph.set('edgemode', 'undirected')
 
-        for node in nodes:
+        mapper = {}
+
+        for idx_node, node in enumerate(nodes):
+            mapper[node.node_id] = idx_node
+
             node_xml = ET.SubElement(graph, 'node')
-            node_xml.set('id', str(node.node_id))
+            node_xml.set('id', str(idx_node))
 
             attr = ET.SubElement(node_xml, 'attr')
             attr.set('name', 'lbl')
@@ -58,8 +62,10 @@ def parse_xml(nodes_per_graph, edges_per_graph, folder):
 
         for edge in edges:
             edge_xml = ET.SubElement(graph, 'edge')
-            edge_xml.set('from', str(edge.node_idx_start))
-            edge_xml.set('to', str(edge.node_idx_end))
+            node_idx_start = mapper[edge.node_idx_start]
+            node_idx_end = mapper[edge.node_idx_end]
+            edge_xml.set('from', str(node_idx_start))
+            edge_xml.set('to', str(node_idx_end))
 
         b_xml = ET.tostring(gxl).decode()
         newxml = md.parseString(b_xml)
@@ -67,7 +73,7 @@ def parse_xml(nodes_per_graph, edges_per_graph, folder):
         folder_data = os.path.join(folder, 'data', '')
         Path(folder_data).mkdir(parents=True, exist_ok=True)
 
-        filename = os.path.join(folder_data, f'{graph_name}.xml')
+        filename = os.path.join(folder_data, f'{graph_name}.gxl')
         with open(filename, mode='w') as f:
             f.write(newxml.toprettyxml(indent=' ', newl='\n'))
 
