@@ -21,14 +21,19 @@ cdef:
         'a': 0, 'i': 1,
     }
 
-    dict MUTAGENICITY_TO_CODE = {
+    dict MUTAGENICITY_LBL_TO_CODE = {
         'mutagen': 0, 'nonmutagen': 1,
+    }
+
+    dict NCI1_LBL_TO_CODE = {
+        '0': 0, '1': 1,
     }
 
     dict DEFAULT_LABELS_TO_CODE = {
         'letter': LETTER_LBL_TO_CODE,
         'AIDS': AIDS_LBL_TO_CODE,
-        'mutagenicity': MUTAGENICITY_TO_CODE,
+        'mutagenicity': MUTAGENICITY_LBL_TO_CODE,
+        'NCI1': NCI1_LBL_TO_CODE,
     }
 
 def get_default_lbls_to_code():

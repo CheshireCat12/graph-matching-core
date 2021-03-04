@@ -8,4 +8,5 @@ cdef:
     dict LETTER_LBL_TO_CODE
     dict AIDS_LBL_TO_CODE
     dict MUTAGENICITY_LBL_TO_CODE
+    dict NCI1_LBL_TO_CODE
     dict DEFAULT_LABELS_TO_CODE

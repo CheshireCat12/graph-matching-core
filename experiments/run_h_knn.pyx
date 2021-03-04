@@ -61,22 +61,24 @@ cpdef void run_h_knn(parameters):
     k = parameters.k
     parallel = parameters.parallel
 
-    percentages = [0.2] # [0.8, 0.6, 0.4, 0.2]
-    measures = ['pagerank'] # ['betweeness', 'pagerank']
-    deletion_strategies = ['compute_once']
-    alphas = [0.1 * i for i in range(1, 10)]
+    percentages = [1.0, 0.8, 0.6, 0.4, 0.2]
+    measures = ['betweeness', 'pagerank']
+    deletion_strategies = ['compute_once', 'recomputing']
+    # alphas = [0.1 * i for i in range(1, 10)]
+    alphas = []
 
     params_edit_cost = params_coordinator['params_edit_cost']
 
-    for measure, percentage, del_strat, alpha  in product(measures, percentages, deletion_strategies, alphas):
+    # for measure, percentage, del_strat, alpha  in product(measures, percentages, deletion_strategies, alphas):
+    for measure, percentage, del_strat in product(measures, percentages, deletion_strategies):
         print(f'\n{"+"*30}')
-        print(f'\n+ Percentage: {percentage}; Measure: {measure}; Delete Strat: {del_strat}; Alpha: {alpha} +\n')
+        print(f'\n+ Percentage: {percentage}; Measure: {measure}; Delete Strat: {del_strat} +\n')
 
         # Init the hyperparameters to test
         parameters.percentage = percentage
         parameters.centrality_measure = measure
         parameters.deletion_strategy = del_strat
-        parameters.coordinator['params_edit_cost'] = (*params_edit_cost, alpha)
+        # parameters.coordinator['params_edit_cost'] = (*params_edit_cost, alpha)
 
         coordinator = CoordinatorClassifier(**parameters.coordinator)
         graphs_train, labels_train = coordinator.train_split(conv_lbl_to_code=True)

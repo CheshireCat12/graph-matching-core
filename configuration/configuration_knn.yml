@@ -19,5 +19,12 @@ mutagenicity:
     folder_dataset: ./data/Mutagenicity/data/
     folder_labels: ./data/Mutagenicity/data/
   k: 5
+NCI1:
+  coordinator:
+    dataset: NCI1
+    params_edit_cost: !!python/tuple [11.0, 11.0, 1.1, 1.1, dirac, 0.75]
+    folder_dataset: ./data/NCI1/data/
+    folder_labels: ./data/NCI1/data/
+  k: 5
 general:
   parallel: True

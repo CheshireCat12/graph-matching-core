@@ -33,6 +33,10 @@ cpdef void run_knn(parameters):
     k = parameters.k
     parallel = parameters.parallel
 
+
+    print('before_params')
+    print(params_coordinator)
+
     coordinator = CoordinatorClassifier(**params_coordinator)
     graphs_train, labels_train = coordinator.train_split(conv_lbl_to_code=True)
     graphs_val, labels_val = coordinator.val_split(conv_lbl_to_code=True)

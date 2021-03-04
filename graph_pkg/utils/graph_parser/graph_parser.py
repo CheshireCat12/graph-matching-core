@@ -11,6 +11,7 @@ from pathlib import Path
 from collections import defaultdict, namedtuple
 import xml.etree.ElementTree as ET
 import xml.dom.minidom as md
+import random
 
 
 __FOLDER = './data/NCI1/'
@@ -24,16 +25,54 @@ __EXTENSIONS = {
 
 
 def parser(folder, dataset):
-    nodes_lbls_per_graph = load_nodes_per_graph_with_lbls(folder, dataset)
-    edges = load_edges(folder, dataset)
-    edges_per_graph = create_edges_per_graph(nodes_lbls_per_graph, edges)
+    # nodes_lbls_per_graph = load_nodes_per_graph_with_lbls(folder, dataset)
+    # edges = load_edges(folder, dataset)
+    # edges_per_graph = create_edges_per_graph(nodes_lbls_per_graph, edges)
+    #
+    # parse_graph_xml(nodes_lbls_per_graph, edges_per_graph, folder)
 
-    # print(nodes_lbls_per_graph)
+    graph_lbls = load_file(folder, dataset, __EXTENSIONS['graph_labels'])
+    labels_per_graph = defaultdict(list)
+    for idx, graph_lbl in enumerate(graph_lbls):
+        labels_per_graph[int(graph_lbl)].append((idx, int(graph_lbl)))
 
-    parse_xml(nodes_lbls_per_graph, edges_per_graph, folder)
+    random.seed(42)
+    random.shuffle(labels_per_graph[0])
+    random.shuffle(labels_per_graph[1])
+
+    graphs_train = labels_per_graph[0][:750] + labels_per_graph[1][:750]
+    graphs_val = labels_per_graph[0][750:1000] + labels_per_graph[1][750:1000]
+    graphs_test = labels_per_graph[0][1000:] + labels_per_graph[1][1000:]
+    print(len(labels_per_graph[0]))
+    print(len(labels_per_graph[1]))
+    print(len(graphs_train))
+    print(len(graphs_test))
+    parse_class_xml(graphs_train, folder, 'train')
+    parse_class_xml(graphs_val, folder, 'validation')
+    parse_class_xml(graphs_test, folder, 'test')
+
+def parse_class_xml(classes, folder, name):
+    graph_collection = ET.Element('GraphCollection')
+
+    finger_prints = ET.SubElement(graph_collection, 'fingerprints')
+
+    for idx_graph, class_ in classes:
+        print_ = ET.SubElement(finger_prints, 'print')
+        print_.set('file', f'molecule_{idx_graph}.gxl')
+        print_.set('class', str(class_))
+
+    b_xml = ET.tostring(graph_collection).decode()
+    newxml = md.parseString(b_xml)
+
+    folder_data = os.path.join(folder, 'data', '')
+    Path(folder_data).mkdir(parents=True, exist_ok=True)
+
+    filename = os.path.join(folder_data, f'{name}.cxl')
+    with open(filename, mode='w') as f:
+        f.write(newxml.toprettyxml(indent=' ', newl='\n'))
 
 
-def parse_xml(nodes_per_graph, edges_per_graph, folder):
+def parse_graph_xml(nodes_per_graph, edges_per_graph, folder):
 
     for graph_idx in nodes_per_graph.keys():
         graph_name = f'molecule_{graph_idx}'

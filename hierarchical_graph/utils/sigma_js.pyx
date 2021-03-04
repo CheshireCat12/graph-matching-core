@@ -141,7 +141,7 @@ document.getElementById('layout').onclick = function() {
 
 document.getElementById('export').onclick = function() {
   console.log('exporting...');
-  var output = s.toSVG({download: true, filename: '$filename', size: 1000, labels: true});
+  var output = s.toSVG({download: true, filename: '$filename', size: 1000});
   // console.log(output);
 };
 

@@ -16,6 +16,7 @@ cdef class LoaderTrainTestValSplit:
         with open(split_file) as file:
             split_text = "".join(file.readlines())
 
+        print('file loaded')
         parsed_data = parse(split_text)
         index = 'fingerprints'
         if 'Mutagenicity' in self.folder_dataset:
