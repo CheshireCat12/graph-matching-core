@@ -166,7 +166,8 @@ dragListener.bind('dragend', function(event) {
 
     _THRESHOLDS = {'letter': 1,
                    'AIDS': 1,
-                   'mutagenicity': 5}
+                   'mutagenicity': 5,
+                   'NCI1': 1,}
 
     def __init__(self,
                  str dataset,
@@ -272,7 +273,7 @@ dragListener.bind('dragend', function(event) {
         return graph_data
 
     def graph_to_html(self, dict graph, str graph_name, int level=-1, str extra_info_nodes='No info'):
-        if self.dataset == 'mutagenicity':
+        if self.dataset in ['mutagenicity', 'NCI1']:
             self._create_layout_mutagenicity(graph)
 
         prefix = f'{level}_' if level >= 0 else ''
@@ -295,7 +296,7 @@ dragListener.bind('dragend', function(event) {
             nx_graph.add_node(node['id'])
 
         for edge in graph['edges']:
-            nx_graph.add_edge(edge['source'], edge['target'], weight=int(edge['label']))
+            nx_graph.add_edge(edge['source'], edge['target'], weight=1.)
 
         # pos = nx.drawing.layout.spring_layout(nx_graph, iterations=2500, center=[0.0, 0.0], seed=42)
         pos = nx.drawing.layout.kamada_kawai_layout(nx_graph)

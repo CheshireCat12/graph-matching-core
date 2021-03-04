@@ -44,6 +44,8 @@ cdef class Coordinator:
             self._init_AIDS()
         elif self.dataset == 'mutagenicity':
             self._init_mutagenicity()
+        elif self.dataset == 'NCI1':
+            self._init_NCI1()
         else:
             raise ValueError(f'The dataset {self.dataset} is not available!')
 
@@ -61,6 +63,10 @@ cdef class Coordinator:
     cdef void _init_mutagenicity(self):
         self.loader = LoaderMutagenicity(self.folder_dataset)
         self.edit_cost = EditCostMutagenicity(*self.params_edit_cost)
+
+    cdef void _init_NCI1(self):
+        self.loader = LoaderNCI1(self.folder_dataset)
+        self.edit_cost = EditCostNCI1(*self.params_edit_cost)
 
     def __repr__(self):
         return f'Coordinator - Dataset: {self.dataset}; ' \

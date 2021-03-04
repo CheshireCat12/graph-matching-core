@@ -2,11 +2,13 @@ from graph_pkg.edit_cost.edit_cost cimport EditCost
 from graph_pkg.edit_cost.edit_cost_AIDS cimport EditCostAIDS
 from graph_pkg.edit_cost.edit_cost_letter cimport EditCostLetter
 from graph_pkg.edit_cost.edit_cost_mutagenicity cimport EditCostMutagenicity
+from graph_pkg.edit_cost.edit_cost_NCI1 cimport EditCostNCI1
 from graph_pkg.algorithm.graph_edit_distance cimport GED
 from graph_pkg.loader.loader_base cimport LoaderBase
 from graph_pkg.loader.loader_AIDS cimport LoaderAIDS
 from graph_pkg.loader.loader_letter cimport LoaderLetter
 from graph_pkg.loader.loader_mutagenicity cimport LoaderMutagenicity
+from graph_pkg.loader.loader_NCI1 cimport LoaderNCI1
 
 cdef class Coordinator:
 
@@ -28,3 +30,5 @@ cdef class Coordinator:
     cdef void _init_AIDS(self)
 
     cdef void _init_mutagenicity(self)
+
+    cdef void _init_NCI1(self)

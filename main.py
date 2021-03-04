@@ -56,7 +56,7 @@ if __name__ == '__main__':
                         help='Choose the experiment to run.')
     parser.add_argument('-d', '--dataset', type=str,
                         default='letter',
-                        choices=['letter', 'AIDS', 'mutagenicity'],
+                        choices=['letter', 'AIDS', 'mutagenicity', 'NCI1'],
                         help='Choose the dataset.')
     args = parser.parse_args()
     run_experiment(args)

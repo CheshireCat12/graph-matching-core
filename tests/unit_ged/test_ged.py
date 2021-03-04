@@ -9,6 +9,7 @@ from graph_pkg.algorithm.graph_edit_distance import GED
 from graph_pkg.edit_cost.edit_cost_AIDS import EditCostAIDS
 from graph_pkg.edit_cost.edit_cost_letter import EditCostLetter
 from graph_pkg.edit_cost.edit_cost_mutagenicity import EditCostMutagenicity
+from graph_pkg.edit_cost.edit_cost_NCI1 import EditCostNCI1
 from graph_pkg.graph.edge import Edge
 from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.label.label_edge import LabelEdge
@@ -18,6 +19,7 @@ from graph_pkg.graph.node import Node
 from graph_pkg.loader.loader_AIDS import LoaderAIDS
 from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
+from graph_pkg.loader.loader_NCI1 import LoaderNCI1
 
 
 @pytest.fixture()
@@ -40,6 +42,11 @@ def mutagenicity_graphs():
     graphs = loader.load()
     return graphs
 
+@pytest.fixture()
+def NCI1_graphs():
+    loader = LoaderNCI1()
+    graphs = loader.load()
+    return graphs
 
 @pytest.fixture()
 def dataframe_letter():
@@ -229,6 +236,36 @@ def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_so
     print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')
     print(f'exp {expected}')
     assert results == expected
+    # assert False
+
+
+@pytest.mark.parametrize('graph_name_source_target',
+                         [
+                             (['molecule_2767', 'molecule_2769']),
+                             (['molecule_2769', 'molecule_2767']),
+                             (['molecule_1897', 'molecule_1349']),
+                             (['molecule_1897', 'molecule_1051']),
+                         ])
+def test_NCI1(NCI1_graphs, graph_name_source_target):
+    graph_name_source, graph_name_target = graph_name_source_target
+    graph_source = [graph for graph in NCI1_graphs if graph.name == graph_name_source][0]
+    graph_target = [graph for graph in NCI1_graphs if graph.name == graph_name_target][0]
+
+    cst_cost_node = 11.0
+    cst_cost_edge = 1.1
+    ged = GED(EditCostNCI1(cst_cost_node, cst_cost_node,
+                           cst_cost_edge, cst_cost_edge, 'dirac'))
+
+    results = ged.compute_edit_distance(graph_source, graph_target)
+
+    print(results)
+
+    assert False
+
+    # print(f'###### diff {results - expected}')
+    # print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')
+    # print(f'exp {expected}')
+    # assert results == expected
     # assert False
 
 
