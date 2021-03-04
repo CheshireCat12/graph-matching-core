@@ -14,3 +14,6 @@ cdef double dirac_AIDS(int symbol_source, int symbol_target):
 
 cdef double dirac_mutagenicity(int chem_source, int chem_target):
     return float(chem_source != chem_target)
+
+cdef double dirac_NCI1(int chem_source, int chem_target):
+    return float(chem_source != chem_target)
