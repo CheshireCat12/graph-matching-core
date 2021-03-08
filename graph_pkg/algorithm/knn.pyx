@@ -1,7 +1,7 @@
 import numpy as np
 cimport numpy as np
 from collections import Counter
-from graph_pkg.utils.constants import get_code_to_lbls_letter, get_code_to_lbls_muta
+
 
 cdef class KNNClassifier:
     """
