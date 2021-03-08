@@ -1,7 +1,7 @@
 import numpy as np
 cimport numpy as np
 from collections import Counter
-
+from graph_pkg.utils.constants import get_code_to_lbls_letter, get_code_to_lbls_muta
 
 cdef class KNNClassifier:
     """
@@ -52,8 +52,9 @@ cdef class KNNClassifier:
 
         print('\n-- Start prediction --')
         distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
-                                                        graphs_pred)
-        distances = np.asarray(distances)
+                                                        graphs_pred,
+                                                        heuristic=True)
+        # distances = np.asarray(distances)
 
         # Get the index of the k smallest distances in the matrix distances.
         idx_k_nearest = np.argpartition(distances, k, axis=0)[:k]

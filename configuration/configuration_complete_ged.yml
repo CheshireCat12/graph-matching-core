@@ -15,7 +15,7 @@ AIDS:
 mutagenicity:
   coordinator:
     dataset: mutagenicity
-    params_edit_cost: !!python/tuple [11.0, 11.0, 1.1, 1.1, dirac]
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac, 0.75]
     folder_dataset: ./data/Mutagenicity/data/
     folder_labels: ./data/Mutagenicity/data/
   folder_results: ./results/complete_ged/mutagenicity

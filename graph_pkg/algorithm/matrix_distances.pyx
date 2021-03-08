@@ -90,12 +90,12 @@ cdef class MatrixDistances:
         prods = product(graphs_train, graphs_test)
         pool = Pool(num_cores)
         with pool as p:
-            results = p.starmap(self._helper_parallel, [(graph_train, graph_test) for graph_train, graph_test in prods])
+            results = p.starmap(self._helper_parallel, [(graph_train, graph_test, heuristic) for graph_train, graph_test in prods])
 
         distances = np.array(results).reshape((n, m))
         return distances
 
-    cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test):
-        dist = self.ged.compute_edit_distance(graph_train, graph_test)
+    cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test, bint heuristic=False):
+        dist = self.ged.compute_edit_distance(graph_train, graph_test, heuristic)
 
         return dist
