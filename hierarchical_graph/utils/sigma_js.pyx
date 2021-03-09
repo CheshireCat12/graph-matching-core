@@ -4,7 +4,7 @@ import os
 from string import Template
 from pathlib import Path
 
-from hierarchical_graph.centrality_measure.centrality_measure import CentralityMeasure
+from hierarchical_graph.centrality_measure.centrality_measure cimport CentralityMeasure
 
 
 def _round_3(num):
@@ -167,8 +167,8 @@ dragListener.bind('dragend', function(event) {
 
     _THRESHOLDS = {'letter': 1,
                    'AIDS': 1,
-                   'mutagenicity': 5,
-                   'NCI1': 1,}
+                   'mutagenicity': 500,
+                   'NCI1': 100,}
 
     def __init__(self,
                  str dataset,
@@ -184,12 +184,11 @@ dragListener.bind('dragend', function(event) {
 
     def save_to_sigma_with_score(self,
                                  Graph graph,
-                                 CentralityMeasure measure,
+                                 double[::1] centrality_score,
+                                 str name_centrality_measure,
                                  int level=-1,
                                  str extra_info='',
                                  str extra_info_nodes='No info'):
-        centrality_score = measure.calc_centrality_score(graph)
-        name_centrality_measure = measure.name
         json_graph = self.graph_to_json_with_score(graph, centrality_score, name_centrality_measure)
 
         if self.save_json:

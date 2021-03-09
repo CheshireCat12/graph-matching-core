@@ -9,7 +9,7 @@ AIDS:
     dataset: AIDS
     params_edit_cost: !!python/tuple [1.1, 1.1, 0.1, 0.1, dirac]
     folder_dataset: ./data/AIDS/data/
-  folder_results: ./results/hierarchical/AIDS
+  folder_results: ./results/hierarchical/AIDS_
 mutagenicity:
   coordinator:
     dataset: mutagenicity
@@ -21,10 +21,11 @@ NCI1:
     dataset: NCI1
     params_edit_cost: !!python/tuple [11.0, 11.0, 1.1, 1.1, dirac]
     folder_dataset: ./data/NCI1/data/
-  folder_results: ./results/hierarchical/NCI1
+  folder_results: ./results/hierarchical/NCI1_
 general:
-  num_graphs: 10
+  num_graphs: 20
   random_graph: True
+  percentage: 1.0
   centrality_measure: pagerank
   strategy: one_by_one
   save_to_html: True

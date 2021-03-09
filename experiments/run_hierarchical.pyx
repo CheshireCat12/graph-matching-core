@@ -17,15 +17,31 @@ def run_hierarchical(parameters):
     if parameters.random_graph:
         random.shuffle(graphs)
 
-    selected_graphs = graphs[:parameters.num_graphs]
+    # biggest_graph = None
+    # max_size = float('-inf')
+    # for graph in graphs:
+    #     if len(graph) > max_size:
+    #         print(graph.name)
+    #         biggest_graph = graph
+    #         max_size = len(graph)
+    #
+    # print(biggest_graph)
+    sorted_by_len = sorted(graphs, key=lambda x: -len(x))
+    for graph in sorted_by_len[-10:]:
+        print(graph.name)
 
-    measure = ['pagerank', 'betweeness']
-    strategy = ['compute_once']
 
-    for m, s in product(measure, strategy):
+    selected_graphs = sorted_by_len[:parameters.num_graphs]
 
-        parameters.centrality_measure = m
-        parameters.deletion_strategy = s
+    percentages = [1.0, 0.8, 0.6, 0.4, 0.2]
+    measures = ['pagerank', 'betweeness']
+    strategies = ['compute_once']
+
+    for strategy, measure, percentage in product(strategies, measures, percentages):
+
+        parameters.percentage = percentage
+        parameters.centrality_measure = measure
+        parameters.deletion_strategy = strategy
 
         if parameters.centrality_measure == 'pagerank':
             measure = PageRank()
@@ -38,4 +54,10 @@ def run_hierarchical(parameters):
                            save_html=parameters.save_to_html)
 
         hierarchical_graph = HierarchicalGraph(selected_graphs[1:], measure, sigma_js)
-        hierarchical_graph.create_hierarchy_sigma(parameters.strategy)
+        # hierarchical_graph.create_hierarchy_sigma(parameters.strategy)
+        hierarchical_graph.create_hierarchy_percent(selected_graphs,
+                                                   percentage_remaining=percentage,
+                                                   deletion_strategy=strategy,
+                                                   verbose=False)
+
+        # break

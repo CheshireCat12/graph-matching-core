@@ -40,10 +40,6 @@ cdef class HierarchicalGraph:
         elif deletion_strategy == 'compute_once':
             delete_strat = self._update_graph_compute_once
 
-        if self.sigma_js is not None:
-            [self._save_graph_to_js(graph, graph, level=0, delete_strat=deletion_strategy)
-             for graph in graphs]
-
 
         for graph in graphs:
             tmp_graph = copy.deepcopy(graph)
@@ -57,10 +53,6 @@ cdef class HierarchicalGraph:
             delete_strat(tmp_graph, num_nodes_to_del)
 
             reduced_graphs.append(tmp_graph)
-
-            if self.sigma_js is not None:
-
-                self._save_graph_to_js(tmp_graph, graph, level=1, delete_strat=deletion_strategy)
 
         if verbose:
             print(f'~~ Running time: {time() - start_time:.2f}s')
@@ -76,22 +68,19 @@ cdef class HierarchicalGraph:
         :param num_nodes_to_del: 
         :return: 
         """
-        # print('@@@@@@')
-        # print(f'Num nodes {len(graph)}; num nodes to del {num_nodes_to_del}')
         centrality_score = np.asarray(self.measure.calc_centrality_score(graph))
-        # print('centrality')
-        # print(centrality_score)
-        idx_to_delete = np.argpartition(centrality_score, num_nodes_to_del)[:num_nodes_to_del]
+
+        idx_sorted = np.argpartition(centrality_score, num_nodes_to_del)
+        idx_to_delete = idx_sorted[:num_nodes_to_del]
         idx_to_delete_sorted = np.sort(idx_to_delete, kind='stable')[::-1]
-        # print('idx to del')
-        # print(idx_to_delete_sorted)
-        # print('values')
-        # print(centrality_score[idx_to_delete])
-        # print(centrality_score[idx_to_delete[::-1]])
 
         for idx_del in idx_to_delete_sorted:
             graph.remove_node_by_idx(idx_del)
 
+        if self.sigma_js is not None:
+            tmp_idx = np.sort(idx_sorted[num_nodes_to_del:])
+            # print(centrality_score[tmp_idx])
+            self._save_graph_to_js(graph, num_nodes_to_del, centrality_score[tmp_idx])
 
     cpdef void _update_graph_recomputing(self, Graph graph, int num_nodes_to_del):
         """
@@ -111,11 +100,22 @@ cdef class HierarchicalGraph:
 
             graph.remove_node_by_idx(idx_del)
 
-    cpdef void _save_graph_to_js(self, Graph graph_h, Graph graph_s, int level=-1, str del_strat=''):
-        extra_info_nodes = f'Current nodes/Total nodes: {len(graph_h)}/{len(graph_s)} <br>' \
-                           f'Percentage remaining: {(len(graph_h) / len(graph_s)) * 100:.0f}%'
-        self.sigma_js.save_to_sigma_with_score(graph_h, self.measure, level=1,
-                                               extra_info=del_strat,
+    cpdef void _save_graph_to_js(self, Graph graph, int num_nodes_deleted, double[::1] centrality_score):
+        original_size = len(graph) + num_nodes_deleted
+        current_size = len(graph)
+        percentage_size = current_size / original_size
+        rounded_percentage_size = ceil(percentage_size * 10) / 10
+        extra_info = f'percentage_{rounded_percentage_size}'
+
+        extra_info_nodes = f'Current nodes/Total nodes: {current_size}/{original_size} <br>' \
+                           f'Percentage remaining: {rounded_percentage_size * 100:.0f}%'
+
+        # print(centrality_score)
+        self.sigma_js.save_to_sigma_with_score(graph,
+                                               centrality_score,
+                                               self.measure.name,
+                                               level=rounded_percentage_size*100,
+                                               extra_info=extra_info,
                                                extra_info_nodes=extra_info_nodes)
 
     cpdef void create_hierarchy_sigma(self, strategy='one_by_one'):
