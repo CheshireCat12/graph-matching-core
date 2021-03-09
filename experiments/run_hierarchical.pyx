@@ -20,12 +20,12 @@ def run_hierarchical(parameters):
     selected_graphs = graphs[:parameters.num_graphs]
 
     measure = ['pagerank', 'betweeness']
-    strategy = ['one_by_one', 'multiple_by_one']
+    strategy = ['compute_once']
 
     for m, s in product(measure, strategy):
 
         parameters.centrality_measure = m
-        parameters.strategy = s
+        parameters.deletion_strategy = s
 
         if parameters.centrality_measure == 'pagerank':
             measure = PageRank()

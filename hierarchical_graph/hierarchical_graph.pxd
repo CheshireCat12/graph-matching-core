@@ -20,4 +20,6 @@ cdef class HierarchicalGraph:
     cpdef void _update_graph_recomputing(self, Graph graph,
                                             int num_nodes_to_del)
 
+    cpdef void _save_graph_to_js(self, Graph graph_h, Graph graph_s, int level=*, str del_strat=*)
+
     cpdef void create_hierarchy_sigma(self, strategy=*)

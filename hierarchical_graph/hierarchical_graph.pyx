@@ -40,6 +40,11 @@ cdef class HierarchicalGraph:
         elif deletion_strategy == 'compute_once':
             delete_strat = self._update_graph_compute_once
 
+        if self.sigma_js is not None:
+            [self._save_graph_to_js(graph, graph, level=0, delete_strat=deletion_strategy)
+             for graph in graphs]
+
+
         for graph in graphs:
             tmp_graph = copy.deepcopy(graph)
 
@@ -52,6 +57,10 @@ cdef class HierarchicalGraph:
             delete_strat(tmp_graph, num_nodes_to_del)
 
             reduced_graphs.append(tmp_graph)
+
+            if self.sigma_js is not None:
+
+                self._save_graph_to_js(tmp_graph, graph, level=1, delete_strat=deletion_strategy)
 
         if verbose:
             print(f'~~ Running time: {time() - start_time:.2f}s')
@@ -102,6 +111,13 @@ cdef class HierarchicalGraph:
 
             graph.remove_node_by_idx(idx_del)
 
+    cpdef void _save_graph_to_js(self, Graph graph_h, Graph graph_s, int level=-1, str del_strat=''):
+        extra_info_nodes = f'Current nodes/Total nodes: {len(graph_h)}/{len(graph_s)} <br>' \
+                           f'Percentage remaining: {(len(graph_h) / len(graph_s)) * 100:.0f}%'
+        self.sigma_js.save_to_sigma_with_score(graph_h, self.measure, level=1,
+                                               extra_info=del_strat,
+                                               extra_info_nodes=extra_info_nodes)
+
     cpdef void create_hierarchy_sigma(self, strategy='one_by_one'):
         cdef:
             int idx, idx_graph, current_level
@@ -131,8 +147,7 @@ cdef class HierarchicalGraph:
                                    f'Percentage remaining: {(len(graph)/total_number_nodes[idx_graph])*100:.0f}%'
 
                 self.sigma_js.save_to_sigma_with_score(graph,
-                                                       centrality_score,
-                                                       self.measure.name,
+                                                       self.measure,
                                                        level=current_level,
                                                        extra_info=strategy,
                                                        extra_info_nodes=extra_info_nodes)
