@@ -9,7 +9,6 @@ cdef double compute_edit_distance(str string_1, str string_2, double subst_cost,
     return _compute_edit_distance_matr(string_1, string_2, subst_cost, ins_cost, del_cost)[len_1][len_2]
 
 cpdef double[:, ::1] _compute_edit_distance_matr_cpd(str string_1, str string_2, double subst_cost, double ins_cost, double del_cost):
-
     return _compute_edit_distance_matr(string_1, string_2, subst_cost, ins_cost, del_cost)
 
 cdef double[:, ::1] _compute_edit_distance_matr(str string_1, str string_2, double subst_cost, double ins_cost, double del_cost):
