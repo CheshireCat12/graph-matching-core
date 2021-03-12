@@ -4,6 +4,7 @@ from graph_pkg.loader.loader_AIDS import LoaderAIDS
 from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 from graph_pkg.loader.loader_NCI1 import LoaderNCI1
+from graph_pkg.loader.loader_protein import LoaderProtein
 
 
 ############## LETTER ##############
@@ -103,6 +104,30 @@ def test_loader_NCI1_len(graphs_NCI1):
                           ])
 def test_loader_NCI1_value(graphs_NCI1, idx_graph, gr_name, num_nodes):
     graph = graphs_NCI1[idx_graph]
+
+    assert graph.name == gr_name
+    assert len(graph) == num_nodes
+
+######################### Protein #######################
+
+@pytest.fixture()
+def graphs_Protein():
+    loader = LoaderProtein()
+    graphs = loader.load()
+
+    return graphs
+
+
+def test_loader_Protein_len(graphs_Protein):
+    assert len(graphs_Protein) == 600
+
+
+@pytest.mark.parametrize('idx_graph, gr_name, num_nodes',
+                         [(0, 'pdb1h3e', 37),
+                          (1, 'pdb1a8h', 32),
+                          ])
+def test_loader_Protein_value(graphs_Protein, idx_graph, gr_name, num_nodes):
+    graph = graphs_Protein[idx_graph]
 
     assert graph.name == gr_name
     assert len(graph) == num_nodes
