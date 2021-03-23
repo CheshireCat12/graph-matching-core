@@ -7,9 +7,23 @@ from scipy.optimize import linear_sum_assignment
 import sys
 
 cdef class GED:
+    """
+    Compute the approximate graph edit distance with the linear assignment formulation.
+
+    Attributes
+    ----------
+    edit_cost : EditCost
+
+    Methods
+    -------
+    compute_edit_distance(graph_source, graph_target, heuristic)
+    """
 
     def __init__(self, EditCost edit_cost):
-        """test it is working!"""
+        """
+
+        :param edit_cost:
+        """
         self.edit_cost = edit_cost
 
     cpdef double compute_edit_distance(self,
@@ -17,10 +31,19 @@ cdef class GED:
                                        Graph graph_target,
                                        bint heuristic=False):
         """
+        Compute the graph edit distance
+        
+        Create the C matrix:
+        Substitution | Deletion
+        -----------------------
+        Insertion    | None
+        
+        Then create the C star matrix to add the cost of the edges
+        Once the C star matrix is created the node substitution is computed with the linear_sum_assignment function.
         
         :param graph_source: 
         :param graph_target: 
-        :param heuristic: 
+        :param heuristic: is set to true if the bigger graph has to be taken as the source graph
         :return: 
         """
         cdef:
@@ -31,13 +54,8 @@ cdef class GED:
 
         self._init_graphs(graph_source, graph_target, heuristic)
 
-        # print(self.graph_source)
-
         self._create_c_matrix()
-        # print(self.C.base)
         self._create_c_star_matrix()
-        # print(f'C_star')
-
 
         _, col_ind = linear_sum_assignment(self.C_star)
         self.phi = col_ind.astype(dtype=np.int32)
@@ -45,8 +63,6 @@ cdef class GED:
 
         edit_cost += self._compute_cost_node_edit(self.phi)
         edit_cost += self._compute_cost_edge_edit(self.phi)
-
-        # print(edit_cost)
 
         return edit_cost
 
@@ -122,7 +138,6 @@ cdef class GED:
         for i in range(self._n):
             for j in range(self._m):
                 cost = c_abs(out_degrees_source[i] - out_degrees_target[j]) * self.edit_cost.c_cost_insert_edge(edge_source)
-                # print(f'cost C star {cost}')
                 self.C_star[i][j] += cost
 
         # Update the deletion part

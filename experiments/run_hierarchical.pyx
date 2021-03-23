@@ -34,7 +34,7 @@ def run_hierarchical(parameters):
     selected_graphs = sorted_by_len[:parameters.num_graphs]
 
     percentages = [1.0, 0.8, 0.6, 0.4, 0.2]
-    measures = ['pagerank', 'betweeness']
+    measures = ['pagerank', 'betweenness']
     strategies = ['compute_once']
 
     for strategy, measure, percentage in product(strategies, measures, percentages):
@@ -45,7 +45,7 @@ def run_hierarchical(parameters):
 
         if parameters.centrality_measure == 'pagerank':
             measure = PageRank()
-        elif parameters.centrality_measure == 'betweeness':
+        elif parameters.centrality_measure == 'betweenness':
             measure = Betweenness()
 
 
@@ -54,7 +54,6 @@ def run_hierarchical(parameters):
                            save_html=parameters.save_to_html)
 
         hierarchical_graph = HierarchicalGraph(selected_graphs[1:], measure, sigma_js)
-        # hierarchical_graph.create_hierarchy_sigma(parameters.strategy)
         hierarchical_graph.create_hierarchy_percent(selected_graphs,
                                                    percentage_remaining=percentage,
                                                    deletion_strategy=strategy,

@@ -63,7 +63,7 @@ class HyperparametersTuning:
         self.parameters = parameters
 
     def fine_tune(self):
-        print('Finetune the paramters')
+        print('Finetune the parameters')
 
         # set parameters to tune
         alpha_start, alpha_end, alpha_step = self.parameters.tuning['alpha']

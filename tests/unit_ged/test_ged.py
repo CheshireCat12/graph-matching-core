@@ -262,12 +262,6 @@ def test_NCI1(NCI1_graphs, graph_name_source_target, expected):
 
     assert round(results, 5) == expected
 
-    # print(f'###### diff {results - expected}')
-    # print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')
-    # print(f'exp {expected}')
-    # assert results == expected
-    # assert False
-
 
 @pytest.mark.parametrize('graph_name_source_target',
                          [
