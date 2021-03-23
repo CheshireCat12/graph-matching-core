@@ -1,3 +1,12 @@
+""" Graph Drawer
+@author: Anthony Gillioz
+
+This script runs the graph drawer with SigmaJS.
+The parameter file ../configuration/configuration_draw.yml has to be correctly settled before to run this script.
+The configuration file contains all the parameters to run and save the graphs into a .js.
+
+The centrality score of the nodes is computed on the fly and directly added to the be drawn.
+"""
 import random
 
 from graph_pkg.utils.coordinator.coordinator import Coordinator
@@ -7,6 +16,12 @@ from hierarchical_graph.utils.sigma_js import SigmaJS
 
 
 def run_draw(parameters):
+    """
+    Draw the graphs into .js format to be used with the SigmaJS library.
+
+    :param parameters: All the parameters from the config file.
+    :return:
+    """
     random.seed(42)
 
     coordinator = Coordinator(**parameters.coordinator)
@@ -16,7 +31,6 @@ def run_draw(parameters):
         random.shuffle(graphs)
 
     selected_graphs = graphs[:parameters.num_graphs]
-
 
     sigma_js = SigmaJS(parameters.coordinator['dataset'],
                        parameters.folder_results)

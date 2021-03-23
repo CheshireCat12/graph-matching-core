@@ -1,3 +1,9 @@
+""" SigmaJS
+@author: Anthony Gillioz
+
+This script is used to create the graph from the core graph to the sigmaJS library.
+
+"""
 import json
 import networkx as nx
 import os
