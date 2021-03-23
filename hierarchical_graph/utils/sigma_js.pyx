@@ -10,6 +10,9 @@ import os
 from string import Template
 from pathlib import Path
 
+from graph_pkg.utils.constants import DATASETS_TO_ADD_EXTRA_LAYOUT
+from graph_pkg.utils.constants import THRESHOLDS_SIGMAJS as THRESHOLDS
+
 
 def _round_3(num):
     return round(num, 3)
@@ -195,11 +198,6 @@ dragListener.bind('dragend', function(event) {
 
 ''')
 
-    _THRESHOLDS = {'letter': 1,
-                   'AIDS': 1,
-                   'mutagenicity': 500,
-                   'NCI1': 100,}
-
     def __init__(self,
                  str dataset,
                  str folder_results,
@@ -219,7 +217,7 @@ dragListener.bind('dragend', function(event) {
                                  str extra_info_nodes='No info'):
         """
         Create and save the graph into the SigmaJS format.
-        
+
         :param graph:
         :param centrality_score:
         :param name_centrality_measure:
@@ -228,7 +226,7 @@ dragListener.bind('dragend', function(event) {
         :param extra_info_nodes:
         :return:
         """
-        json_graph = self.graph_to_json_with_score(graph, centrality_score, name_centrality_measure)
+        json_graph = self._graph_to_json_with_score(graph, centrality_score, name_centrality_measure)
 
         if self.save_json:
             self._write_to_file(json_graph,
@@ -238,7 +236,7 @@ dragListener.bind('dragend', function(event) {
                                 level=level,
                                 extra_info=extra_info)
 
-        html_graph = self.graph_to_html(json_graph, graph.name, level, extra_info_nodes)
+        html_graph = self._graph_to_html(json_graph, graph.name, level, extra_info_nodes)
 
         if self.save_html:
             self._write_to_file(html_graph,
@@ -290,7 +288,7 @@ dragListener.bind('dragend', function(event) {
                 raise ValueError(f'The extension {extension} is not accepted!')
 
 
-    def graph_to_json_with_score(self, Graph graph,
+    def _graph_to_json_with_score(self, Graph graph,
                                  double[::1] centrality_score,
                                  str name_centrality_measure):
         """
@@ -331,7 +329,7 @@ dragListener.bind('dragend', function(event) {
 
         return graph_data
 
-    def graph_to_html(self, dict graph, str graph_name, int level=-1, str extra_info_nodes='No info'):
+    def _graph_to_html(self, dict graph, str graph_name, int level=-1, str extra_info_nodes='No info'):
         """
         Create the graph in SigmaJS format by filling the JS and HTML templates.
 
@@ -341,14 +339,14 @@ dragListener.bind('dragend', function(event) {
         :param extra_info_nodes:
         :return: The graph under html format
         """
-        if self.dataset in ['mutagenicity', 'NCI1']:
-            self._create_layout_mutagenicity(graph)
+        if self.dataset in DATASETS_TO_ADD_EXTRA_LAYOUT:
+            self._create_extra_layout(graph)
 
         prefix = f'{level}_' if level >= 0 else ''
 
         js_text = self._JS_TEMPLATE.substitute({'graph_data': json.dumps(graph),
                                                 'container': 'graph-div',
-                                                'threshold': self._THRESHOLDS[self.dataset],
+                                                'threshold': THRESHOLDS[self.dataset],
                                                 'filename': f'{graph_name}.svg',
                                                })
         html = self._HTML_TEMPLATE.substitute({'graph_name': f'{prefix}{graph_name}',
@@ -358,7 +356,7 @@ dragListener.bind('dragend', function(event) {
         return html
 
 
-    def _create_layout_mutagenicity(self, dict graph):
+    def _create_extra_layout(self, dict graph):
         """
         Create an extra layout for the graph.
         It is useful for the datasets that have not the coordinates of the nodes.

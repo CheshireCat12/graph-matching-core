@@ -25,5 +25,5 @@ NCI1:
 general:
   num_graphs: 10
   random_graph: True
-  centrality_measure: pagerank
+  centrality_measure: betweenness
 

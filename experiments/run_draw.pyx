@@ -18,6 +18,7 @@ from hierarchical_graph.utils.sigma_js import SigmaJS
 def run_draw(parameters):
     """
     Draw the graphs into .js format to be used with the SigmaJS library.
+    Randomly select the given number of graphs to be drawn.
 
     :param parameters: All the parameters from the config file.
     :return:
@@ -39,7 +40,8 @@ def run_draw(parameters):
                                                  parameters.centrality_measure)
         sigma_js.save_to_sigma_with_score(graph,
                                           centrality_score,
-                                          parameters.centrality_measure, level=0)
+                                          parameters.centrality_measure,
+                                          level=0)
 
     print('-- Graphs correctly generated')
 
@@ -48,7 +50,7 @@ def _get_centrality_score(graph, centrality_measure):
 
     if centrality_measure == 'pagerank':
         measure = PageRank()
-    elif centrality_measure == 'betweeness':
+    elif centrality_measure == 'betweenness':
         measure = Betweeness()
     else:
         raise ValueError(f'Centrality measure: {centrality_measure} not accepted!')

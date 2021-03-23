@@ -1,7 +1,15 @@
 cdef:
+    #########################
+    ##  General Constants  ##
+    #########################
+
     ### File Extensions ###
     EXTENSION_GRAPHS = '*.gxl'
     EXTENSION_SPLITS = '.cxl'
+
+    #########################
+    ##  Folder Constants   ##
+    #########################
 
     ### Datatset and Labels folder ###
     dict DEFAULT_FOLDERS = {'letter': './data/Letter/Letter/HIGH/',
@@ -10,6 +18,10 @@ cdef:
                             'NCI1': './data/NCI1/data/'}
 
     dict DEFAULT_FOLDERS_LABELS = DEFAULT_FOLDERS
+
+    #################################
+    ##  Convert Labels Constants   ##
+    #################################
 
     ### Convert Labels to unique code ###
     dict LETTER_LBL_TO_CODE = {
@@ -37,6 +49,20 @@ cdef:
         'mutagenicity': MUTAGENICITY_LBL_TO_CODE,
         'NCI1': NCI1_LBL_TO_CODE,
     }
+
+
+########################
+##  Sigma Constants   ##
+########################
+
+THRESHOLDS_SIGMAJS = {
+    'letter': 1,
+    'AIDS': 1,
+    'mutagenicity': 5,
+    'NCI1': 5,
+}
+
+DATASETS_TO_ADD_EXTRA_LAYOUT = ['mutagenicity', 'NCI1']
 
 def get_default_lbls_to_code():
     """Access to the DEFAULT_LABELS_TO_CODE from python."""
