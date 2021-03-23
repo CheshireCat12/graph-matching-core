@@ -4,6 +4,6 @@ from graph_pkg.graph.graph cimport Graph
 from graph_pkg.graph.node cimport Node
 
 
-cdef class Betweeness(CentralityMeasure):
+cdef class Betweenness(CentralityMeasure):
 
     cpdef double[::1] calc_centrality_score(self, Graph graph)

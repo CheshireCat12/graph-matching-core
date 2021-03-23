@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import networkx as nx
-from hierarchical_graph.centrality_measure.betweeness import Betweeness
+from hierarchical_graph.centrality_measure.betweenness import Betweenness
 from graph_pkg.graph.graph import Graph
 from graph_pkg.graph.node import Node
 from graph_pkg.graph.edge import Edge
@@ -9,7 +9,7 @@ from graph_pkg.graph.label.label_edge import LabelEdge
 from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
 
 
-def test_betweeness_by_hand():
+def test_betweenness_by_hand():
     graph = Graph('gr', 'gr.xml', 4)
     graph.add_node(Node(0, LabelNodeLetter(0, 0)))
     graph.add_node(Node(1, LabelNodeLetter(0, 0)))
@@ -20,8 +20,8 @@ def test_betweeness_by_hand():
     graph.add_edge(Edge(1, 2, LabelEdge(0)))
     graph.add_edge(Edge(2, 3, LabelEdge(0)))
 
-    betweeness = Betweeness()
-    results = betweeness.calc_centrality_score(graph)
+    betweenness = Betweenness()
+    results = betweenness.calc_centrality_score(graph)
     results = np.asarray(results)
 
     graph2 = nx.Graph()
@@ -40,7 +40,7 @@ def test_betweeness_by_hand():
     assert np.linalg.norm(results - expected) < 1e-6
     # assert False
 
-def test_betweeness_by_hand_big():
+def test_betweenness_by_hand_big():
     graph = Graph('gr', 'gr.xml', 6)
     graph2 = nx.Graph()
 
@@ -62,8 +62,8 @@ def test_betweeness_by_hand_big():
     graph.add_edge(Edge(3, 4, LabelEdge(0)))
     graph.add_edge(Edge(3, 5, LabelEdge(0)))
 
-    betweeness = Betweeness()
-    results = betweeness.calc_centrality_score(graph)
+    betweenness = Betweenness()
+    results = betweenness.calc_centrality_score(graph)
     results = np.asarray(results)
 
     ### Add edge to nx.graph

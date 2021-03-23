@@ -2,10 +2,10 @@ import numpy as np
 cimport numpy as np
 
 
-cdef class Betweeness(CentralityMeasure):
+cdef class Betweenness(CentralityMeasure):
 
     def __init__(self):
-        super(Betweeness, self).__init__('betweeness')
+        super(Betweenness, self).__init__('betweenness')
 
     cpdef double[::1] calc_centrality_score(self, Graph graph):
         """

@@ -1,6 +1,6 @@
 from graph_pkg.utils.coordinator.coordinator import Coordinator
 from hierarchical_graph.centrality_measure.pagerank import PageRank
-from hierarchical_graph.centrality_measure.betweeness import Betweeness
+from hierarchical_graph.centrality_measure.betweenness import Betweenness
 from hierarchical_graph.utils.sigma_js import SigmaJS
 from hierarchical_graph.hierarchical_graph import HierarchicalGraph
 import random
@@ -46,7 +46,7 @@ def run_hierarchical(parameters):
         if parameters.centrality_measure == 'pagerank':
             measure = PageRank()
         elif parameters.centrality_measure == 'betweeness':
-            measure = Betweeness()
+            measure = Betweenness()
 
 
         sigma_js = SigmaJS(parameters.coordinator['dataset'],

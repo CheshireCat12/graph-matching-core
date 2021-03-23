@@ -11,7 +11,7 @@ import random
 
 from graph_pkg.utils.coordinator.coordinator import Coordinator
 from hierarchical_graph.centrality_measure.pagerank import PageRank
-from hierarchical_graph.centrality_measure.betweeness import Betweeness
+from hierarchical_graph.centrality_measure.betweenness import Betweenness
 from hierarchical_graph.utils.sigma_js import SigmaJS
 
 
@@ -51,7 +51,7 @@ def _get_centrality_score(graph, centrality_measure):
     if centrality_measure == 'pagerank':
         measure = PageRank()
     elif centrality_measure == 'betweenness':
-        measure = Betweeness()
+        measure = Betweenness()
     else:
         raise ValueError(f'Centrality measure: {centrality_measure} not accepted!')
 

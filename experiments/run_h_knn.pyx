@@ -3,7 +3,7 @@ from graph_pkg.algorithm.knn cimport KNNClassifier
 from hierarchical_graph.hierarchical_graph cimport HierarchicalGraph
 
 from hierarchical_graph.centrality_measure.pagerank import PageRank
-from hierarchical_graph.centrality_measure.betweeness import Betweeness
+from hierarchical_graph.centrality_measure.betweenness import Betweenness
 
 from pathlib import Path
 import numpy as np
@@ -17,7 +17,7 @@ import pandas as pd
 
 __MEASURES = {
     'pagerank': PageRank(),
-    'betweeness': Betweeness(),
+    'betweenness': Betweenness(),
 }
 
 cpdef void _write_results(double acc, double exec_time, parameters, name):
@@ -56,7 +56,7 @@ class HyperparametersTuning:
 
     __MEASURES = {
         'pagerank': PageRank(),
-        'betweeness': Betweeness(),
+        'betweeness': Betweenness(),
     }
 
     def __init__(self, parameters):
