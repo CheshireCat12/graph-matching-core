@@ -1,12 +1,14 @@
+import random
+
 from graph_pkg.utils.coordinator.coordinator import Coordinator
 from hierarchical_graph.centrality_measure.pagerank import PageRank
 from hierarchical_graph.centrality_measure.betweenness import Betweenness
 from hierarchical_graph.utils.sigma_js import SigmaJS
-from hierarchical_graph.hierarchical_graph import HierarchicalGraph
-import random
-from itertools import product
+from hierarchical_graph.hierarchical_graphs import HierarchicalGraphs
 
 
+__MEASURES = {'pagerank': PageRank(),
+              'betweenness': Betweenness()}
 
 def run_hierarchical(parameters):
     random.seed(42)
@@ -17,46 +19,43 @@ def run_hierarchical(parameters):
     if parameters.random_graph:
         random.shuffle(graphs)
 
-    # biggest_graph = None
-    # max_size = float('-inf')
-    # for graph in graphs:
-    #     if len(graph) > max_size:
-    #         print(graph.name)
-    #         biggest_graph = graph
-    #         max_size = len(graph)
-    #
-    # print(biggest_graph)
+    # Select the 10 biggest graphs
     sorted_by_len = sorted(graphs, key=lambda x: -len(x))
-    for graph in sorted_by_len[-10:]:
+    for graph in sorted_by_len[:10]:
         print(graph.name)
-
 
     selected_graphs = sorted_by_len[:parameters.num_graphs]
 
-    percentages = [1.0, 0.8, 0.6, 0.4, 0.2]
     measures = ['pagerank', 'betweenness']
-    strategies = ['compute_once']
 
-    for strategy, measure, percentage in product(strategies, measures, percentages):
+    sigma_js = SigmaJS(parameters.coordinator['dataset'],
+                       parameters.folder_results,
+                       save_html=parameters.save_to_html)
 
-        parameters.percentage = percentage
-        parameters.centrality_measure = measure
-        parameters.deletion_strategy = strategy
-
-        if parameters.centrality_measure == 'pagerank':
-            measure = PageRank()
-        elif parameters.centrality_measure == 'betweenness':
-            measure = Betweenness()
+    for measure in measures:
+        h_graphs = HierarchicalGraphs(selected_graphs, __MEASURES[measure])
+        _save_h_graphs_to_js(sigma_js, h_graphs, __MEASURES[measure])
 
 
-        sigma_js = SigmaJS(parameters.coordinator['dataset'],
-                           parameters.folder_results,
-                           save_html=parameters.save_to_html)
 
-        hierarchical_graph = HierarchicalGraph(selected_graphs[1:], measure, sigma_js)
-        hierarchical_graph.create_hierarchy_percent(selected_graphs,
-                                                   percentage_remaining=percentage,
-                                                   deletion_strategy=strategy,
-                                                   verbose=False)
+def _save_h_graphs_to_js(sigma_js, h_graphs, measure):
+    original_graphs = h_graphs.hierarchy[1.0]
 
-        # break
+    for level, (percentage, graphs) in enumerate(h_graphs.hierarchy.items()):
+
+        for idx, graph in enumerate(graphs):
+            original_size = len(original_graphs[idx])
+            current_size = len(graph)
+            extra_info = f'percentage_{percentage}'
+
+            extra_info_nodes = f'Current nodes/Total nodes: {current_size}/{original_size} <br>' \
+                               f'Percentage remaining: {percentage * 100:.0f}%'
+
+            centrality_score = measure.calc_centrality_score(graph)
+
+            sigma_js.save_to_sigma_with_score(graph,
+                                                   centrality_score,
+                                                   measure.name,
+                                                   level=level,
+                                                   extra_info=extra_info,
+                                                   extra_info_nodes=extra_info_nodes)

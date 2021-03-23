@@ -6,22 +6,42 @@ cimport cython
 from libc.math cimport ceil
 from time import time
 
-cdef class HierarchicalGraph:
+from graph_pkg.utils.constants cimport PERCENT_HIERARCHY
 
 
-    def __init__(self, list graphs, CentralityMeasure measure): # , sigma_js=None):
-        self.level_graphs = [graphs]
+cdef class HierarchicalGraphs:
+
+
+    def __init__(self, list graphs, CentralityMeasure measure,
+                 str deletion_strategy='compute_once', bint verbose=True):
+        self.hierarchy = {}
+        self.original_graphs = graphs
         self.measure = measure
-        # self.sigma_js = sigma_js
+        self.deletion_strategy = deletion_strategy
+        self.verbose = verbose
+
+        self._create_hierarchy_of_graphs()
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef void _create_hierarchy_of_graphs(self):
+        cdef:
+            double percentage
+
+        if self.verbose:
+            print(f'\n** Create Graph Hierarchy with {self.measure.name} **')
+
+        for percentage in PERCENT_HIERARCHY:
+
+            self.hierarchy[percentage] = self._reduce_graphs(self.original_graphs,
+                                                             percentage)
 
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
-    cpdef list create_hierarchy_percent(self, list graphs,
-                                        double percentage_remaining=1.0,
-                                        str deletion_strategy="recomputing",
-                                        bint verbose=True):
+    cpdef list _reduce_graphs(self, list graphs, double percentage_remaining=1.0):
         """
+        Reduce the size of the graph until it remains the given percentage of nodes from the original graphs.
         
         :param graphs: 
         :param percentage_remaining: 
@@ -32,13 +52,13 @@ cdef class HierarchicalGraph:
             list reduced_graphs = []
             Graph graph, tmp_graph
 
-        if verbose:
-            print('\n** Creating hierarchical representation **')
+        if self.verbose:
+            print(f'~~ Create graph with {percentage_remaining:.1f}% of remaining nodes')
             start_time = time()
 
-        if deletion_strategy == 'recomputing':
+        if self.deletion_strategy == 'recomputing':
             delete_strat = self._update_graph_recomputing
-        elif deletion_strategy == 'compute_once':
+        elif self.deletion_strategy == 'compute_once':
             delete_strat = self._update_graph_compute_once
 
 
@@ -55,7 +75,7 @@ cdef class HierarchicalGraph:
 
             reduced_graphs.append(tmp_graph)
 
-        if verbose:
+        if self.verbose:
             print(f'~~ Running time: {time() - start_time:.2f}s')
 
         return reduced_graphs
@@ -78,11 +98,6 @@ cdef class HierarchicalGraph:
         for idx_del in idx_to_delete_sorted:
             graph.remove_node_by_idx(idx_del)
 
-        # if self.sigma_js is not None:
-        #     tmp_idx = np.sort(idx_sorted[num_nodes_to_del:])
-        #     # print(centrality_score[tmp_idx])
-        #     self._save_graph_to_js(graph, num_nodes_to_del, centrality_score[tmp_idx])
-
     cpdef void _update_graph_recomputing(self, Graph graph, int num_nodes_to_del):
         """
         Delete one node at a time and recompute the centrality score every turn.
@@ -100,21 +115,3 @@ cdef class HierarchicalGraph:
             idx_del = idx_to_delete[0]
 
             graph.remove_node_by_idx(idx_del)
-
-    # cpdef void _save_graph_to_js(self, Graph graph, int num_nodes_deleted, double[::1] centrality_score):
-    #     original_size = len(graph) + num_nodes_deleted
-    #     current_size = len(graph)
-    #     percentage_size = current_size / original_size
-    #     rounded_percentage_size = ceil(percentage_size * 10) / 10
-    #     extra_info = f'percentage_{rounded_percentage_size}'
-    #
-    #     extra_info_nodes = f'Current nodes/Total nodes: {current_size}/{original_size} <br>' \
-    #                        f'Percentage remaining: {rounded_percentage_size * 100:.0f}%'
-    #
-    #     # print(centrality_score)
-    #     self.sigma_js.save_to_sigma_with_score(graph,
-    #                                            centrality_score,
-    #                                            self.measure.name,
-    #                                            level=rounded_percentage_size*100,
-    #                                            extra_info=extra_info,
-    #                                            extra_info_nodes=extra_info_nodes)
