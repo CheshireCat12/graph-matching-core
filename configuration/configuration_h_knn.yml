@@ -38,9 +38,8 @@ general:
     alpha: [1, 20, 0.05]
     ks: [1, 3, 5]
   hierarchy_params:
-    percentages: [0.8, 0.6, 0.4, 0.2]
+    percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
     centrality_measures: [pagerank, betweenness]
-  percentage: 1.0
   centrality_measure: pagerank
   parallel: True
   deletion_strategy: compute_once

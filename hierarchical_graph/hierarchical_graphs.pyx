@@ -53,7 +53,7 @@ cdef class HierarchicalGraphs:
             Graph graph, tmp_graph
 
         if self.verbose:
-            print(f'~~ Create graph with {percentage_remaining:.1f}% of remaining nodes')
+            print(f'~~ Create graph with {percentage_remaining*100:.0f}% of remaining nodes')
             start_time = time()
 
         if self.deletion_strategy == 'recomputing':

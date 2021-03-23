@@ -54,9 +54,11 @@ cdef:
     ##  hierarchical Constants   ##
     ###############################
 
-    # list PERCENT_HIERARCHY = [100, 80, 60, 40, 20]
     list PERCENT_HIERARCHY = [1.0, 0.8, 0.6, 0.4, 0.2]
 
+    dict MEASURES = {
+
+    }
 
 ########################
 ##  Sigma Constants   ##

@@ -54,7 +54,6 @@ cdef class KNNClassifier:
         distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
                                                         graphs_pred,
                                                         heuristic=True)
-        # distances = np.asarray(distances)
 
         # Get the index of the k smallest distances in the matrix distances.
         idx_k_nearest = np.argpartition(distances, k, axis=0)[:k]

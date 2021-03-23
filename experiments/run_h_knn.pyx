@@ -1,7 +1,7 @@
 from graph_pkg.utils.coordinator.coordinator_classifier cimport CoordinatorClassifier
+from graph_pkg.utils.constants cimport PERCENT_HIERARCHY
 from graph_pkg.algorithm.knn cimport KNNClassifier
-from hierarchical_graph.hierarchical_graph cimport HierarchicalGraph
-
+from hierarchical_graph.hierarchical_graphs cimport HierarchicalGraphs
 from hierarchical_graph.centrality_measure.pagerank import PageRank
 from hierarchical_graph.centrality_measure.betweenness import Betweenness
 
@@ -15,11 +15,6 @@ from collections import defaultdict
 import pandas as pd
 
 
-__MEASURES = {
-    'pagerank': PageRank(),
-    'betweenness': Betweenness(),
-}
-
 cpdef void _write_results(double acc, double exec_time, parameters, name):
     Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
     # name = f'percent_remain_{parameters.percentage}_' \
@@ -31,6 +26,15 @@ cpdef void _write_results(double acc, double exec_time, parameters, name):
         fp.write(f'\n\nAcc: {acc}; Time: {exec_time}\n'
                  f'{"="*50}\n\n')
 
+cpdef void _write_results_new(list accuracies, list exec_times, parameters, name):
+    Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
+
+    filename = os.path.join(parameters.folder_results, name)
+    with open(filename, mode='a+') as fp:
+        fp.write(str(parameters))
+        fp.write(f'\n\nAcc: {",".join([str(val) for val in accuracies])};'
+                 f'\nTime: {",".join([str(val) for val in exec_times])}\n'
+                 f'{"="*50}\n\n')
 
 cpdef tuple _do_prediction(KNNClassifier knn, list graphs, list labels, int k, str set_):
     start_time = time()
@@ -56,7 +60,7 @@ class HyperparametersTuning:
 
     __MEASURES = {
         'pagerank': PageRank(),
-        'betweeness': Betweenness(),
+        'betweenness': Betweenness(),
     }
 
     def __init__(self, parameters):
@@ -83,9 +87,6 @@ class HyperparametersTuning:
 
             self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, alpha)
             self.parameters.k = k
-
-            # self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, 0.75)
-            # self.parameters.k = 3
 
             acc, _ = self._run_pred_val_test()
             accuracies[k].append(acc)
@@ -122,18 +123,17 @@ class HyperparametersTuning:
         best_alpha = self.parameters.best_alpha
         self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
 
-        for measure, percentage in product(measures, percentages):
-            print('+ Tuning parameters +')
-            print(f'+ Measure: {measure}, percentage: {percentage} +\n')
+        for measure in measures:
+            print('+ Tweaking parameters +')
+            print(f'+ Measure: {measure} +\n')
 
-            self.parameters.percentage = percentage
             self.parameters.centrality_measure = measure
 
             acc, time_pred = self._run_pred_val_test(validation=False)
 
-            filename = f'measure_{measure}_del_strat_{self.parameters.deletion_strategy}_heuristic.txt'
+            filename = f'refactor_measure_{measure}_heuristic.txt'
 
-            _write_results(acc, time_pred, self.parameters, filename)
+            _write_results_new(acc, time_pred, self.parameters, filename)
 
 
     def _run_pred_val_test(self, validation=True):
@@ -147,7 +147,6 @@ class HyperparametersTuning:
         deletion_strategy = self.parameters.deletion_strategy
         k = self.parameters.k
         parallel = self.parameters.parallel
-        percentage = self.parameters.percentage
 
         # Retrieve graphs with labels
         coordinator = CoordinatorClassifier(**coordinator_params)
@@ -157,35 +156,44 @@ class HyperparametersTuning:
 
         # Set the graph hierarchical
         measure = self.__MEASURES[centrality_measure]
-        h_graph = HierarchicalGraph(graphs_train, measure)
+        h_graphs_train = HierarchicalGraphs(graphs_train, measure)
+        h_graphs_val = HierarchicalGraphs(graphs_val, measure)
+        h_graphs_test = HierarchicalGraphs(graphs_test, measure)
 
-        # Create the reduced graphs
-        graphs_train_reduced = h_graph.create_hierarchy_percent(graphs_train,
-                                                                percentage,
-                                                                deletion_strategy,
-                                                                verbose=True)
-        if validation:
-            graphs_val_reduced = h_graph.create_hierarchy_percent(graphs_val,
-                                                              percentage,
-                                                              deletion_strategy,
-                                                              verbose=True)
-        else:
-            graphs_test_reduced = h_graph.create_hierarchy_percent(graphs_test,
-                                                               percentage,
-                                                               deletion_strategy,
-                                                               verbose=True)
 
-        # Create and train the classifier
-        knn = KNNClassifier(coordinator.ged, parallel)
-        knn.train(graphs_train_reduced, labels_train)
+        accuracies, times = [], []
+        for percentage in self.parameters.hierarchy_params['percentages']:
+            # Create and train the classifier
+            knn = KNNClassifier(coordinator.ged, parallel)
+            knn.train(h_graphs_train.hierarchy[percentage], labels_train)
 
+            acc, time_pred = _do_prediction(knn, h_graphs_test.hierarchy[percentage], labels_test, k, 'Test')
+            accuracies.append(acc)
+            times.append(time_pred)
+
+        return accuracies, times
+        #
+        # # Create the reduced graphs
+        # graphs_train_reduced = h_graph.create_hierarchy_percent(graphs_train,
+        #                                                         percentage,
+        #                                                         deletion_strategy,
+        #                                                         verbose=True)
+        # if validation:
+        #     graphs_val_reduced = h_graph.create_hierarchy_percent(graphs_val,
+        #                                                       percentage,
+        #                                                       deletion_strategy,
+        #                                                       verbose=True)
+        # else:
+        #     graphs_test_reduced = h_graph.create_hierarchy_percent(graphs_test,
+        #                                                        percentage,
+        #                                                        deletion_strategy,
+        #                                                        verbose=True)
         # Perform prediction
-        if validation:
-            acc, time_pred = _do_prediction(knn, graphs_val_reduced, labels_val, k, 'Validation')
-        else:
-            acc, time_pred = _do_prediction(knn, graphs_test_reduced, labels_test, k, 'Test')
+        # if validation:
+        #     acc, time_pred = _do_prediction(knn, graphs_val_reduced, labels_val, k, 'Validation')
+        # else:
+        #     acc, time_pred = _do_prediction(knn, graphs_test_reduced, labels_test, k, 'Test')
 
-        return acc, time_pred
         # acc_test, time_test = _do_prediction(knn, graphs_test_reduced, labels_test, k, 'Test')
         #
         # _write_results(acc_val, time_val, self.parameters)
@@ -198,64 +206,3 @@ cpdef void run_h_knn(parameters):
         parameters_tuning.fine_tune()
     else:
         parameters_tuning.run_hierarchy()
-
-    # cdef:
-    #     CoordinatorClassifier coordinator
-    #     KNNClassifier knn
-    #     int[::1] predictions
-    #     double accuracy
-    #
-    # params_coordinator = parameters.coordinator
-    # k = parameters.k
-    # parallel = parameters.parallel
-    #
-    # percentages = [1.0, 0.8, 0.6, 0.4, 0.2]
-    # measures = ['betweeness', 'pagerank']
-    # deletion_strategies = ['compute_once', 'recomputing']
-    # # alphas = [0.1 * i for i in range(1, 10)]
-    # alphas = []
-    #
-    # params_edit_cost = params_coordinator['params_edit_cost']
-    #
-    # # for measure, percentage, del_strat, alpha  in product(measures, percentages, deletion_strategies, alphas):
-    # for measure, percentage, del_strat in product(measures, percentages, deletion_strategies):
-    #     print(f'\n{"+"*30}')
-    #     print(f'\n+ Percentage: {percentage}; Measure: {measure}; Delete Strat: {del_strat} +\n')
-    #
-    #     # Init the hyperparameters to test
-    #     parameters.percentage = percentage
-    #     parameters.centrality_measure = measure
-    #     parameters.deletion_strategy = del_strat
-    #     # parameters.coordinator['params_edit_cost'] = (*params_edit_cost, alpha)
-    #
-    #     coordinator = CoordinatorClassifier(**parameters.coordinator)
-    #     graphs_train, labels_train = coordinator.train_split(conv_lbl_to_code=True)
-    #     graphs_val, labels_val = coordinator.val_split(conv_lbl_to_code=True)
-    #     graphs_test, labels_test = coordinator.test_split(conv_lbl_to_code=True)
-    #
-    #     measure = __MEASURES[parameters.centrality_measure]
-    #
-    #     h_graph = HierarchicalGraph(graphs_train, measure)
-    #
-    #
-    #     graphs_train_reduced = h_graph.create_hierarchy_percent(graphs_train,
-    #                                                             parameters.percentage,
-    #                                                             parameters.deletion_strategy,
-    #                                                             verbose=True)
-    #     graphs_val_reduced = h_graph.create_hierarchy_percent(graphs_val,
-    #                                                           parameters.percentage,
-    #                                                           parameters.deletion_strategy,
-    #                                                           verbose=True)
-    #     graphs_test_reduced = h_graph.create_hierarchy_percent(graphs_test,
-    #                                                            parameters.percentage,
-    #                                                            parameters.deletion_strategy,
-    #                                                            verbose = True)
-    #
-    #     knn = KNNClassifier(coordinator.ged, parallel)
-    #     knn.train(graphs_train_reduced, labels_train)
-    #
-    #     acc_val, time_val = _do_prediction(knn, graphs_val_reduced, labels_val, k, 'Validation')
-    #     acc_test, time_test = _do_prediction(knn, graphs_test_reduced, labels_test, k, 'Test')
-    #
-    #     _write_results(acc_val, time_val, parameters)
-    #     _write_results(acc_test, time_test, parameters)
