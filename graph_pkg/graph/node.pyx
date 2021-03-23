@@ -1,11 +1,35 @@
 
 cdef class Node:
+    """
+    Class used to represent the Node.
+    A node contains an ID and a Label.
+
+    Attributes
+    ----------
+    idx : int
+    label : LabelBase
+
+    Methods
+    -------
+    update_idx(new_idx)
+    """
 
     def __init__(self, unsigned int idx, LabelBase label):
+        """
+
+        :param idx:
+        :param label:
+        """
         self.idx = idx
         self.label = label
 
     cdef void update_idx(self, unsigned int new_idx):
+        """
+        Update the index of the node with the new index.
+        
+        :param new_idx: 
+        :return: 
+        """
         self.idx = new_idx
 
     def __richcmp__(self, Node other, int op):

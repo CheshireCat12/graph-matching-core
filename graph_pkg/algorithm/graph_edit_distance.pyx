@@ -16,6 +16,13 @@ cdef class GED:
                                        Graph graph_source,
                                        Graph graph_target,
                                        bint heuristic=False):
+        """
+        
+        :param graph_source: 
+        :param graph_target: 
+        :param heuristic: 
+        :return: 
+        """
         cdef:
             int i, j
             int[::1] phi

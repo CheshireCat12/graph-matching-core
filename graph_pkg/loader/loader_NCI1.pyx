@@ -1,4 +1,7 @@
 cdef class LoaderNCI1(LoaderBase):
+    """
+    Class to format the idx, the node's label and the edge's label correctly
+    """
 
     def __init__(self, str folder='./data/NCI1/data/'):
         super().__init__(folder)

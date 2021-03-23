@@ -17,7 +17,6 @@ cdef class Coordinator:
         str _folder_dataset
         readonly tuple params_edit_cost
         readonly list graphs
-        readonly list dataset_available
 
         EditCost edit_cost
         readonly GED ged

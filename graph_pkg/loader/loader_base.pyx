@@ -6,8 +6,20 @@ from xmltodict import parse
 from graph_pkg.utils.constants cimport EXTENSION_GRAPHS
 
 cdef class LoaderBase:
+    """
+    Base class to load the datasets.
+    Load and construct the graphs.
+
+    Methods
+    -------
+    load()
+    """
 
     def __init__(self, str folder):
+        """
+
+        :param folder:
+        """
         self._folder = folder
 
     cpdef int _format_idx(self, str idx):
@@ -20,6 +32,11 @@ cdef class LoaderBase:
         raise NotImplementedError
 
     cpdef list load(self):
+        """
+        Load and construct the graphs.
+        
+        :return: list of constructed graphs
+        """
         cdef object parsed_data
 
         files = os.path.join(self._folder, EXTENSION_GRAPHS)

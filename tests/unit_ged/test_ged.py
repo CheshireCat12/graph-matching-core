@@ -239,14 +239,14 @@ def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_so
     # assert False
 
 
-@pytest.mark.parametrize('graph_name_source_target',
+@pytest.mark.parametrize('graph_name_source_target, expected',
                          [
-                             (['molecule_2767', 'molecule_2769']),
-                             (['molecule_2769', 'molecule_2767']),
-                             (['molecule_1897', 'molecule_1349']),
-                             (['molecule_1897', 'molecule_1051']),
+                             (['molecule_2767', 'molecule_2769'], 383.9),
+                             (['molecule_2769', 'molecule_2767'], 383.9),
+                             (['molecule_1897', 'molecule_1349'], 133.1),
+                             (['molecule_1897', 'molecule_1051'], 147.4),
                          ])
-def test_NCI1(NCI1_graphs, graph_name_source_target):
+def test_NCI1(NCI1_graphs, graph_name_source_target, expected):
     graph_name_source, graph_name_target = graph_name_source_target
     graph_source = [graph for graph in NCI1_graphs if graph.name == graph_name_source][0]
     graph_target = [graph for graph in NCI1_graphs if graph.name == graph_name_target][0]
@@ -256,11 +256,11 @@ def test_NCI1(NCI1_graphs, graph_name_source_target):
     ged = GED(EditCostNCI1(cst_cost_node, cst_cost_node,
                            cst_cost_edge, cst_cost_edge, 'dirac'))
 
-    results = ged.compute_edit_distance(graph_source, graph_target)
+    results = ged.compute_edit_distance(graph_source, graph_target, heuristic=True)
 
     print(results)
 
-    assert False
+    assert round(results, 5) == expected
 
     # print(f'###### diff {results - expected}')
     # print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')

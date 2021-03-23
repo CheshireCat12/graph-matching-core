@@ -2,12 +2,36 @@ from graph_pkg.utils.constants cimport DEFAULT_FOLDERS_LABELS, DEFAULT_LABELS_TO
 
 
 cdef class CoordinatorClassifier(Coordinator):
+    """
+    Coordinator Classifier is a subclass of the Coordinator.
+    It is used to split the dataset into the training, validation, and test set.
+
+    Attributes
+    ----------
+    folder_labels : str
+    loader_split : LoaderTrainTestValSplit
+    graph_filename_to_graph : dict
+    lbl_to_code : dict
+
+    Methods
+    -------
+    train_split(conv_lbl_to_code=False)
+    test_split(conv_lbl_to_code=False)
+    val_split(conv_lbl_to_code=False)
+    """
 
     def __init__(self,
                  str dataset,
                  tuple params_edit_cost,
                  str folder_dataset='',
                  str folder_labels=''):
+        """
+
+        :param dataset:
+        :param params_edit_cost:
+        :param folder_dataset:
+        :param folder_labels:
+        """
         super().__init__(dataset, params_edit_cost, folder_dataset)
         self.folder_labels = folder_labels
         self.loader_split = LoaderTrainTestValSplit(self.folder_dataset)
@@ -60,19 +84,34 @@ cdef class CoordinatorClassifier(Coordinator):
         data = self.loader_split.load_train_split()
         return self._split_dataset(data, conv_lbl_to_code)
 
+    cpdef tuple val_split(self, bint conv_lbl_to_code=False):
+        """
+        Gather the validation data.
+        It returns a tuple of two lists. The first list contain the data.
+        The second one contains the corresponding labels.
+
+        :return: tuple(list, list)
+        """
+        cdef:
+            list data
+
+        data = self.loader_split.load_val_split()
+        return self._split_dataset(data, conv_lbl_to_code)
+
     cpdef tuple test_split(self, bint conv_lbl_to_code=False):
+        """
+        Gather the test data.
+        It returns a tuple of two lists. The first list contain the data.
+        The second one contains the corresponding labels.
+         
+        :return: tuple(list, list)
+        """
         cdef:
             list data
 
         data = self.loader_split.load_test_split()
         return self._split_dataset(data, conv_lbl_to_code)
 
-    cpdef tuple val_split(self, bint conv_lbl_to_code=False):
-        cdef:
-            list data
-
-        data = self.loader_split.load_val_split()
-        return self._split_dataset(data, conv_lbl_to_code)
 
     def __repr__(self):
         return super().__repr__() + f'Folder Labels: {self.folder_labels}'
@@ -80,5 +119,5 @@ cdef class CoordinatorClassifier(Coordinator):
     def __str__(self):
         indent = '   '
         str_parent = super().__str__().split('\n')
-        str_parent[0] = f'{indent}Paramters CoordinatorClassifier:'
+        str_parent[0] = f'{indent}Parameters CoordinatorClassifier:'
         return '\n'.join(str_parent) + f'{indent * 2}Folder Labels : {self.folder_labels}\n'

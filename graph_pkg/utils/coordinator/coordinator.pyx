@@ -1,6 +1,23 @@
+"""
+@author: Anthony Gillioz
+
+This file contains the coordinator class. It is used to load the graphs given the name of the dataset.
+The EditCost is also loaded automatically given the name of the dataset.
+"""
 from graph_pkg.utils.constants cimport DEFAULT_FOLDERS
 
 cdef class Coordinator:
+    """
+    Coordinator class coordinate the datasets with their corresponding loaders and edit costs.
+
+    Attributes
+    ----------
+    dataset : str
+    folder_dataset : str
+    params_edit_cost : tuple
+    graphs : list
+    ged : GED
+    """
 
     def __init__(self,
                  str dataset,
@@ -35,6 +52,7 @@ cdef class Coordinator:
 
     cdef int _init_system(self) except? -1:
         """
+        Init the correct value for the given dataset.
         
         :return: 
         """
