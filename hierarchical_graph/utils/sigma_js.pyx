@@ -2,7 +2,7 @@
 @author: Anthony Gillioz
 
 This script is used to create the graph from the core graph to the sigmaJS library.
-
+The sigmaJS have to be put at the correct place to allow the created graphs to be drawn correctly.
 """
 import json
 import networkx as nx
@@ -10,14 +10,38 @@ import os
 from string import Template
 from pathlib import Path
 
-from hierarchical_graph.centrality_measure.centrality_measure cimport CentralityMeasure
-
 
 def _round_3(num):
     return round(num, 3)
 
 cdef class SigmaJS:
-    """Class to transform the Graphs into html with the sigma.js library."""
+    """
+    Class to transform the Graphs into html with the sigma.js library.
+
+    Constants
+    ---------
+    _HTML_TEMPLATE : str
+        Contains the html header with the paths to the SigmaJS lib.
+        The js code is going to be filled in the HTML template
+    _JS_TEMPLATE : str
+        Contains the javascript code to create and draw the graphs
+
+    Attributes
+    ----------
+    dataset: str
+        The name of the dataset
+    folder_results: str
+        Folder where to write the results
+    save_html: bool
+       if to save the graph into the html format
+    save_json: bool
+       if to save the graph into the json format
+
+    Methods
+    -------
+
+
+    """
 
     _HTML_TEMPLATE = Template('''
 <!DOCTYPE html>
@@ -180,13 +204,11 @@ dragListener.bind('dragend', function(event) {
                  str dataset,
                  str folder_results,
                  bint save_html=True,
-                 bint save_json=False,
-                 bint tree_structure=False):
+                 bint save_json=False):
         self.dataset = dataset
         self.folder_results = folder_results
         self.save_html = save_html
         self.save_json = save_json
-        self.tree_structure = tree_structure
 
     def save_to_sigma_with_score(self,
                                  Graph graph,
@@ -195,6 +217,17 @@ dragListener.bind('dragend', function(event) {
                                  int level=-1,
                                  str extra_info='',
                                  str extra_info_nodes='No info'):
+        """
+        Create and save the graph into the SigmaJS format.
+        
+        :param graph:
+        :param centrality_score:
+        :param name_centrality_measure:
+        :param level:
+        :param extra_info:
+        :param extra_info_nodes:
+        :return:
+        """
         json_graph = self.graph_to_json_with_score(graph, centrality_score, name_centrality_measure)
 
         if self.save_json:
@@ -222,6 +255,16 @@ dragListener.bind('dragend', function(event) {
                        str extension='html',
                        int level=-1,
                        str extra_info=''):
+        """
+
+        :param data:
+        :param graph_name:
+        :param centrality_measure:
+        :param extension:
+        :param level:
+        :param extra_info:
+        :return:
+        """
         folder = self.folder_results
         prefix = ''
         suffix = ''
@@ -232,7 +275,6 @@ dragListener.bind('dragend', function(event) {
         if level >= 0:
             folder = os.path.join(folder, f'{centrality_measure}_{graph_name}', '')
             suffix = f'_{level}'
-
 
 
         Path(folder).mkdir(parents=True, exist_ok=True)
@@ -251,6 +293,16 @@ dragListener.bind('dragend', function(event) {
     def graph_to_json_with_score(self, Graph graph,
                                  double[::1] centrality_score,
                                  str name_centrality_measure):
+        """
+        Convert the graph to the json format.
+        Create a dict with the nodes and the edges of the given graph.
+        The format of the nodes and edges correspond to the format of the SigmaJS lib.
+
+        :param graph:
+        :param centrality_score:
+        :param name_centrality_measure:
+        :return: The graph on a dict format.
+        """
         cdef:
             Edge edge
             Node node
@@ -280,6 +332,15 @@ dragListener.bind('dragend', function(event) {
         return graph_data
 
     def graph_to_html(self, dict graph, str graph_name, int level=-1, str extra_info_nodes='No info'):
+        """
+        Create the graph in SigmaJS format by filling the JS and HTML templates.
+
+        :param graph:
+        :param graph_name:
+        :param level:
+        :param extra_info_nodes:
+        :return: The graph under html format
+        """
         if self.dataset in ['mutagenicity', 'NCI1']:
             self._create_layout_mutagenicity(graph)
 
@@ -298,6 +359,14 @@ dragListener.bind('dragend', function(event) {
 
 
     def _create_layout_mutagenicity(self, dict graph):
+        """
+        Create an extra layout for the graph.
+        It is useful for the datasets that have not the coordinates of the nodes.
+        Use the NetworkX lib to find a good approximation of position of the nodes.
+
+        :param graph:
+        :return:
+        """
         nx_graph = nx.Graph()
         for node in graph['nodes']:
             nx_graph.add_node(node['id'])
@@ -310,4 +379,3 @@ dragListener.bind('dragend', function(event) {
 
         for node in graph['nodes']:
             node['x'], node['y'] = pos[node['id']]
-

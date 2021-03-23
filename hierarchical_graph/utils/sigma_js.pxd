@@ -6,4 +6,4 @@ cdef class SigmaJS:
 
     cdef:
         str dataset, folder_results
-        bint save_html, save_json, tree_structure
+        bint save_html, save_json
