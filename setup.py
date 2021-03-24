@@ -23,6 +23,7 @@ install_requires = [
     'gitpython',
     'easydict',
     'bunch',
+    'sklearn',
 ]
 
 

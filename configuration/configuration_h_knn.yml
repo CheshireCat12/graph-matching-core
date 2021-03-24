@@ -44,3 +44,4 @@ general:
   parallel: True
   deletion_strategy: compute_once
   save_to_html: False
+  save_predictions: True

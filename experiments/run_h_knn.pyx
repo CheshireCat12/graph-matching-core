@@ -30,6 +30,7 @@ cpdef void _write_results_new(list accuracies, list exec_times, parameters, name
     Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
 
     filename = os.path.join(parameters.folder_results, name)
+
     with open(filename, mode='a+') as fp:
         fp.write(str(parameters))
         fp.write(f'\n\nAcc: {",".join([str(val) for val in accuracies])};'
@@ -53,7 +54,7 @@ cpdef tuple _do_prediction(KNNClassifier knn, list graphs, list labels, int k, s
     print(f'{set_} Accuracy {accuracy}')
     print(f'Prediction time: {prediction_time:.3f}\n')
 
-    return (accuracy, prediction_time)
+    return accuracy, prediction_time, predictions, lbls_test
 
 
 class HyperparametersTuning:
@@ -66,51 +67,51 @@ class HyperparametersTuning:
     def __init__(self, parameters):
         self.parameters = parameters
 
-    def fine_tune(self):
-        print('Finetune the parameters')
-
-        # set parameters to tune
-        alpha_start, alpha_end, alpha_step = self.parameters.tuning['alpha']
-        alphas = [alpha_step * i for i in range(alpha_start, alpha_end)]
-        ks = self.parameters.tuning['ks']
-
-        params_edit_cost = self.parameters.coordinator['params_edit_cost']
-
-        accuracies = defaultdict(list)
-
-        best_acc = float('-inf')
-        best_params = (None,)
-
-        for k, alpha in product(ks, alphas):
-            print('+ Tuning parameters +')
-            print(f'+ alpha: {alpha:.2f}, k: {k} +\n')
-
-            self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, alpha)
-            self.parameters.k = k
-
-            acc, _ = self._run_pred_val_test()
-            accuracies[k].append(acc)
-
-            if acc > best_acc:
-                best_acc = acc
-                best_params = (alpha, k)
-
-            # break
-
-        dataframe = pd.DataFrame(accuracies, index=alphas, columns=ks)
-        print(dataframe)
-
-        print(f'Best acc on validation: {best_acc}, best params: {best_params}')
-
-        Path(self.parameters.folder_results).mkdir(parents=True, exist_ok=True)
-        filename = os.path.join(self.parameters.folder_results, 'fine_tuning_heuristic.csv')
-        dataframe.to_csv(filename)
-
-        best_alpha, best_k = best_params
-        self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
-        self.parameters.k = best_k
-        acc_test, time_pred = self._run_pred_val_test(validation=False)
-        _write_results(acc_test, time_pred, self.parameters, 'accuracy_test_heuristic.txt')
+    # def fine_tune(self):
+    #     print('Finetune the parameters')
+    #
+    #     # set parameters to tune
+    #     alpha_start, alpha_end, alpha_step = self.parameters.tuning['alpha']
+    #     alphas = [alpha_step * i for i in range(alpha_start, alpha_end)]
+    #     ks = self.parameters.tuning['ks']
+    #
+    #     params_edit_cost = self.parameters.coordinator['params_edit_cost']
+    #
+    #     accuracies = defaultdict(list)
+    #
+    #     best_acc = float('-inf')
+    #     best_params = (None,)
+    #
+    #     for k, alpha in product(ks, alphas):
+    #         print('+ Tuning parameters +')
+    #         print(f'+ alpha: {alpha:.2f}, k: {k} +\n')
+    #
+    #         self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, alpha)
+    #         self.parameters.k = k
+    #
+    #         acc, _ = self._run_pred_val_test()
+    #         accuracies[k].append(acc)
+    #
+    #         if acc > best_acc:
+    #             best_acc = acc
+    #             best_params = (alpha, k)
+    #
+    #         # break
+    #
+    #     dataframe = pd.DataFrame(accuracies, index=alphas, columns=ks)
+    #     print(dataframe)
+    #
+    #     print(f'Best acc on validation: {best_acc}, best params: {best_params}')
+    #
+    #     Path(self.parameters.folder_results).mkdir(parents=True, exist_ok=True)
+    #     filename = os.path.join(self.parameters.folder_results, 'fine_tuning_heuristic.csv')
+    #     dataframe.to_csv(filename)
+    #
+    #     best_alpha, best_k = best_params
+    #     self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
+    #     self.parameters.k = best_k
+    #     acc_test, time_pred = self._run_pred_val_test(validation=False)
+    #     _write_results(acc_test, time_pred, self.parameters, 'accuracy_test_heuristic.txt')
 
     def run_hierarchy(self):
         print('Run Hierarchy')
@@ -167,7 +168,20 @@ class HyperparametersTuning:
             knn = KNNClassifier(coordinator.ged, parallel)
             knn.train(h_graphs_train.hierarchy[percentage], labels_train)
 
-            acc, time_pred = _do_prediction(knn, h_graphs_test.hierarchy[percentage], labels_test, k, 'Test')
+            acc, time_pred, predictions, np_lbl_test = _do_prediction(knn,
+                                                                      h_graphs_test.hierarchy[percentage],
+                                                                      labels_test, k, 'Test')
+
+            if self.parameters.save_predictions:
+                Path(self.parameters.folder_results).mkdir(parents=True, exist_ok=True)
+
+                name = f'prediction_{percentage*100:.0f}_{self.parameters.centrality_measure}.npy'
+                filename = os.path.join(self.parameters.folder_results, name)
+                with open(filename, 'wb') as f:
+
+                    np.save(f, np_lbl_test)
+                    np.save(f, predictions)
+
             accuracies.append(acc)
             times.append(time_pred)
 
