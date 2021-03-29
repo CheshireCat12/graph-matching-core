@@ -31,7 +31,7 @@ cpdef void _write_results_new(list accuracies, list exec_times, parameters, name
     with open(filename, mode='a+') as fp:
         fp.write(str(parameters))
         fp.write(f'\n\nAcc: {",".join([str(val) for val in accuracies])};'
-                 f'\nTime: {",".join([str(val) for val in exec_times])}\n'
+                 f'\nAlphas: {",".join([str(val) for val in exec_times])}\n'
                  f'{"="*50}\n\n')
 
 
@@ -48,6 +48,8 @@ class HyperparametersTuning:
     def run_hierarchy(self):
         print('Run Hierarchy')
 
+        Path(self.parameters.folder_results).mkdir(parents=True, exist_ok=True)
+
         # set parameters to tune
         percentages = self.parameters.hierarchy_params['percentages']
         measures = self.parameters.hierarchy_params['centrality_measures']
@@ -62,12 +64,11 @@ class HyperparametersTuning:
 
             self.parameters.centrality_measure = measure
 
-            self._run_pred_val_test(validation=False)
+            acc, alphas = self._run_pred_val_test(validation=False)
             # acc, time_pred = self._run_pred_val_test(validation=False)
 
-            # filename = f'refactor_measure_{measure}_heuristic.txt'
-
-            # _write_results_new(acc, time_pred, self.parameters, filename)
+            filename = f'{measure}.txt'
+            _write_results_new([acc], list(alphas), self.parameters, filename)
 
 
     def _run_pred_val_test(self, validation=True):
@@ -95,14 +96,27 @@ class HyperparametersTuning:
         h_graphs_test = HierarchicalGraphs(graphs_test, measure)
 
 
+        # k = 3
         # Create and train the classifier
         knn = KNNLC(coordinator.ged, parallel)
         knn.train(h_graphs_train, labels_train)
-        acc, alphas = knn.optimize(h_graphs_val, labels_val, k,
-                                   optimization_strategy=self.parameters.optimization_strategy)
+
+        if self.parameters.do_optimization:
+            acc, alphas = knn.optimize(h_graphs_val, labels_val, k,
+                                       optimization_strategy=self.parameters.optimization_strategy)
+        else:
+            acc = 0
+            alphas = np.array(self.parameters.linear_combination)
+        # acc = 77.4
+        # alphas = np.array([0.647, 0.49, 0.129, 0.361, 0.98])
 
         print(f'best acc {acc}, best alphas {np.asarray(alphas)}')
-        knn.predict(h_graphs_test, labels_test, k, alphas)
+        accuray_final = knn.predict(h_graphs_test, labels_test,
+                                    k, alphas, save_predictions=True,
+                                    folder=self.parameters.folder_results)
+
+        return accuray_final, alphas
+
 
 
 

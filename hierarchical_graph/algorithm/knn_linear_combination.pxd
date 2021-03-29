@@ -25,9 +25,13 @@ cdef class KNNLinearCombination:
     cpdef double predict(self, HierarchicalGraphs h_graphs_pred,
                          list labels_pred,
                          int k,
-                         double[::1] alphas)
+                         double[::1] alphas,
+                         bint save_predictions=*,
+                         str folder=*)
 
     cpdef double[::1] fitness(self, double[:, ::1] population,
                               double[:, :, ::1] h_distances,
                               int[::1] np_labels_test,
-                              int k)
+                              int k,
+                              bint save_predictions=*,
+                              str folder=*)

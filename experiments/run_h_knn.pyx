@@ -178,7 +178,6 @@ class HyperparametersTuning:
                 name = f'prediction_{percentage*100:.0f}_{self.parameters.centrality_measure}.npy'
                 filename = os.path.join(self.parameters.folder_results, name)
                 with open(filename, 'wb') as f:
-
                     np.save(f, np_lbl_test)
                     np.save(f, predictions)
 
