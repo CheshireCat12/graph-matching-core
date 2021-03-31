@@ -8,13 +8,15 @@ from experiments.run_draw import run_draw
 from experiments.run_hierarchical import run_hierarchical
 from experiments.run_h_knn import run_h_knn
 from experiments.run_knn_lc import run_knn_lc
+from experiments.run_coarse_to_fine import run_coarse_to_fine
 
 __EXPERIMENTS = {'complete_ged': run_complete_ged,
                  'knn': run_knn,
                  'draw': run_draw,
                  'hierarchical': run_hierarchical,
                  'h_knn': run_h_knn,
-                 'knn_lc': run_knn_lc}
+                 'knn_lc': run_knn_lc,
+                 'coarse_to_fine': run_coarse_to_fine}
 
 def print_fancy_title(text, size_max=50):
     """
@@ -43,18 +45,11 @@ def run_experiment(args):
     print_fancy_title('Run')
     __EXPERIMENTS[args.exp](parameters)
 
-    # if args.exp == 'complete_ged':
-    #     run_complete_ged(parameters)
-    # elif args.exp == 'knn':
-    #     run_knn(parameters)
-    # elif args.exp == 'draw':
-    #     run_draw(parameters)
-
 
 if __name__ == '__main__':
     parser = ArgumentParser(description='Run Experiments')
     parser.add_argument('-e', '--exp', type=str, required=True,
-                        choices=__EXPERIMENTS.keys(), # ['complete_ged', 'knn', 'draw'],
+                        choices=__EXPERIMENTS.keys(),
                         help='Choose the experiment to run.')
     parser.add_argument('-d', '--dataset', type=str,
                         default='letter',

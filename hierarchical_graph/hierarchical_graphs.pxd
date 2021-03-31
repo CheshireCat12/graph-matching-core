@@ -7,6 +7,7 @@ cdef class HierarchicalGraphs:
     cdef:
         readonly dict hierarchy
         list original_graphs
+        list percentage_hierarchy
         CentralityMeasure measure
         str deletion_strategy
         bint verbose

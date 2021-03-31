@@ -2,6 +2,7 @@ from graph_pkg.algorithm.graph_edit_distance cimport GED
 from graph_pkg.algorithm.matrix_distances cimport MatrixDistances
 from hierarchical_graph.hierarchical_graphs cimport HierarchicalGraphs
 
+
 cdef class KNNLinearCombination:
 
     cdef:

@@ -25,3 +25,7 @@ cdef class MatrixDistances:
                                                       bint heuristic=*)
 
     cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test, bint heuristic=*)
+
+    cpdef double[::1] test_parallel(self,
+                                        list prods,
+                                        bint heuristic=*)

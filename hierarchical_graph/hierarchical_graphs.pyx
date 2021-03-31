@@ -13,9 +13,11 @@ cdef class HierarchicalGraphs:
 
 
     def __init__(self, list graphs, CentralityMeasure measure,
+                 list percentage_hierarchy=PERCENT_HIERARCHY,
                  str deletion_strategy='compute_once', bint verbose=True):
         self.hierarchy = {}
         self.original_graphs = graphs
+        self.percentage_hierarchy = percentage_hierarchy
         self.measure = measure
         self.deletion_strategy = deletion_strategy
         self.verbose = verbose
@@ -31,7 +33,7 @@ cdef class HierarchicalGraphs:
         if self.verbose:
             print(f'\n** Create Graph Hierarchy with {self.measure.name} **')
 
-        for percentage in PERCENT_HIERARCHY:
+        for percentage in self.percentage_hierarchy:
 
             self.hierarchy[percentage] = self._reduce_graphs(self.original_graphs,
                                                              percentage)
