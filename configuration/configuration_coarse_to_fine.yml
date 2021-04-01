@@ -40,6 +40,6 @@ general:
   parallel: True
   deletion_strategy: compute_once
   save_predictions: True
-  limit: 5
-  exp: pt4
+  limit: 4
+  exp: pt3
   nb_cores: 12
