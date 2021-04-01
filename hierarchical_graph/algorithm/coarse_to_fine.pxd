@@ -15,7 +15,7 @@ cdef class CoarseToFine:
                     list labels_train)
 
     cpdef int[::1] predict(self, HierarchicalGraphs h_graphs_pred,
-                           int k)
+                           int k, int limit)
 
     cpdef int[::1] predict_percent(self, HierarchicalGraphs h_graphs_pred,
-                                   int k, double percent_remaining_graphs=*)
+                                   int k, int limit, double percent_remaining_graphs=*)

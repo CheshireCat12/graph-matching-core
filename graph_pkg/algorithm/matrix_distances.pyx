@@ -82,7 +82,7 @@ cdef class MatrixDistances:
                                                       list graphs_test,
                                                       bint heuristic=False):
         print('~~ Parallel Computation')
-        num_cores = psutil.cpu_count()
+        num_cores = 4 # psutil.cpu_count()
         print(f'~~ Number of cores: {num_cores}')
 
         n, m = len(graphs_train), len(graphs_test)
@@ -106,7 +106,7 @@ cdef class MatrixDistances:
                                     list prods,
                                     bint heuristic=False):
         print('|| Parallel Computation with prods')
-        num_cores = psutil.cpu_count()
+        num_cores = 4 # psutil.cpu_count()
         print(f'~~ Number of cores: {num_cores}')
         pool = Pool(num_cores)
         with pool as p:

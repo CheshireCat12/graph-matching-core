@@ -6,6 +6,7 @@ import numpy as np
 
 from graph_pkg.utils.coordinator.coordinator_classifier cimport CoordinatorClassifier
 from hierarchical_graph.algorithm.coarse_to_fine cimport CoarseToFine
+from graph_pkg.utils.functions.helper import calc_accuracy
 from hierarchical_graph.hierarchical_graphs cimport HierarchicalGraphs
 from hierarchical_graph.centrality_measure.pagerank import PageRank
 from hierarchical_graph.centrality_measure.betweenness import Betweenness
@@ -59,6 +60,8 @@ class HyperparametersTuning:
         k = self.parameters.k
         parallel = self.parameters.parallel
         percentages = self.parameters.hierarchy_params['percentages']
+        limit = self.parameters.limit
+        exp = self.parameters.exp
 
         # Retrieve graphs with labels
         coordinator = CoordinatorClassifier(**coordinator_params)
@@ -76,17 +79,38 @@ class HyperparametersTuning:
         classifier = CoarseToFine(coordinator.ged, parallel)
         classifier.train(h_graphs_train, labels_train)
         start_time = time.time()
-        predictions = classifier.predict_percent(h_graphs_test, k)
+        if exp == 'pt3':
+            predictions = classifier.predict(h_graphs_test, k, limit)
+        else:
+            predictions = classifier.predict_percent(h_graphs_test, k, limit)
         prediction_time = time.time() - start_time
 
-        correctly_classified = np.sum(predictions == np.array(labels_test))
-        accuracy = 100 * (correctly_classified / len(labels_test))
+        np_labels_test = np.array(labels_test, dtype=np.int32)
+        accuracy = calc_accuracy(predictions, np_labels_test)
 
-        print(f'Accuracy {accuracy}')
-        print(f'Prediction time: {prediction_time:.3f}\n')
+        filename = f'res_{centrality_measure}_{exp}'
+        save_predictions(predictions, np_labels_test, f'{filename}.npy', self.parameters)
+        save_stats(f'Accuracy {accuracy} \n'
+                  f'Prediction time: {prediction_time:.3f}\n',
+                  f'{filename}.txt',
+                   self.parameters)
+
+cpdef void save_predictions(int[::1] predictions, int[::1] labels_test, str name, parameters):
+    filename = os.path.join(parameters.folder_results, name)
+    with open(filename, 'wb') as f:
+        np.save(f, labels_test)
+        np.save(f, predictions)
 
 
+cpdef void save_stats(str message, str name, parameters):
+    Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
 
+    filename = os.path.join(parameters.folder_results, name)
+
+    with open(filename, mode='a+') as fp:
+        fp.write(str(parameters))
+        fp.write(f'{message}\n'
+                 f'{"="*50}\n\n')
 
 cpdef void run_coarse_to_fine(parameters):
     parameters_tuning = HyperparametersTuning(parameters)
