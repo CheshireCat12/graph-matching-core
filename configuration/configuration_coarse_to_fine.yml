@@ -34,7 +34,7 @@ NCI1:
   folder_results: ./results/coarse_to_fine/NCI1
 general:
   exp: pt4
-  limit: 4
+  limit: 5
   percentage_remaining_graphs: 0.1
   hierarchy_params:
     percentages: [1.0, 0.2]
