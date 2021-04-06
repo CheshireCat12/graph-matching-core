@@ -82,71 +82,49 @@ cdef class CoarseToFine:
             list graphs_to_pred_with_100 = []
             Graph graph
             double[:, ::1] h_distances_20
-            double[:, :] h_distances_100
+            double[:, ::1] h_distances_100
 
         print('Run Experiment Point 4!\n')
         # Compute the number of graphs to keep to compute with the original graphs
-        num_graphs = len(h_graphs_pred.hierarchy[1.0])
-        num_graphs_100 = int(num_graphs * percent_remaining_graphs)
+        num_predictions = len(h_graphs_pred.hierarchy[1.0])
+        num_graphs_100 = int(num_predictions * percent_remaining_graphs)
         num_graphs_train = len(self.h_graphs_train.hierarchy[1.0])
 
         # Compute distance with 20% of the original size
         h_distances_20 = self.mat_dist.calc_matrix_distances(self.h_graphs_train.hierarchy[0.2],
                                                              h_graphs_pred.hierarchy[0.2],
                                                              heuristic=True)
-        # Get the index of the k smallest distances in the matrix distances.
-        idx_k_nearest = np.argpartition(h_distances_20, k, axis=0)[:k]
+
+        # Retrieve the closest graphs from each predicted graphs
         idx_percent_nearest = np.argpartition(h_distances_20, num_graphs_100, axis=0)[:num_graphs_100]
 
-        # Get the label of the k smallest distances.
-        labels_k_nearest = np.asarray(self.labels_train)[idx_k_nearest]
+        predictions = -1 * np.ones(num_predictions, dtype=np.int32)
+        indices = np.array(range(num_predictions), dtype=np.int32)
 
-        counter_element = 0
-        limit = k
-        predictions = -1 * np.ones(len(labels_k_nearest.T), dtype=np.int32)
-        # Check if the prediction with 20% of the size is "clear"
-        for idx, arr in enumerate(labels_k_nearest.T):
-            most_common_cls = Counter(arr).most_common()
-
-            if most_common_cls[0][1] >= limit:
-                counter_element += 1
-                predictions[idx] = most_common_cls[0][0]
-
-        idx_still_to_predict, *_ = np.where(predictions < 0)
+        self._make_predictions(predictions, h_distances_20, indices, k, limit=limit)
 
         # find graphs still to predict
-        m, n = len(idx_still_to_predict), num_graphs_100
+        idx_still_to_predict, *_ = np.where(predictions < 0)
 
+        # Create the tuples for between the closest graphs and the graphs that remains to be predicted
         prods = []
         for idx_pred in idx_still_to_predict:
             for idx_train in idx_percent_nearest.T[idx_pred]:
-                # print(idx_pred, idx_train)
                 prods.append((self.h_graphs_train.hierarchy[1.0][idx_train],
                               h_graphs_pred.hierarchy[1.0][idx_pred]))
 
-        temp = np.asarray(self.mat_dist.test_parallel(prods, heuristic=True)) # .reshape(m, n).T
+        # Compute the distances between the closest graphs and the remaining graphs
+        temp_distances = self.mat_dist.do_parallel_computation(prods, heuristic=True)
 
-        h_distances_100 = np.full((num_graphs_train, m), np.inf)
+        # Create the distance matrix with full graphs
+        h_distances_100 = np.full((num_graphs_train, len(idx_still_to_predict)), np.inf)
         idx = 0
         for idx_row, idx_pred in enumerate(idx_still_to_predict):
             for idx_train in idx_percent_nearest.T[idx_pred]:
-                h_distances_100[idx_train][idx_row] = temp[idx]
+                h_distances_100[idx_train][idx_row] = temp_distances[idx]
                 idx += 1
 
-        # Get the index of the k smallest distances in the matrix distances.
-        idx_k_nearest = np.argpartition(h_distances_100, k, axis=0)[:k]
-
-        # Get the label of the k smallest distances.
-        labels_k_nearest = np.asarray(self.labels_train)[idx_k_nearest]
-
-        counter_element = 0
-        # Check if the prediction with 20% of the size is "clear"
-        for idx, arr in zip(idx_still_to_predict, labels_k_nearest.T):
-            most_common_cls = Counter(arr).most_common()
-
-            if most_common_cls[0][1] >= limit:
-                counter_element += 1
-
-            predictions[idx] = most_common_cls[0][0]
+        self._make_predictions(predictions, h_distances_100,
+                               idx_still_to_predict.astype(np.int32), k, limit=-1)
 
         return predictions

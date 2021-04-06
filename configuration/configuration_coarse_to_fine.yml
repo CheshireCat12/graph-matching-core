@@ -33,13 +33,14 @@ NCI1:
   best_alpha: 0.7
   folder_results: ./results/coarse_to_fine/NCI1
 general:
+  exp: pt4
+  limit: 4
+  percentage_remaining_graphs: 0.1
   hierarchy_params:
     percentages: [1.0, 0.2]
     centrality_measures: [pagerank] # , betweenness]
   current_centrality_measure: pagerank
-  parallel: True
   deletion_strategy: compute_once
   save_predictions: True
-  limit: 4
-  exp: pt3
   num_cores: 24
+  parallel: True

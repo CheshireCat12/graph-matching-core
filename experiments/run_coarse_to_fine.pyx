@@ -48,6 +48,7 @@ class RunnerCoarseToFine(Runner):
         limit = self.parameters.limit
         exp = self.parameters.exp
         num_cores = self.parameters.num_cores
+        percentage_remaining_graphs = self.parameters.percentage_remaining_graphs
 
         gag = GAG(coordinator_params, percentages, centrality_measure)
 
@@ -59,7 +60,8 @@ class RunnerCoarseToFine(Runner):
         if exp == 'pt3':
             predictions = classifier.predict(gag.h_graphs_test, k, limit, num_cores)
         else:
-            predictions = classifier.predict_percent(gag.h_graphs_test, k, limit)
+            predictions = classifier.predict_percent(gag.h_graphs_test, k, limit,
+                                                     percentage_remaining_graphs)
         prediction_time = time.time() - start_time
 
         np_labels_test = np.array(gag.labels_test, dtype=np.int32)

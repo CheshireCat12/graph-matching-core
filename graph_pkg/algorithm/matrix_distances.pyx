@@ -78,38 +78,36 @@ cdef class MatrixDistances:
         bar.finish()
         return distances
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
     cpdef double[:, ::1] _parallel_calc_matrix_distances(self,
-                                                        list graphs_train,
-                                                        list graphs_test,
-                                                        bint heuristic=False,
-                                                        int num_cores=-1):
-        print('~~ Parallel Computation')
-        num_cores = psutil.cpu_count() if num_cores <= 0 else num_cores
-        print(f'~~ Number of cores: {num_cores}')
+                                                         list graphs_train,
+                                                         list graphs_test,
+                                                         bint heuristic=False,
+                                                         int num_cores=-1):
+        cdef:
+            Graph graph_source, graph_target
 
         n, m = len(graphs_train), len(graphs_test)
-        max_count = n * m
-        prods = product(graphs_train, graphs_test)
-        pool = Pool(num_cores)
-        with pool as p:
-            results = p.starmap(self._helper_parallel,
-                                [(graph_train, graph_test, heuristic)
-                                 for graph_train, graph_test in prods])
+
+        prods = []
+        for graph_source in graphs_train:
+            for graph_target in graphs_test:
+                prods.append((graph_source, graph_target))
+
+        results = self.do_parallel_computation(prods, heuristic, num_cores)
 
         distances = np.array(results).reshape((n, m))
         return distances
 
-    cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test, bint heuristic=False):
-        dist = self.ged.compute_edit_distance(graph_train, graph_test, heuristic)
-
-        return dist
-
-    cpdef double[::1] test_parallel(self,
+    cpdef double[::1] do_parallel_computation(self,
                                     list prods,
-                                    bint heuristic=False):
-        print('|| Parallel Computation with prods')
-        num_cores = psutil.cpu_count()
+                                    bint heuristic=False,
+                                    int num_cores=-1):
+        print('~~ Parallel Computation')
+        num_cores = psutil.cpu_count() if num_cores <= 0 else num_cores
         print(f'~~ Number of cores: {num_cores}')
+
         pool = Pool(num_cores)
         with pool as p:
             results = p.starmap(self._helper_parallel,
@@ -118,3 +116,8 @@ cdef class MatrixDistances:
 
         distances = np.array(results)
         return distances
+
+    cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test, bint heuristic=False):
+        dist = self.ged.compute_edit_distance(graph_train, graph_test, heuristic)
+
+        return dist
