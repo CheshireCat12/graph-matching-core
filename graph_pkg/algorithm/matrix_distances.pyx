@@ -23,7 +23,8 @@ cdef class MatrixDistances:
     cpdef double[:, ::1] calc_matrix_distances(self,
                                                list graphs_train,
                                                list graphs_test,
-                                               bint heuristic=False):
+                                               bint heuristic=False,
+                                               int num_cores=-1):
         """
         Compute all the distances between the graphs in the lists given 
         in parameter.
@@ -39,7 +40,7 @@ cdef class MatrixDistances:
         :return: distances between the graphs in the given lists
         """
         if self.parallel:
-            return self._parallel_calc_matrix_distances(graphs_train, graphs_test, heuristic)
+            return self._parallel_calc_matrix_distances(graphs_train, graphs_test, heuristic, num_cores)
         else:
             return self._serial_calc_matrix_distances(graphs_train, graphs_test, heuristic)
 
@@ -78,11 +79,12 @@ cdef class MatrixDistances:
         return distances
 
     cpdef double[:, ::1] _parallel_calc_matrix_distances(self,
-                                                      list graphs_train,
-                                                      list graphs_test,
-                                                      bint heuristic=False):
+                                                        list graphs_train,
+                                                        list graphs_test,
+                                                        bint heuristic=False,
+                                                        int num_cores=-1):
         print('~~ Parallel Computation')
-        num_cores = psutil.cpu_count()
+        num_cores = psutil.cpu_count() if num_cores <= 0 else num_cores
         print(f'~~ Number of cores: {num_cores}')
 
         n, m = len(graphs_train), len(graphs_test)

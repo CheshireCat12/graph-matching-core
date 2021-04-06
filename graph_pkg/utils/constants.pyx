@@ -1,3 +1,6 @@
+from hierarchical_graph.centrality_measure.pagerank cimport PageRank
+from hierarchical_graph.centrality_measure.betweenness cimport Betweenness
+
 cdef:
     #########################
     ##  General Constants  ##
@@ -57,7 +60,8 @@ cdef:
     list PERCENT_HIERARCHY = [1.0, 0.8, 0.6, 0.4, 0.2]
 
     dict MEASURES = {
-
+        'pagerank': PageRank(),
+        'betweenness': Betweenness(),
     }
 
 ########################

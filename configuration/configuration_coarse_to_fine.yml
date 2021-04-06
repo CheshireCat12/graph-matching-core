@@ -35,11 +35,11 @@ NCI1:
 general:
   hierarchy_params:
     percentages: [1.0, 0.2]
-    centrality_measures: [pagerank, betweenness]
+    centrality_measures: [pagerank] # , betweenness]
   current_centrality_measure: pagerank
   parallel: True
   deletion_strategy: compute_once
   save_predictions: True
   limit: 4
   exp: pt3
-  nb_cores: 12
+  num_cores: 24
