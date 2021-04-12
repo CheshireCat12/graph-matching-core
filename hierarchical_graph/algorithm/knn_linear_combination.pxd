@@ -16,19 +16,21 @@ cdef class KNNLinearCombination:
                      list labels_train)
 
     cpdef double[:, :, ::1] _get_distances(self, HierarchicalGraphs h_graphs_pred,
-                                           int size_pred_set)
+                                           int size_pred_set, int num_cores=*)
 
     cpdef tuple optimize(self, HierarchicalGraphs h_graphs_pred,
                          list labels_pred,
                          int k,
-                         str optimization_strategy=*)
+                         str optimization_strategy=*,
+                         int num_cores=*)
 
     cpdef double predict(self, HierarchicalGraphs h_graphs_pred,
                          list labels_pred,
                          int k,
                          double[::1] alphas,
                          bint save_predictions=*,
-                         str folder=*)
+                         str folder=*,
+                         int num_cores=*)
 
     cpdef double[::1] fitness(self, double[:, ::1] population,
                               double[:, :, ::1] h_distances,

@@ -37,7 +37,8 @@ cdef class KNNLinearCombination:
         self.labels_train = labels_train
         self.np_labels_train = np.array(labels_train, dtype=np.int32)
 
-    cpdef double[:, :, ::1] _get_distances(self, HierarchicalGraphs h_graphs_pred, int size_pred_set):
+    cpdef double[:, :, ::1] _get_distances(self, HierarchicalGraphs h_graphs_pred,
+                                           int size_pred_set, int num_cores=-1):
 
         shape = (len(PERCENT_HIERARCHY), len(self.labels_train), size_pred_set)
         h_distances = np.empty(shape)
@@ -45,14 +46,16 @@ cdef class KNNLinearCombination:
         for idx, percentage in enumerate(PERCENT_HIERARCHY):
             h_distances[idx] = self.mat_dist.calc_matrix_distances(self.h_graphs_train.hierarchy[percentage],
                                                                    h_graphs_pred.hierarchy[percentage],
-                                                                   heuristic=True)
+                                                                   heuristic=True,
+                                                                   num_cores=num_cores)
 
         return h_distances
 
     cpdef tuple optimize(self, HierarchicalGraphs h_graphs_pred,
                          list labels_pred,
                          int k,
-                         str optimization_strategy='linear'):
+                         str optimization_strategy='linear',
+                         int num_cores=-1):
         """
         Predict the class for the graphs in X.
         It returns the majority of the k nearest neighbor from the trainset.
@@ -74,7 +77,7 @@ cdef class KNNLinearCombination:
         print('\n-- Start prediction --')
         np_labels_pred = np.array(labels_pred, dtype=np.int32)
 
-        h_distances = self._get_distances(h_graphs_pred, len(labels_pred))
+        h_distances = self._get_distances(h_graphs_pred, len(labels_pred), num_cores=num_cores)
 
 
         if optimization_strategy == 'linear':
@@ -172,20 +175,12 @@ cdef class KNNLinearCombination:
                     new_population.append(child1)
                     new_population.append(child2)
 
-                #     break
-                #
-                # break
                 population = np.around(np.array(new_population), round_val)
 
                 bar.next()
             bar.finish()
 
             return best_acc, best_alphas
-            # idx_best_acc = np.argmax(accuracies)
-            #
-            # return accuracies[idx_best_acc], population[idx_best_acc]
-
-
 
     cpdef double[::1] fitness(self, double[:, ::1] population,
                               double[:, :, ::1] h_distances,
@@ -240,7 +235,8 @@ cdef class KNNLinearCombination:
                          int k,
                          double[::1] alphas,
                          bint save_predictions=False,
-                         str folder='.'):
+                         str folder='.',
+                         int num_cores=-1):
         cdef:
             # list alphas
             int[::1] np_labels_pred
@@ -250,7 +246,7 @@ cdef class KNNLinearCombination:
         print('\n-- Start prediction --')
         np_labels_pred = np.array(labels_pred, dtype=np.int32)
 
-        h_distances = self._get_distances(h_graphs_pred, len(labels_pred))
+        h_distances = self._get_distances(h_graphs_pred, len(labels_pred), num_cores=num_cores)
 
         accuracies = self.fitness(np.array([alphas,]), h_distances, np_labels_pred, k,
                                   save_predictions=save_predictions, folder=folder)

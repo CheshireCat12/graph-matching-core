@@ -42,12 +42,12 @@ class RunnerCoarseToFine(Runner):
         coordinator_params = self.parameters.coordinator
         centrality_measure = self.parameters.centrality_measure
         deletion_strategy = self.parameters.deletion_strategy
+        exp = self.parameters.exp
         k = self.parameters.k
+        limit = self.parameters.limit
+        num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
         percentages = self.parameters.hierarchy_params['percentages']
-        limit = self.parameters.limit
-        exp = self.parameters.exp
-        num_cores = self.parameters.num_cores
         percentage_remaining_graphs = self.parameters.percentage_remaining_graphs
 
         gag = GAG(coordinator_params, percentages, centrality_measure)
@@ -78,5 +78,5 @@ class RunnerCoarseToFine(Runner):
 
 
 cpdef void run_coarse_to_fine(parameters):
-    parameters_tuning = RunnerCoarseToFine(parameters)
-    parameters_tuning.run()
+    ctf = RunnerCoarseToFine(parameters)
+    ctf.run()
