@@ -1,10 +1,13 @@
 from hierarchical_graph.algorithm.knn_linear_combination cimport KNNLinearCombination as KNNLC
 from experiments.runner import Runner
 from hierarchical_graph.gatherer_hierarchical_graphs cimport GathererHierarchicalGraphs as GAG
-
+from graph_pkg.utils.functions.helper import calc_accuracy
 from pathlib import Path
 import numpy as np
 cimport numpy as np
+from itertools import product
+
+from progress.bar import Bar
 from time import time
 import os
 
@@ -55,12 +58,6 @@ class RunnerKnnLC(Runner):
             self.parameters.centrality_measure = measure
 
             self._run_pred_val_test(validation=False)
-            # acc, alphas = self._run_pred_val_test(validation=False)
-            # acc, time_pred = self._run_pred_val_test(validation=False)
-            #
-            # filename = f'{measure}.txt'
-            # _write_results_new([acc], list(alphas), self.parameters, filename)
-
 
     def _run_pred_val_test(self, validation=True):
         cdef:
@@ -74,30 +71,55 @@ class RunnerKnnLC(Runner):
         num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
         percentages = self.parameters.hierarchy_params['percentages']
+        cv = self.parameters.cv
 
         gag = GAG(coordinator_params, percentages, centrality_measure)
 
-        # Create and train the classifier
-        knn = KNNLC(gag.coordinator.ged, parallel)
-        knn.train(gag.h_graphs_train, gag.labels_train)
+        knn = KNNLC(gag.coordinator.ged, k, parallel)
 
-        if self.parameters.do_optimization:
-            acc, alphas = knn.optimize(gag.h_graphs_val, gag.labels_val, k,
-                                       optimization_strategy=self.parameters.optimization_strategy,
-                                       num_cores=num_cores)
-        else:
-            acc = 0
-            alphas = np.array(self.parameters.linear_combination)
-        # acc = 77.4
-        # alphas = np.array([0.647, 0.49, 0.129, 0.361, 0.98])
+        # omegas_range = [i / 10 for i in range(1, 10)]
+        # coefficients = list(product(omegas_range, repeat=len(percentages)))
+        # accuracies = np.zeros((len(coefficients), cv))
+        #
+        # for idx, (h_graphs_train, labels_train, h_graphs_val, labels_val) in enumerate(gag.k_fold_validation(cv=cv)):
+        #     # print(f'Turn {idx+1}/{cv}')
+        #
+        #     # Train the classifier
+        #     knn.train(h_graphs_train, labels_train)
+        #     # Compute the distances in advance not to have to compute it every turn
+        #     knn.load_h_distances(h_graphs_val, num_cores=num_cores)
+        #
+        #     bar = Bar(f'Processing, Turn {idx+1}/{cv}', max=len(coefficients))
+        #
+        #     for idx_coef, omegas in enumerate(coefficients):
+        #         predictions = knn.predict_dist(np.array(omegas))
+        #         acc = calc_accuracy(np.array(labels_val, dtype=np.int32), predictions)
+        #
+        #         accuracies[idx_coef][idx] = acc
+        #         bar.next()
+        #
+        #     bar.finish()
+        #
+        #
+        # mean_acc = np.mean(accuracies, axis=1)
+        # idx_best_omega = np.argmax(mean_acc)
+        # best_omega = np.array(coefficients[idx_best_omega])
+        # print(max(mean_acc))
+        # print(best_omega)
 
-        print(f'best acc {acc}, best alphas {np.asarray(alphas)}')
-        accuray_final = knn.predict(gag.h_graphs_test, gag.labels_test,
-                                    k, alphas, save_predictions=True,
-                                    folder=self.parameters.folder_results,
-                                    num_cores=num_cores)
-        print(accuray_final)
-        return accuray_final, alphas
+        best_omega = np.array(self.parameters.linear_combination) # np.array([0.9, 0.3, 0.2, 0.1, 0.1])
+        print(best_omega)
+
+
+        knn.train(gag.h_aggregation_graphs, gag.aggregation_labels)
+        # knn.train(gag.h_graphs_train, gag.labels_train)
+        knn.load_h_distances(gag.h_graphs_test, self.parameters.folder_results,
+                             is_test_set=True)
+        predictions_final = knn.predict_score(best_omega)
+        accuracy_final = calc_accuracy(np.array(gag.labels_test, dtype=np.int32),
+                                       predictions_final)
+        print(f'{accuracy_final:.2f}')
+        # return accuray_final, alphas
 
 
 cpdef void run_knn_lc(parameters):

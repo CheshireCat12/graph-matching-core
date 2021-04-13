@@ -6,35 +6,45 @@ from hierarchical_graph.hierarchical_graphs cimport HierarchicalGraphs
 cdef class KNNLinearCombination:
 
     cdef:
+        GED ged
+        int k
+        str folder_distances
+        MatrixDistances mat_dist
         HierarchicalGraphs h_graphs_train
         list labels_train
         int[::1] np_labels_train
-        GED ged
-        MatrixDistances mat_dist
+        double[:, :, ::1] h_distances
+        bint are_distances_loaded
+
+    cdef void _init_folder_distances(self, str folder_distances, bint is_test_set=*)
 
     cpdef void train(self, HierarchicalGraphs h_graphs_train,
                      list labels_train)
 
-    cpdef double[:, :, ::1] _get_distances(self, HierarchicalGraphs h_graphs_pred,
-                                           int size_pred_set, int num_cores=*)
+    cpdef void load_h_distances(self, HierarchicalGraphs h_graphs_pred,
+                                str folder_distances=*, bint is_test_set=*, int num_cores=*)
 
-    cpdef tuple optimize(self, HierarchicalGraphs h_graphs_pred,
-                         list labels_pred,
-                         int k,
-                         str optimization_strategy=*,
-                         int num_cores=*)
+    cpdef int[::1] predict_dist(self, double[::1] omegas)
 
-    cpdef double predict(self, HierarchicalGraphs h_graphs_pred,
-                         list labels_pred,
-                         int k,
-                         double[::1] alphas,
-                         bint save_predictions=*,
-                         str folder=*,
-                         int num_cores=*)
+    cpdef int[::1] predict_score(self, double[::1] omegas)
 
-    cpdef double[::1] fitness(self, double[:, ::1] population,
-                              double[:, :, ::1] h_distances,
-                              int[::1] np_labels_test,
-                              int k,
-                              bint save_predictions=*,
-                              str folder=*)
+    # cpdef tuple optimize(self, HierarchicalGraphs h_graphs_pred,
+    #                      list labels_pred,
+    #                      int k,
+    #                      str optimization_strategy=*,
+    #                      int num_cores=*)
+    #
+    # cpdef double predict(self, HierarchicalGraphs h_graphs_pred,
+    #                      list labels_pred,
+    #                      int k,
+    #                      double[::1] alphas,
+    #                      bint save_predictions=*,
+    #                      str folder=*,
+    #                      int num_cores=*)
+    #
+    # cpdef double[::1] fitness(self, double[:, ::1] population,
+    #                           double[:, :, ::1] h_distances,
+    #                           int[::1] np_labels_test,
+    #                           int k,
+    #                           bint save_predictions=*,
+    #                           str folder=*)
