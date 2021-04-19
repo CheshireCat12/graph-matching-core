@@ -78,47 +78,78 @@ class RunnerKnnLC(Runner):
         knn = KNNLC(gag.coordinator.ged, k, parallel)
 
         # omegas_range = [i / 10 for i in range(1, 10)]
-        # coefficients = list(product(omegas_range, repeat=len(percentages)))
-        # accuracies = np.zeros((len(coefficients), cv))
-        #
-        # for idx, (h_graphs_train, labels_train, h_graphs_val, labels_val) in enumerate(gag.k_fold_validation(cv=cv)):
-        #     # print(f'Turn {idx+1}/{cv}')
-        #
-        #     # Train the classifier
-        #     knn.train(h_graphs_train, labels_train)
-        #     # Compute the distances in advance not to have to compute it every turn
-        #     knn.load_h_distances(h_graphs_val, num_cores=num_cores)
-        #
-        #     bar = Bar(f'Processing, Turn {idx+1}/{cv}', max=len(coefficients))
-        #
-        #     for idx_coef, omegas in enumerate(coefficients):
-        #         predictions = knn.predict_dist(np.array(omegas))
-        #         acc = calc_accuracy(np.array(labels_val, dtype=np.int32), predictions)
-        #
-        #         accuracies[idx_coef][idx] = acc
-        #         bar.next()
-        #
-        #     bar.finish()
-        #
-        #
-        # mean_acc = np.mean(accuracies, axis=1)
-        # idx_best_omega = np.argmax(mean_acc)
-        # best_omega = np.array(coefficients[idx_best_omega])
-        # print(max(mean_acc))
-        # print(best_omega)
+        # omegas_range = [i / 10 for i in range(1, 3)]
+        omegas_range = np.arange(0, 1, step=0.05)[1:]
+        coefficients = list(product(omegas_range, repeat=len(percentages)))
+        # print(coefficients)
+        accuracies = np.zeros((len(coefficients), cv))
 
-        best_omega = np.array(self.parameters.linear_combination) # np.array([0.9, 0.3, 0.2, 0.1, 0.1])
+        for idx, (h_graphs_train, labels_train, h_graphs_val, labels_val) in enumerate(gag.k_fold_validation(cv=cv)):
+            # print(f'Turn {idx+1}/{cv}')
+
+            # Train the classifier
+            knn.train(h_graphs_train, labels_train)
+            # Compute the distances in advance not to have to compute it every turn
+            knn.load_h_distances(h_graphs_val, num_cores=num_cores)
+
+            bar = Bar(f'Processing, Turn {idx+1}/{cv}', max=len(coefficients))
+
+            if not self.parameters.dist:
+                overall_predictions = knn.predict_score()
+
+
+            best_acc = float('-inf')
+
+            for idx_coef, omegas in enumerate(coefficients):
+                omegas = np.array(omegas)
+                if self.parameters.dist:
+                    predictions = knn.predict_dist(omegas)
+                else:
+                    predictions = knn.compute_pred_from_score(overall_predictions, omegas)
+                acc = calc_accuracy(np.array(labels_val, dtype=np.int32), predictions)
+
+                accuracies[idx_coef][idx] = acc
+
+                if acc > best_acc:
+                    best_acc = acc
+
+                bar.next()
+
+            print(f'best acc : {best_acc}')
+            bar.finish()
+
+
+        mean_acc = np.mean(accuracies, axis=1)
+        print(mean_acc)
+        idx_best_omega = np.argmax(mean_acc)
+        best_omega = np.array(coefficients[idx_best_omega])
+
+        print(max(mean_acc))
         print(best_omega)
+
+
+        # best_omega = np.array([0.2, 0.3, 0.3, 0.1, 0.7])
+        # best_omega = np.array(self.parameters.linear_combination) # np.array([0.9, 0.3, 0.2, 0.1, 0.1])
+        # print(best_omega)
 
 
         knn.train(gag.h_aggregation_graphs, gag.aggregation_labels)
         # knn.train(gag.h_graphs_train, gag.labels_train)
         knn.load_h_distances(gag.h_graphs_test, self.parameters.folder_results,
-                             is_test_set=True)
-        predictions_final = knn.predict_score(best_omega)
+                             is_test_set=True, num_cores=num_cores)
+
+        if self.parameters.dist:
+            predictions_final = knn.predict_dist(best_omega)
+        else:
+            overall_predictions = knn.predict_score()
+            predictions_final = knn.compute_pred_from_score(overall_predictions, best_omega)
+
         accuracy_final = calc_accuracy(np.array(gag.labels_test, dtype=np.int32),
                                        predictions_final)
-        print(f'{accuracy_final:.2f}')
+        message = f'Acc: {accuracy_final:.2f},\nLinear combination: {best_omega}'
+        name = f'acc_{"dist" if self.parameters.dist else "score"}'
+        print(message)
+        self.save_stats(message, name=f'{name}.txt')
         # return accuray_final, alphas
 
 

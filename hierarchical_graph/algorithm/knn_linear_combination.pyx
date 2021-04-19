@@ -6,6 +6,7 @@ from progress.bar import Bar
 from graph_pkg.utils.constants cimport PERCENT_HIERARCHY
 import os
 from pathlib import Path
+from collections import defaultdict
 
 cdef class KNNLinearCombination:
     """
@@ -110,21 +111,16 @@ cdef class KNNLinearCombination:
 
         return predictions
 
-    cpdef int[::1] predict_score(self, double[::1] omegas):
+    cpdef int[:, ::1] predict_score(self):
         cdef:
             int dim1, dim2
             int[::1] h_predictions, predictions
-            double[::1] normalized_omegas
-            double[:, ::1] combination_distances
             list overall_predictions = []
 
         assert self.are_distances_loaded, f'Please call first load_h_distances().'
 
-        # print(f'-- Start Prediction --')
-        # Create distances matrix
-        dim1, dim2 = self.h_distances.shape[1:3]
-        combination_distances = np.zeros((dim1, dim2))
-        normalized_omegas = omegas / np.sum(omegas)
+        print(f'-- Start Prediction (score) --')
+
         for idx, _ in enumerate(PERCENT_HIERARCHY):
 
             # Get the index of the k smallest distances in the matrix distances.
@@ -139,10 +135,40 @@ cdef class KNNLinearCombination:
 
             overall_predictions.append(h_predictions)
 
-        predictions = np.array([Counter(arr).most_common()[0][0]
-                                for arr in np.array(overall_predictions).T])
+        # predictions = np.array([Counter(arr).most_common()[0][0]
+        #                         for arr in np.array(overall_predictions).T])
 
+        return np.array(overall_predictions)
+
+    cpdef int[::1] compute_pred_from_score(self, int[:, ::1] overall_predictions, double[::1] omegas):
+        normalized_omegas = omegas / np.sum(omegas)
+        predictions = -1 * np.ones_like(overall_predictions[0])
+        for idx, preds in enumerate(np.array(overall_predictions).T):
+            # temp = defaultdict(lambda x: 0)
+            temp = {}
+            for pred, val in zip(preds, normalized_omegas):
+                temp[pred] = temp.get(pred, 0) + val
+            # temp = Counter({pred: val for pred, val in zip(preds, normalized_omegas)})
+
+            temp = Counter(temp)
+            # print(temp.most_common()[0][0])
+            # print(Counter(preds).most_common()[0][0])
+            #
+            # print(temp)
+            # print(Counter(preds))
+            #
+            # print(preds)
+            # print(np.asarray(omegas))
+            #
+            # print("####")
+            predictions[idx] = temp.most_common()[0][0]
+            # preds
+            # omegas
+            # break
+        # predictions = np.array([Counter({pred: val for pred, val in zip(preds, normalized_omegas)}).most_common()[0][0]
+        #                         for preds in np.array(overall_predictions).T])
         return predictions
+
 
     # cpdef tuple optimize(self, HierarchicalGraphs h_graphs_pred,
     #                      list labels_pred,

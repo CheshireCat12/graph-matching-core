@@ -5,7 +5,10 @@ letter:
     folder_dataset: ./data/Letter/Letter/HIGH/
   k: 5
   best_alpha: 0.55
-  linear_combination: [0.9, 0.3, 0.2, 0.1, 0.1] # [0.9, 0.2, 0.1, 0.1, 0.1] # [0.89,0.452,0.423,0.318,0.001]
+  # dist
+#  linear_combination: [0.9, 0.3, 0.2, 0.1, 0.1] # [0.9, 0.2, 0.1, 0.1, 0.1] # [0.89,0.452,0.423,0.318,0.001]
+  # score
+  linear_combination: [0.9, 0.7, 0.4, 0.2, 0.4]
   folder_results: ./results/knn_linear_combination_v2/letter
 AIDS:
   coordinator:
@@ -24,7 +27,12 @@ mutagenicity:
     folder_labels: ./data/Mutagenicity/data/
   k: 5
   best_alpha: 0.60
-  linear_combination: [1.0, 1.0, 1.0, 1.0, 1.0] # [0.637,0.369,0.219,0.512,0.738]
+  # dist
+#  linear_combination: [1.0, 1.0, 1.0, 1.0, 1.0]
+  linear_combination: [0.637,0.369,0.219,0.512,0.738]
+#  linear_combination: [0.2, 0.3, 0.3, 0.1, 0.7]
+  #score
+  # linear_combination: [0.1, 0.3, 0.1, 0.2, 0.1]
   folder_results: ./results/knn_linear_combination_v2/mutagenicity
 NCI1:
   coordinator:
@@ -34,7 +42,9 @@ NCI1:
     folder_labels: ./data/NCI1/data/
   k: 5
   best_alpha: 0.7
-  linear_combination: [0.6, 0.1, 0.2, 0.4, 0.5] # [0.787,0.186,0.445,0.489,0.059]
+  linear_combination: [0.5, 0.2, 0.4, 0.5, 0.9]
+#   linear_combination: [0.6, 0.1, 0.2, 0.4, 0.5] # [0.787,0.186,0.445,0.489,0.059]
+#  linear_combination: [0.787,0.186,0.445,0.489,0.059]
   folder_results: ./results/knn_linear_combination_v2/NCI1
 general:
   hierarchy_params:
@@ -46,5 +56,6 @@ general:
   save_predictions: True
   optimization_strategy: linear
   do_optimization: False
-  num_cores: 8
-  cv: 5
+  num_cores: 12
+  cv: 3
+  dist: True

@@ -26,7 +26,9 @@ cdef class KNNLinearCombination:
 
     cpdef int[::1] predict_dist(self, double[::1] omegas)
 
-    cpdef int[::1] predict_score(self, double[::1] omegas)
+    cpdef int[:, ::1] predict_score(self)
+
+    cpdef int[::1] compute_pred_from_score(self, int[:, ::1] overall_predictions, double[::1] omegas)
 
     # cpdef tuple optimize(self, HierarchicalGraphs h_graphs_pred,
     #                      list labels_pred,
