@@ -9,6 +9,7 @@ from experiments.run_hierarchical import run_hierarchical
 from experiments.run_h_knn import run_h_knn
 from experiments.run_knn_lc import run_knn_lc
 from experiments.run_coarse_to_fine import run_coarse_to_fine
+from experiments.run_bagging_knn import run_bagging_knn
 
 __EXPERIMENTS = {'complete_ged': run_complete_ged,
                  'knn': run_knn,
@@ -16,7 +17,8 @@ __EXPERIMENTS = {'complete_ged': run_complete_ged,
                  'hierarchical': run_hierarchical,
                  'h_knn': run_h_knn,
                  'knn_lc': run_knn_lc,
-                 'coarse_to_fine': run_coarse_to_fine}
+                 'coarse_to_fine': run_coarse_to_fine,
+                 'bagging_knn': run_bagging_knn}
 
 def print_fancy_title(text, size_max=50):
     """

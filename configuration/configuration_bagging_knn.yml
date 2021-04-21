@@ -1,0 +1,41 @@
+letter:
+  coordinator:
+    dataset: letter
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, euclidean]
+    folder_dataset: ./data/Letter/Letter/HIGH/
+  k: 5
+  best_alpha: 0.55
+  folder_results: ./results/bagging_knn/letter
+AIDS:
+  coordinator:
+    dataset: AIDS
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/AIDS/data/
+  k: 1
+  best_alpha: 0.7
+  folder_results: ./results/bagging_knn/AIDS
+mutagenicity:
+  coordinator:
+    dataset: mutagenicity
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/Mutagenicity/data/
+    folder_labels: ./data/Mutagenicity/data/
+  k: 5
+  best_alpha: 0.60
+  folder_results: ./results/bagging_knn/mutagenicity
+NCI1:
+  coordinator:
+    dataset: NCI1
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0,  dirac]
+    folder_dataset: ./data/NCI1/data/
+    folder_labels: ./data/NCI1/data/
+  k: 5
+  best_alpha: 0.7
+  folder_results: ./results/bagging_knn/NCI1
+general:
+  hierarchy_params:
+    percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
+  centrality_measure: pagerank
+  parallel: True
+  deletion_strategy: compute_once
+  num_cores: 12
