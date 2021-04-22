@@ -11,7 +11,7 @@ AIDS:
     dataset: AIDS
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
     folder_dataset: ./data/AIDS/data/
-  k: 5
+  k: 1
   best_alpha: 0.7
   folder_results: ./results/coarse_to_fine/AIDS
 mutagenicity:

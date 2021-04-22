@@ -5,6 +5,7 @@ from graph_pkg.algorithm.matrix_distances cimport MatrixDistances
 cdef class KNNClassifier:
 
     cdef:
+        bint verbose
         list graphs_train
         list labels_train
         int[::1] np_labels_train
@@ -13,4 +14,4 @@ cdef class KNNClassifier:
 
     cpdef void train(self, list graphs_train, list labels_train)
 
-    cpdef int[::1] predict(self, list graphs_pred, int k)
+    cpdef int[::1] predict(self, list graphs_pred, int k, int num_cores=*)

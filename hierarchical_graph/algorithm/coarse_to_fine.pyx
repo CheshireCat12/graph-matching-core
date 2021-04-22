@@ -101,10 +101,13 @@ cdef class CoarseToFine:
         predictions = -1 * np.ones(num_predictions, dtype=np.int32)
         indices = np.array(range(num_predictions), dtype=np.int32)
 
-        self._make_predictions(predictions, h_distances_20, indices, k, limit=limit)
+        # self._make_predictions(predictions, h_distances_20, indices, k, limit=limit)
 
         # find graphs still to predict
         idx_still_to_predict, *_ = np.where(predictions < 0)
+
+
+        print(len(idx_still_to_predict))
 
         # Create the tuples for between the closest graphs and the graphs that remains to be predicted
         prods = []

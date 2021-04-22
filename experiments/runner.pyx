@@ -21,10 +21,11 @@ cdef class Runner:
             np.save(f, labels_test)
             np.save(f, predictions)
 
-    cpdef void save_stats(self, str message, str name):
+    cpdef void save_stats(self, str message, str name, bint save_params=True):
         filename = os.path.join(self.parameters.folder_results, name)
 
         with open(filename, mode='a+') as fp:
-            fp.write(str(self.parameters))
+            if save_params:
+                fp.write(str(self.parameters))
             fp.write(f'{message}\n'
                      f'{"="*50}\n\n')

@@ -27,6 +27,9 @@ cdef class GathererHierarchicalGraphs:
         self.h_aggregation_graphs = HierarchicalGraphs(self.aggregation_graphs, self.measure,
                                                        percentage_hierarchy=percentages)
 
+
+        print(len(self.graphs_val))
+
     cpdef list k_fold_validation(self, int cv=5):
         cdef:
             list graphs, labels, folds
@@ -50,12 +53,12 @@ cdef class GathererHierarchicalGraphs:
             graphs_train_fold = graphs[:lower_idx] + graphs[upper_idx:]
             labels_train_fold = labels[:lower_idx] + labels[upper_idx:]
 
-            graphs_val_fold = graphs[lower_idx:upper_idx]
+            graphs_val1_fold = graphs[lower_idx:upper_idx]
             labels_val_fold = labels[lower_idx:upper_idx]
 
             h_graphs_train_fold = HierarchicalGraphs(graphs_train_fold, self.measure, self.percentages)
-            h_graphs_val_fold = HierarchicalGraphs(graphs_val_fold, self.measure, self.percentages)
+            h_graphs_val1_fold = HierarchicalGraphs(graphs_val1_fold, self.measure, self.percentages)
 
-            folds.append((h_graphs_train_fold, labels_train_fold, h_graphs_val_fold, labels_val_fold))
+            folds.append((h_graphs_train_fold, labels_train_fold, h_graphs_val1_fold, labels_val_fold))
 
         return folds

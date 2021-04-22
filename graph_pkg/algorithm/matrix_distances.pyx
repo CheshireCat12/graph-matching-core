@@ -12,13 +12,14 @@ cdef class MatrixDistances:
     Compute the graph edit distance between the two lists of graphs.
     """
 
-    def __init__(self, GED ged, bint parallel=False):
+    def __init__(self, GED ged, bint parallel=False, verbose=False):
         """
         :param ged: the graph edit distance class
         :param parallel: Bool - choose to use the serial or the parallel computation
         """
         self.parallel = parallel
         self.ged = ged
+        self.verbose = verbose
 
     cpdef double[:, ::1] calc_matrix_distances(self,
                                                list graphs_train,
@@ -104,9 +105,12 @@ cdef class MatrixDistances:
                                     list prods,
                                     bint heuristic=False,
                                     int num_cores=-1):
-        print('~~ Parallel Computation')
+
         num_cores = psutil.cpu_count() if num_cores <= 0 else num_cores
-        print(f'~~ Number of cores: {num_cores}')
+
+        if self.verbose:
+            print('~~ Parallel Computation')
+            print(f'~~ Number of cores: {num_cores}')
 
         pool = Pool(num_cores)
         with pool as p:

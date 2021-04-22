@@ -10,7 +10,7 @@ cdef class KNNClassifier:
     Returns the majority class of the k neighbors.
     """
 
-    def __init__(self, GED ged, bint parallel=False):
+    def __init__(self, GED ged, bint parallel=False, bint verbose=False):
         """
         Initialize the KNN with the graph edit distance class.
         The ged is used to compute the distance between 2 graphs.
@@ -19,6 +19,7 @@ cdef class KNNClassifier:
         """
         self.ged = ged
         self.mat_dist = MatrixDistances(ged, parallel)
+        self.verbose = verbose
 
     cpdef void train(self, list graphs_train, list labels_train):
         """
@@ -34,7 +35,7 @@ cdef class KNNClassifier:
         self.labels_train = labels_train
         self.np_labels_train = np.array(labels_train, dtype=np.int32)
 
-    cpdef int[::1] predict(self, list graphs_pred, int k):
+    cpdef int[::1] predict(self, list graphs_pred, int k, int num_cores=-1):
         """
         Predict the class for the graphs in X.
         It returns the majority of the k nearest neighbor from the trainset.
@@ -50,10 +51,13 @@ cdef class KNNClassifier:
         cdef:
             double[:, ::1] distances
 
-        print('\n-- Start prediction --')
+        if self.verbose:
+            print('\n-- Start prediction --')
+
         distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
                                                         graphs_pred,
-                                                        heuristic=True)
+                                                        heuristic=True,
+                                                        num_cores=num_cores)
 
         # Get the index of the k smallest distances in the matrix distances.
         idx_k_nearest = np.argpartition(distances, k, axis=0)[:k]

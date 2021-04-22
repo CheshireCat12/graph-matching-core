@@ -7,7 +7,7 @@ cdef class GathererHierarchicalGraphs:
 
     cdef:
         CentralityMeasure measure
-        list graphs_train, graphs_val, graphs_test, percentages, aggregation_graphs
+        readonly list graphs_train, graphs_val, graphs_test, percentages, aggregation_graphs
         readonly list labels_train, labels_val, labels_test, aggregation_labels
         readonly HierarchicalGraphs h_graphs_train, h_graphs_val, h_graphs_test, h_aggregation_graphs
         readonly CoordinatorClassifier coordinator

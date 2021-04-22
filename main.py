@@ -30,8 +30,8 @@ def print_fancy_title(text, size_max=50):
     """
     border = (size_max - len(text) - 4) // 2
     is_odd = len(text) % 2 != 0
-    print(f'\n{"="*size_max}\n'
-          f'=={" "*border}{text}{" "*(border+is_odd)}==\n'
+    print(f'\n{"="*size_max}\n'\
+          f'=={" "*border}{text}{" "*(border+is_odd)}==\n'\
           f'{"="*size_max}')
 
 

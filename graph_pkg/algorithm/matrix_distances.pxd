@@ -5,6 +5,7 @@ from graph_pkg.graph.graph cimport Graph
 cdef class MatrixDistances:
 
     cdef:
+        bint verbose
         bint parallel
         GED ged
 
