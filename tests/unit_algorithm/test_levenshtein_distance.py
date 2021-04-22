@@ -70,3 +70,43 @@ def test_unequal_costs():
 
     assert np.allclose(expected_edit_distance_matr, actual_distance_matr)
     assert expected_edit_distance == actual_distance
+
+def test_normalized_distance():
+    # example from https://www.programiz.com/dsa/longest-common-subsequence#:~:text=The%20longest%20common%20subsequence%20(LCS,positions%20within%20the%20original%20sequences.
+    string_1 = "ACADB"
+    string_2 = "CBDA"
+    expected_edit_distance_matr = [[0,1,2,3,4],
+                                   [1,2,3,4,3],
+                                   [2,1,2,3,4],
+                                   [3,2,3,4,3],
+                                   [4,3,4,3,4],
+                                   [5,4,3,4,5]]
+    expected_edit_distance = 2*(1- (4/9))
+
+    actual_distance = levi.compute_string_edit_distance_normalized_cpd(string_1, string_2)
+    actual_distance_matr = np.asarray(levi.distances)
+
+    assert np.allclose(expected_edit_distance_matr, actual_distance_matr)
+    assert expected_edit_distance == actual_distance
+
+def test_normalized_distance_equal():
+    # example from https://www.programiz.com/dsa/longest-common-subsequence#:~:text=The%20longest%20common%20subsequence%20(LCS,positions%20within%20the%20original%20sequences.
+    string_1 = "ACADB"
+    string_2 = "ACADB"
+
+    expected_edit_distance = 0
+
+    actual_distance = levi.compute_string_edit_distance_normalized_cpd(string_1, string_2)
+
+    assert expected_edit_distance == actual_distance
+
+def test_normalized_distance_unequal():
+    # example from https://www.programiz.com/dsa/longest-common-subsequence#:~:text=The%20longest%20common%20subsequence%20(LCS,positions%20within%20the%20original%20sequences.
+    string_1 = "ACADB"
+    string_2 = "XXYZU"
+
+    expected_edit_distance = 2
+
+    actual_distance = levi.compute_string_edit_distance_normalized_cpd(string_1, string_2)
+
+    assert expected_edit_distance == actual_distance

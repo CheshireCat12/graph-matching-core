@@ -58,9 +58,10 @@ cdef class EditCostProtein(EditCost):
         self.sequence_target = node_trgt.label.sequence
 
         if self.type_source == self.type_target:
-            cost = self.metric.compute_string_edit_distance(self.sequence_source, self.sequence_target,
-                                                            self.string_edit_substitute,
-                                                            self.string_edit_insert, self.string_edit_delete)
+            cost = self.metric.compute_string_edit_distance_normalized(self.sequence_source, self.sequence_target)
+            # cost = self.metric.compute_string_edit_distance(self.sequence_source, self.sequence_target,
+            #                                                 self.string_edit_substitute,
+            #                                                 self.string_edit_insert, self.string_edit_delete)
         else:
             cost = self.c_insert_node + self.c_delete_node
 

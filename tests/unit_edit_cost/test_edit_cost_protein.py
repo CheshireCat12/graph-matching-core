@@ -8,9 +8,9 @@ from graph_pkg.algorithm.levenshtein_distance import LevenshteinDistance
 levi = LevenshteinDistance()
 
 @pytest.mark.parametrize('coord1, coord2, e_cost, expected',
-                         [((0, 9, 'DLLAELQWR'), (0, 9, 'EDGLRKLLNE'), (11, 11, 1., 1., 'sed', 1., 1., 1.), levi.compute_string_edit_distance_cpd("DLLAELQWR", "EDGLRKLLNE", 1, 1, 1)),
+                         [((0, 9, 'DLLAELQWR'), (0, 9, 'EDGLRKLLNE'), (11, 11, 1., 1., 'sed', 1., 1., 1.), levi.compute_string_edit_distance_normalized_cpd("DLLAELQWR", "EDGLRKLLNE")),
                           ((0, 12, 'LAPILTMRRFQQ'), (1, 4, 'KIKN'), (11, 11, 1., 1., 'sed', 1., 1., 1.), 22.),
-                          ((1, 9, 'RPIALV'), (1, 9, 'TLYCGF'), (11, 11, 1., 1., 'sed', 1., 1., 1.), levi.compute_string_edit_distance_cpd('RPIALV','TLYCGF', 1, 1, 1)),
+                          ((1, 9, 'RPIALV'), (1, 9, 'TLYCGF'), (11, 11, 1., 1., 'sed', 1., 1., 1.), levi.compute_string_edit_distance_normalized_cpd('RPIALV','TLYCGF')),
                           ((1, 9, 'RPIALV'), (0, 9, 'PYEFYQFWI'), (1., 1., 1., 1., 'sed', 1., 1., 1.), 2.),
                           ])
 def test_dirac_protein_norm(coord1, coord2, e_cost, expected):
