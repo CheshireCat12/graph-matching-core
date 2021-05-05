@@ -41,42 +41,42 @@ class RunnerBaggingKnn(Runner):
         best_params = (None, None, None)
         # num_classifiers = [3]
 
-        # for n_estimators, percentage_train, random_k in product(num_classifiers, percentage_data_train, random_ks):
-        #     message = f'n_estimators: {n_estimators}\n' \
-        #               f'percentage_train: {percentage_train}\n' \
-        #               f'random_k: {random_k}\n'
-        #     print(f'\n###############\n'
-        #           f'{message}'
-        #           f'############### \n')
-        #     classifier = BaggingKNN(n_estimators, gag.coordinator.ged)
-        #     classifier.train(gag.h_graphs_train, gag.labels_train, percentage_train)
-        #
-        #     if random_k:
-        #         k_train = -1
-        #     else:
-        #         k_train = k
-        #
-        #     # graphs_val, _ = gag.coordinator.val_split(conv_lbl_to_code=True)
-        #     # print(len(gag.graphs_val))
-        #     np_labels_val = np.array(gag.labels_val, dtype=np.int32)
-        #     acc, omegas, predictions = classifier.predict_GA(gag.graphs_val, np_labels_val,
-        #                                                      k=k_train, num_cores=num_cores)
-        #     # predictions = classifier.predict(graphs_val, k=k_train, num_cores=num_cores)
-        #
-        #     # acc = calc_accuracy(np.array(np_labels_val, predictions)
-        #
-        #     message += f'acc : {acc}\n' \
-        #                f'omegas: {omegas}'
-        #
-        #     self.save_stats(message, 'temp.txt', save_params=False)
-        #
-        #     if acc > best_acc:
-        #         best_acc = acc
-        #         best_params = (n_estimators, percentage_train, random_k, omegas)
-        #
-        # best_n_estimators, best_percentage_train, best_random_k, best_omegas = best_params
+        for n_estimators, percentage_train, random_k in product(num_classifiers, percentage_data_train, random_ks):
+            message = f'n_estimators: {n_estimators}\n' \
+                      f'percentage_train: {percentage_train}\n' \
+                      f'random_k: {random_k}\n'
+            print(f'\n###############\n'
+                  f'{message}'
+                  f'############### \n')
+            classifier = BaggingKNN(n_estimators, gag.coordinator.ged)
+            classifier.train(gag.h_graphs_train, gag.labels_train, percentage_train)
 
-        best_n_estimators, best_percentage_train, best_random_k, best_omegas = (120, 1.4, True, [0, 0])
+            if random_k:
+                k_train = -1
+            else:
+                k_train = k
+
+            # graphs_val, _ = gag.coordinator.val_split(conv_lbl_to_code=True)
+            # print(len(gag.graphs_val))
+            np_labels_val = np.array(gag.labels_val, dtype=np.int32)
+            acc, omegas, predictions = classifier.predict_GA(gag.graphs_val, np_labels_val,
+                                                             k=k_train, num_cores=num_cores)
+            # predictions = classifier.predict(graphs_val, k=k_train, num_cores=num_cores)
+
+            # acc = calc_accuracy(np.array(np_labels_val, predictions)
+
+            message += f'acc : {acc}\n' \
+                       f'omegas: {omegas}'
+
+            self.save_stats(message, 'temp.txt', save_params=False)
+
+            if acc > best_acc:
+                best_acc = acc
+                best_params = (n_estimators, percentage_train, random_k, omegas)
+
+        best_n_estimators, best_percentage_train, best_random_k, best_omegas = best_params
+
+        # best_n_estimators, best_percentage_train, best_random_k, best_omegas = (120, 1.4, True, [0, 0])
         final_classifier = BaggingKNN(best_n_estimators, gag.coordinator.ged)
         # final_classifier.train(gag.h_graphs_train, gag.labels_train, best_percentage_train)
         final_classifier.train(gag.h_aggregation_graphs, gag.aggregation_labels, best_percentage_train)
@@ -84,10 +84,10 @@ class RunnerBaggingKnn(Runner):
         if best_random_k:
             k = -1
 
-        best_omegas = [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
-                       1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0,
-                       0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0,
-                       1, 1, 1, 0, 0, 0, 0, 1, 1]
+        # best_omegas = [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0,
+        #                1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+        #                0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0,
+        #                1, 1, 1, 0, 0, 0, 0, 1, 1]
 
         # graphs_test, _ = gag.coordinator.test_split(conv_lbl_to_code=True)
         test_predictions = final_classifier.predict_overall(gag.graphs_test, k=k)

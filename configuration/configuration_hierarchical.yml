@@ -23,7 +23,7 @@ NCI1:
     folder_dataset: ./data/NCI1/data/
   folder_results: ./results/hierarchical/NCI1
 general:
-  num_graphs: 20
+  num_graphs: 100
   random_graph: True
   percentage: 1.0
   centrality_measure: pagerank

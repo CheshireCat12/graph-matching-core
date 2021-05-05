@@ -117,7 +117,7 @@ cdef class SigmaJS:
 
     var g = $graph_data ;
 
-s = new sigma({graph: g, container: '$container', settings: { defaultNodeColor: '#ec5148', labelThreshold: $threshold, zoomingRatio:1.4} });
+s = new sigma({graph: g, container: '$container', settings: { defaultNodeColor: '#363636', labelThreshold: $threshold, zoomingRatio:1.4} });
 
 s.graph.nodes().forEach(function(n) {
   n.originalColor = n.color;
@@ -316,17 +316,24 @@ dragListener.bind('dragend', function(event) {
                 'label': lbl,
                 'x': x,
                 'y': y,
-                'size': score
+                'size': 10 # score
             })
 
+        existant_edges = set()
         for idx, edge in enumerate(graph._set_edge()):
-            graph_data['edges'].append({
+            sigma_edge = {
                 'id': f'{idx}',
                 'source': f'{edge.idx_node_start}',
                 'target': f'{edge.idx_node_end}',
-                'label': f'{edge.weight.valence}'
-            })
+                'label': f'{edge.weight.valence}',
+            }
+            if (edge.idx_node_start, edge.idx_node_end) not in existant_edges:
+                sigma_edge['size'] = 10
 
+            graph_data['edges'].append(sigma_edge)
+
+            existant_edges.add((edge.idx_node_start, edge.idx_node_end))
+            existant_edges.add((edge.idx_node_end, edge.idx_node_start))
         return graph_data
 
     def _graph_to_html(self, dict graph, str graph_name, int level=-1, str extra_info_nodes='No info'):
@@ -347,7 +354,7 @@ dragListener.bind('dragend', function(event) {
         js_text = self._JS_TEMPLATE.substitute({'graph_data': json.dumps(graph),
                                                 'container': 'graph-div',
                                                 'threshold': THRESHOLDS[self.dataset],
-                                                'filename': f'{graph_name}.svg',
+                                                'filename': f'{prefix}{graph_name}.svg',
                                                })
         html = self._HTML_TEMPLATE.substitute({'graph_name': f'{prefix}{graph_name}',
                                                'extra_info_nodes': extra_info_nodes,
