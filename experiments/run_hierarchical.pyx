@@ -23,6 +23,16 @@ def run_hierarchical(parameters):
     sorted_by_len = sorted(graphs, key=lambda x: -len(x))
     for graph in sorted_by_len[:10]:
         print(graph.name)
+        print(len(graph))
+
+
+
+    # sorted_by_edges = sorted(graphs, key=lambda x: -len(x._set_edge()))
+    # for graph in sorted_by_edges[:5]:
+    #     print(graph.name)
+    #     print(len(graph._set_edge()) / 2)
+    #
+    #     print('****')
 
     selected_graphs = sorted_by_len[:parameters.num_graphs]
 
@@ -33,7 +43,7 @@ def run_hierarchical(parameters):
                        save_html=parameters.save_to_html)
 
     for measure in measures:
-        h_graphs = HierarchicalGraphs(selected_graphs, __MEASURES[measure])
+        h_graphs = HierarchicalGraphs(selected_graphs, __MEASURES[measure], deletion_strategy='compute_once')
         _save_h_graphs_to_js(sigma_js, h_graphs, __MEASURES[measure])
 
 

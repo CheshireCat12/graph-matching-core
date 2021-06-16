@@ -182,11 +182,13 @@ def test_with_verified_data(letter_graphs, dataframe_letter, graph_source_target
     # assert False
 
 @pytest.mark.parametrize('graph_name_source, graph_name_target, gr_name_src, gr_name_trgt',
-                         [(['molid600779', 'molid409962', 'i/10151', 'i/10084']),
-                          (['molid624151', 'molid633011', 'a/11808', 'a/15905']),
-                          (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
-                          (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
-                          (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
+                         [
+                          #   (['molid600779', 'molid409962', 'i/10151', 'i/10084']),
+                          # (['molid624151', 'molid633011', 'a/11808', 'a/15905']),
+                          # (['molid633011', 'molid624151', 'a/15905', 'a/11808']),
+                          # (['molid660165', 'molid645098', 'i/27249', 'a/21376']),
+                          # (['molid645098', 'molid660165', 'a/21376', 'i/27249']),
+                          (['molid698506', 'molid624151', 'a/41540', 'a/11808'])
                           ])
 def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target, gr_name_src, gr_name_trgt):
     graph_source = [graph for graph in aids_graphs if graph.name == graph_name_source][0]
@@ -200,8 +202,11 @@ def test_aids(aids_graphs, dataframe_aids, graph_name_source, graph_name_target,
     results = ged.compute_edit_distance(graph_source, graph_target)
     expected = dataframe_aids.loc[gr_name_src, gr_name_trgt]
 
+    print(ged.C.base)
+    print(ged.C_star.base)
+
     assert results == expected
-    # assert False
+    assert False
 
 # @pytest.mark.skip()
 # @pytest.mark.skip(reason='I have to had the expected accuracy')

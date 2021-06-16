@@ -11,7 +11,7 @@ AIDS:
     dataset: AIDS
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
     folder_dataset: ./data/AIDS/data/
-  k: 1
+  k: 5
   best_alpha: 0.7
   folder_results: ./results/coarse_to_fine/AIDS
 mutagenicity:
@@ -33,9 +33,9 @@ NCI1:
   best_alpha: 0.7
   folder_results: ./results/coarse_to_fine/NCI1
 general:
-  exp: pt4
+  exp: pt3
   limit: 5
-  percentage_remaining_graphs: 0.1
+  percentage_remaining_graphs: 0.05
   hierarchy_params:
     percentages: [1.0, 0.2]
     centrality_measures: [pagerank] # , betweenness]

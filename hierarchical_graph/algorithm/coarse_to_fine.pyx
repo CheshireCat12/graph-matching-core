@@ -24,6 +24,7 @@ cdef class CoarseToFine:
         labels_k_nearest = np.asarray(self.labels_train)[idx_k_nearest]
 
         num_clear_decision = 0
+
         # Check if the predictions predictions are "clear"
         for idx, arr in zip(indices, labels_k_nearest.T):
             most_common_cls = Counter(arr).most_common()
@@ -36,7 +37,10 @@ cdef class CoarseToFine:
             print(f'Number of clear classification: {num_clear_decision}/{len(labels_k_nearest.T)}, '
                   f'{100* (num_clear_decision/len(labels_k_nearest.T)):.1f}%')
 
-    cpdef int[::1] predict(self, HierarchicalGraphs h_graphs_pred, int k, int limit, int num_cores=-1):
+
+
+    # cpdef int[::1] predict(self, HierarchicalGraphs h_graphs_pred, int k, int limit, int num_cores=-1):
+    cpdef tuple predict(self, HierarchicalGraphs h_graphs_pred, int k, int limit, int num_cores=-1):
         cdef:
             int num_predictions
             int[::1] indices, predictions
@@ -61,6 +65,9 @@ cdef class CoarseToFine:
 
         # find graphs that need to be predicted with full graphs
         idx_still_to_predict, *_ = np.where(predictions < np.int32(0))
+        idx_predicted, *_ = np.where(predictions >= np.int32(0))
+
+        print(idx_still_to_predict)
 
         graphs_to_pred_with_100 = [h_graphs_pred.hierarchy[1.0][idx] for idx in idx_still_to_predict]
 
@@ -69,10 +76,13 @@ cdef class CoarseToFine:
                                                               heuristic=True,
                                                               num_cores=num_cores)
 
-        self._make_predictions(predictions, h_distances_100,
-                               idx_still_to_predict.astype(np.int32), k, limit=-1)
+        # self._make_predictions(predictions, h_distances_100,
+        #                        idx_still_to_predict.astype(np.int32), k, limit=-1)
 
-        return predictions
+        for idx in idx_still_to_predict:
+            predictions[idx] = 0
+
+        return predictions, idx_predicted
 
 
     cpdef int[::1] predict_percent(self, HierarchicalGraphs h_graphs_pred, int k, int limit,
@@ -87,15 +97,19 @@ cdef class CoarseToFine:
         print('Run Experiment Point 4!\n')
         # Compute the number of graphs to keep to compute with the original graphs
         num_predictions = len(h_graphs_pred.hierarchy[1.0])
-        num_graphs_100 = int(num_predictions * percent_remaining_graphs)
         num_graphs_train = len(self.h_graphs_train.hierarchy[1.0])
+        num_graphs_100 = min(int(num_predictions * percent_remaining_graphs), num_graphs_train-1)
+
+        print("--")
+        print(num_graphs_100)
+        print(num_predictions)
 
         # Compute distance with 20% of the original size
         h_distances_20 = self.mat_dist.calc_matrix_distances(self.h_graphs_train.hierarchy[0.2],
                                                              h_graphs_pred.hierarchy[0.2],
                                                              heuristic=True)
 
-        # Retrieve the closest graphs from each predicted graphs
+        # Retrieve the closest graphs from each predicted graph
         idx_percent_nearest = np.argpartition(h_distances_20, num_graphs_100, axis=0)[:num_graphs_100]
 
         predictions = -1 * np.ones(num_predictions, dtype=np.int32)

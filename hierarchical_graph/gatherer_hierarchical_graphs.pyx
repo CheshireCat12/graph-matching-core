@@ -19,8 +19,8 @@ cdef class GathererHierarchicalGraphs:
         self.measure = MEASURES[centrality_measure]
         self.h_graphs_train = HierarchicalGraphs(self.graphs_train, self.measure,
                                                  percentage_hierarchy=percentages)
-        # self.h_graphs_val = HierarchicalGraphs(self.graphs_val, self.measure,
-        #                                        percentage_hierarchy=percentages)
+        self.h_graphs_val = HierarchicalGraphs(self.graphs_val, self.measure,
+                                               percentage_hierarchy=percentages)
         self.h_graphs_test = HierarchicalGraphs(self.graphs_test, self.measure,
                                                 percentage_hierarchy=percentages)
 

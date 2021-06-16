@@ -58,7 +58,8 @@ class RunnerCoarseToFine(Runner):
 
         start_time = time.time()
         if exp == 'pt3':
-            predictions = classifier.predict(gag.h_graphs_test, k, limit, num_cores)
+            predictions, idx_predicted = classifier.predict(gag.h_graphs_test, k, limit, num_cores)
+            # predictions, idx_predicted = classifier.predict(gag.h_graphs_val, k, limit, num_cores)
         else:
             predictions = classifier.predict_percent(gag.h_graphs_test, k, limit,
                                                      percentage_remaining_graphs)
@@ -67,13 +68,24 @@ class RunnerCoarseToFine(Runner):
         np_labels_test = np.array(gag.labels_test, dtype=np.int32)
         accuracy = calc_accuracy(predictions, np_labels_test)
 
+        # np_labels_val = np.array(gag.labels_val, dtype=np.int32)
+        # accuracy = calc_accuracy(predictions, np_labels_val)
+
         message = f'\nAccuracy {accuracy} \n'\
                   f'Prediction time: {prediction_time:.3f}\n'
 
         print(message)
 
         filename = f'res_{centrality_measure}_{exp}'
+
+
         self.save_predictions(predictions, np_labels_test, f'{filename}.npy')
+        self.save_predictions(np.array(idx_predicted, dtype=np.int32), np_labels_test, f'{filename}_idx_predicted.npy')
+
+
+        # self.save_predictions(predictions, np_labels_val, f'{filename}.npy')
+        # self.save_predictions(np.array(idx_predicted, dtype=np.int32), np_labels_val, f'{filename}_idx_predicted.npy')
+
         self.save_stats(message, f'{filename}.txt')
 
 

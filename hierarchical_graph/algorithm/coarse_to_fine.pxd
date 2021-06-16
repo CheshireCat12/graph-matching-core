@@ -17,8 +17,10 @@ cdef class CoarseToFine:
     cpdef void _make_predictions(self, int[::1] predictions, double[:, ::1] h_distances,
                                  int[::1] indices, int k, int limit=*)
 
-    cpdef int[::1] predict(self, HierarchicalGraphs h_graphs_pred,
-                           int k, int limit, int num_cores=*)
+    cpdef tuple predict(self, HierarchicalGraphs h_graphs_pred,
+                               int k, int limit, int num_cores=*)
+    # cpdef int[::1] predict(self, HierarchicalGraphs h_graphs_pred,
+    #                        int k, int limit, int num_cores=*)
 
     cpdef int[::1] predict_percent(self, HierarchicalGraphs h_graphs_pred,
                                    int k, int limit, double percent_remaining_graphs=*)
