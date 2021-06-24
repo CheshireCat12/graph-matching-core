@@ -3,7 +3,7 @@ from random import shuffle, seed
 
 cdef class GathererHierarchicalGraphs:
 
-    def __init__(self, dict coordinator_params, list percentages, str centrality_measure):
+    def __init__(self, dict coordinator_params, list percentages, str centrality_measure, bint activate_aggregation=True):
         self.percentages = percentages
         # Retrieve graphs with labels
         self.coordinator = CoordinatorClassifier(**coordinator_params)
@@ -24,11 +24,10 @@ cdef class GathererHierarchicalGraphs:
         self.h_graphs_test = HierarchicalGraphs(self.graphs_test, self.measure,
                                                 percentage_hierarchy=percentages)
 
-        self.h_aggregation_graphs = HierarchicalGraphs(self.aggregation_graphs, self.measure,
-                                                       percentage_hierarchy=percentages)
+        if activate_aggregation:
+            self.h_aggregation_graphs = HierarchicalGraphs(self.aggregation_graphs, self.measure,
+                                                           percentage_hierarchy=percentages)
 
-
-        print(len(self.graphs_val))
 
     cpdef list k_fold_validation(self, int cv=5):
         cdef:

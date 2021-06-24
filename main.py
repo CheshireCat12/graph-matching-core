@@ -20,6 +20,11 @@ __EXPERIMENTS = {'complete_ged': run_complete_ged,
                  'coarse_to_fine': run_coarse_to_fine,
                  'bagging_knn': run_bagging_knn}
 
+__DATASETS = ['AIDS',
+              'mutagenicity']
+
+    # ,NCI1']
+
 def print_fancy_title(text, size_max=50):
     """
     Print the title in a fancy manner :)
@@ -37,7 +42,18 @@ def print_fancy_title(text, size_max=50):
 
 def run_experiment(args):
     parameters = load_config(args.exp)
+    if args.all:
+        for dataset in __DATASETS:
+            args.dataset = dataset
 
+            _run(args, parameters)
+    else:
+        _run(args, parameters)
+
+    print_fancy_title('Final')
+
+
+def _run(args, parameters):
     # Fusion the selected dataset parameters with the general parameters
     parameters = Bunch({**parameters[args.dataset], **parameters['general']})
 
@@ -57,5 +73,9 @@ if __name__ == '__main__':
                         default='letter',
                         choices=['letter', 'AIDS', 'mutagenicity', 'NCI1'],
                         help='Choose the dataset.')
+    parser.add_argument('-a', '--all', type=bool,
+                        default=False,
+                        choices=[True, False],
+                        help='Run on all available datasets.')
     args = parser.parse_args()
     run_experiment(args)

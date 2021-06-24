@@ -9,7 +9,8 @@ cdef class BaggingKNN:
         list labels_train, estimators, graphs_estimators, labels_estimators
         HierarchicalGraphs h_graphs_train
 
-    cpdef void train(self, HierarchicalGraphs h_graphs_train, list labels_train, double percentage_train)
+    cpdef void train(self, HierarchicalGraphs h_graphs_train, list labels_train,
+                     double percentage_train, bint random_lambda=*)
 
     cpdef tuple predict_GA(self, list graphs_pred, int[::1] ground_truth_labels, int k, int num_cores=*)
 

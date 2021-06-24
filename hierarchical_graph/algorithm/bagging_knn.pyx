@@ -16,33 +16,51 @@ cdef class BaggingKNN:
         self.graphs_estimators = [[] for _ in range(n_estimators)]
         self.labels_estimators = [[] for _ in range(n_estimators)]
 
+        # np.random.seed(7)
         np.random.seed(42)
 
-    cpdef void train(self, HierarchicalGraphs h_graphs_train, list labels_train, double percentage_train):
+    def proportion(self, labels):
+        nb_ones = np.count_nonzero(labels)
+        size = len(labels)
+        nb_zeros = size - nb_ones
+
+        proportion_1 = nb_ones / size
+        proportion_0 = nb_zeros / size
+        print(f'\nproportion of 0: {nb_zeros}/{size} {proportion_0:.2f}')
+        print(f'proportion of 1: {nb_ones}/{size} {proportion_1:.2f}')
+
+
+
+    cpdef void train(self, HierarchicalGraphs h_graphs_train, list labels_train, double percentage_train,
+                     bint random_lambda=False):
         cdef:
             int num_samples, idx_estimator, graph_idx
-            set out_of_bag
+            set all_graphs, out_of_bag
 
         self.h_graphs_train = h_graphs_train
         self.labels_train = labels_train
         self.np_labels_train = np.array(labels_train, dtype=np.int32)
 
         num_samples = int(len(labels_train) * percentage_train)
-        # print(f'Size training: {num_samples}')
         all_graphs = set(range(num_samples))
 
-        lambdas = np.array([1.0, 0.8, 0.6, 0.4, 0.2])
+
+        lambdas = np.array([1.0])
+        if random_lambda:
+            print('lamdba random')
+            lambdas = np.array([1.0, 0.8, 0.6, 0.4, 0.2])
 
         for idx_estimator in range(self.n_estimators):
             graphs_choice = np.random.choice(len(labels_train), size=num_samples, replace=True)
-            out_of_bag = all_graphs.difference(graphs_choice)
             lambda_choice = np.random.choice(lambdas, size=num_samples, replace=True, p=lambdas/np.sum(lambdas))
 
+            out_of_bag = all_graphs.difference(graphs_choice)
+
             for graph_idx, lambda_c in zip(graphs_choice, lambda_choice):
-                # print(graph_idx, lambda_c)
                 self.graphs_estimators[idx_estimator].append(self.h_graphs_train.hierarchy[lambda_c][graph_idx])
                 self.labels_estimators[idx_estimator].append(self.labels_train[graph_idx])
 
+            # self.proportion(self.labels_estimators[idx_estimator])
 
             self.estimators[idx_estimator].train(self.graphs_estimators[idx_estimator],
                                                  self.labels_estimators[idx_estimator])
@@ -62,10 +80,23 @@ cdef class BaggingKNN:
 
         overall_predictions = self.predict_overall(graphs_pred, k, num_cores)
 
+        predictions = np.array([Counter(arr).most_common()[0][0]
+                                for arr in np.array(overall_predictions).T],
+                               dtype=np.int32)
+
+        acc_before_GA_opt = calc_accuracy(ground_truth_labels,
+                                        np.array(predictions, dtype=np.int32))
+        print(f'Acc before the GA optimization: {acc_before_GA_opt:.2f}')
+
         for _ in range(num_turn):
 
             accuracies = np.zeros(size_population)
             for idx, gene in enumerate(population):
+
+                # quick fix
+                if sum(gene) == 0:
+                    gene[0] = 1
+
                 predictions = []
                 for arr in np.array(overall_predictions).T:
                     arr_mod = [val for val, activate in zip(arr, gene) if activate]
@@ -113,12 +144,9 @@ cdef class BaggingKNN:
                 new_population.append(child2)
 
 
-                # print(child1)
-                # print(child2)
-
             population = np.array(new_population, dtype=np.int32)
 
-        return best_acc, best_omegas, best_predictions
+        return acc_before_GA_opt, best_acc, best_omegas, best_predictions
 
     cpdef int[:,::1] predict_overall(self, list graphs_pred, int k, int num_cores=-1):
         overall_predictions = []
@@ -143,8 +171,6 @@ cdef class BaggingKNN:
         overall_predictions = []
 
         k_values = [1, 3, 5, 7]
-        # if k == -1:
-
 
         for idx, estimator in enumerate(self.estimators):
             if k == -1:
