@@ -1,11 +1,3 @@
-letter:
-  coordinator:
-    dataset: letter
-    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, euclidean]
-    folder_dataset: ./data/Letter/Letter/HIGH/
-  k: 5
-  best_alpha: 0.55
-  folder_results: ./results/bagging_knn/letter
 AIDS:
   coordinator:
     dataset: AIDS
@@ -14,6 +6,10 @@ AIDS:
   k: 1
   best_alpha: 0.7
   folder_results: ./results/bagging_knn/AIDS
+  bagging_params:
+    n_estimators: 100
+    percentage_train_data: 1.0
+    random_k: True
 mutagenicity:
   coordinator:
     dataset: mutagenicity
@@ -23,6 +19,10 @@ mutagenicity:
   k: 5
   best_alpha: 0.60
   folder_results: ./results/bagging_knn/mutagenicity
+  bagging_params:
+    n_estimators: 61
+    percentage_train_data: 1.0
+    random_k: True
 NCI1:
   coordinator:
     dataset: NCI1
@@ -32,6 +32,10 @@ NCI1:
   k: 5
   best_alpha: 0.7
   folder_results: ./results/bagging_knn/NCI1
+  bagging_params:
+    n_estimators: -1
+    percentage_train_data: -1
+    random_k: -1
 general:
   hierarchy_params:
     percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
@@ -39,7 +43,9 @@ general:
   parallel: True
   deletion_strategy: compute_once
   num_cores: 12
+  optimize: True
   fine_tuning:
-    num_classifiers: 10
-    percentage_data_train: 1.0
-    random_k: False
+    # range of values for the number of estimators: [start, end, step]
+    n_estimators: [1, 3, 1]
+    percentage_data_train: [1.0] #, 1.5, 2.0] # [0.8, 1.0, 1.2, 1.4]
+    random_k: [True] # [False, True]
