@@ -51,6 +51,6 @@ general:
   fine_tuning:
     # range of values for the number of estimators: [start, end, step]
     n_estimators: [60, 100, 20]
-    lambdas: [[1.0, 0.8, 0.6, 0.4, 0.2], [1.0, 0.8, 0.6, 0.4], [1.0, 0.8, 0.6], [1.0, 0.8]]
-    percentage_data_train: [1.0] #, 2.0] #, 1.5, 2.0] # [0.8, 1.0, 1.2, 1.4]
+    lambdas: [[1.0, 0.8, 0.6, 0.4, 0.2]] # , [1.0, 0.8, 0.6, 0.4], [1.0, 0.8, 0.6], [1.0, 0.8]]
+    percentage_data_train: [1.0, 1.5, 2.0] # [0.8, 1.0, 1.2, 1.4]
     random_k: [True] # [False, True]
