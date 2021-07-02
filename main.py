@@ -21,9 +21,8 @@ __EXPERIMENTS = {'complete_ged': run_complete_ged,
                  'bagging_knn': run_bagging_knn}
 
 __DATASETS = ['AIDS',
-              'mutagenicity']
-
-    # ,NCI1']
+              'mutagenicity',
+              'NCI1']
 
 def print_fancy_title(text, size_max=50):
     """

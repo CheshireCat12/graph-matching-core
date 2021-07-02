@@ -36,6 +36,8 @@ class RunnerBaggingKnn(Runner):
         :return: The optimized parameters (n_estimators, percentage_train, random_k, GA_mask)
         """
 
+        print('Optimization of the hyperparameters')
+
         ####################
         ## Set parameters ##
         ####################
@@ -47,6 +49,7 @@ class RunnerBaggingKnn(Runner):
         num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
         percentages = self.parameters.hierarchy_params['percentages']
+        use_reduced_graphs = self.parameters.use_reduced_graphs
 
         gag = GAG(coordinator_params, percentages, centrality_measure, activate_aggregation=False)
 
@@ -54,9 +57,11 @@ class RunnerBaggingKnn(Runner):
         num_classifiers = [i for i in range(start, max_estimators+1, step)]
         percentage_data_train = self.parameters.fine_tuning['percentage_data_train']
         random_ks = self.parameters.fine_tuning['random_k']
+        lambdas = self.parameters.fine_tuning['lambdas']
 
-        # Choose to use the reduced graphs or not
-        use_reduced_graphs = True
+        # fine_tune_lambdas = [np.array(lambdas[:idx+2]) for idx, _ in enumerate(lambdas)][:-1]
+        fine_tune_lambdas = [np.array(arr) for arr in lambdas]
+
 
         best_acc = float('-inf')
         best_params = (None, None, None)
@@ -65,7 +70,9 @@ class RunnerBaggingKnn(Runner):
         ## Start optimization ##
         ########################
 
-        for percentage_train, random_k in product(percentage_data_train, random_ks):
+        for percentage_train, random_k, lambdas_loop in product(percentage_data_train,
+                                                                random_ks,
+                                                                fine_tune_lambdas):
 
             if random_k:
                 k_train = -1
@@ -73,13 +80,15 @@ class RunnerBaggingKnn(Runner):
                 k_train = k
 
             # 1. Create the BaggingKNN with the maximum number of estimators
-            classifier = BaggingKNN(max_estimators, gag.coordinator.ged)
+            classifier = BaggingKNN(max_estimators, gag.coordinator.ged, num_cores=num_cores)
             classifier.train(gag.h_graphs_train, gag.labels_train,
-                             percentage_train, k_train, use_reduced_graphs)
+                             percentage_train, k_train, lambdas_loop,
+                             use_reduced_graphs)
 
             message = f'percentage_train: {percentage_train}\n' \
                       f'random_k: {random_k}\n' \
-                      f'reduced_graphs: {use_reduced_graphs}\n'
+                      f'reduced_graphs: {use_reduced_graphs}\n' \
+                      f'lambdas: {lambdas_loop}\n'
             print(f'\n###############\n'
                   f'{message}'
                   f'############### \n')
@@ -87,30 +96,43 @@ class RunnerBaggingKnn(Runner):
 
             # 2. Retrieve the predictions of the validation set on all the estimators
             np_labels_val = np.array(gag.labels_val, dtype=np.int32)
-            overall_predictions = classifier.predict_overall(gag.graphs_val, num_cores=num_cores)
+
+            filename = 'overall_predictions.npy'
+            path_filename = os.path.join(self.parameters.folder_results, filename)
+
+            # if os.path.exists(path_filename):
+            #     with open(path_filename, 'rb') as f:
+            #         overall_predictions = np.load(f)
+            # else:
+            overall_predictions = classifier.predict_overall(gag.graphs_val)
+
+            # with open(path_filename, 'wb') as f:
+            #     np.save(f, overall_predictions)
 
             # 3. find the best n_estimators
             for n_estimators in num_classifiers:
                 preds_n_estimators = overall_predictions[:n_estimators]
 
-                acc_val, predictions = classifier.predict(preds_n_estimators, np_labels_val)
+                acc_val, f1_val, predictions = classifier.predict(preds_n_estimators, np_labels_val)
 
                 message += f'n_estimators: {n_estimators}\n' \
-                           f'acc {acc_val:.2f}\n\n'
+                           f'acc {acc_val:.2f}\n' \
+                           f'f1 {f1_val:.2f}\n\n'
 
                 if acc_val >= best_acc:
                     best_acc = acc_val
-                    best_params = (n_estimators, percentage_train, random_k)
+                    best_params = (n_estimators, percentage_train, random_k, lambdas_loop)
 
-            self.save_stats(message, 'opt_bagging_baseline.txt', save_params=False)
+            self.save_stats(message, 'opt_bagging_weights_abbl_lambda.txt', save_params=False)
 
-        best_n_estimators, best_percentage_train, best_random_k = best_params
+        best_n_estimators, best_percentage_train, best_random_k, best_lambdas = best_params
 
         final_msg = f'Best Parameters in validation step\n' \
                     f'Validation Accuracy: {best_acc}\n' \
                     f'\tn_estimators: {best_n_estimators}\n' \
                     f'\tpercentage_train: {best_percentage_train}\n' \
-                    f'\trandom_k: {best_random_k}\n'
+                    f'\trandom_k: {best_random_k}\n' \
+                    f'\tlambdas: {best_lambdas}\n'
         print(final_msg)
 
         return best_params
@@ -132,28 +154,31 @@ class RunnerBaggingKnn(Runner):
         num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
         percentages = self.parameters.hierarchy_params['percentages']
+        use_reduced_graphs = self.parameters.use_reduced_graphs
 
-        gag = GAG(coordinator_params, percentages, centrality_measure)
+        gag = GAG(coordinator_params, percentages, centrality_measure, activate_aggregation=False)
 
         print('\nEvaluation on Test set\n')
 
         ###############
         ## Prediction on all estimators
         ###############
-        best_n_estimators, best_percentage_train, best_random_k = best_params
+        best_n_estimators, best_percentage_train, best_random_k, best_lambdas = best_params
+        best_lambdas = np.array(best_lambdas)
 
         if best_random_k:
             k_test = -1
         else:
             k_test = k
 
-        final_classifier = BaggingKNN(best_n_estimators, gag.coordinator.ged)
+        final_classifier = BaggingKNN(best_n_estimators, gag.coordinator.ged, num_cores=num_cores)
         final_classifier.train(gag.h_graphs_train, gag.labels_train,
-                               best_percentage_train, k_test, use_reduced_graphs=True)
+                               best_percentage_train, k_test, best_lambdas,
+                               use_reduced_graphs=use_reduced_graphs)
 
-        test_predictions = final_classifier.predict_overall(gag.graphs_test, num_cores=num_cores)
+        test_predictions = final_classifier.predict_overall(gag.graphs_test)
 
-        final_acc, final_predictions = final_classifier.predict(test_predictions,
+        final_acc, final_f1_score, final_predictions = final_classifier.predict(test_predictions,
                                                                 np.array(gag.labels_test, dtype=np.int32))
         # final_predictions = np.array([Counter(arr).most_common()[0][0]
         #                               for arr in np.array(test_predictions).T],
@@ -189,6 +214,7 @@ class RunnerBaggingKnn(Runner):
         final_acc_aggregation = -1
 
         message = f'Acc test: {final_acc:.2f}\n' \
+                  f'f1 score: {final_f1_score:.2f}' \
                   f'Acc aggregation: {final_acc_aggregation:.2f}\n' \
                   f'Best parameters\n' \
                   f'\tn_estimators: {best_n_estimators}\n' \
@@ -197,7 +223,7 @@ class RunnerBaggingKnn(Runner):
 
         print(message)
 
-        self.save_stats(message, 'final_bagging_baseline_seed_42.txt')
+        self.save_stats(message, 'final_bagging_weights_abbl_lambda.txt')
 
         # best_n_estimators, best_percentage_train, best_random_k, best_omegas = (120, 1.4, True, None)
         # best_omegas = [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,

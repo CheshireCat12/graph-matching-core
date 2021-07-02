@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 
 cpdef double calc_accuracy(int[::1] labels_ground_truth, int[::1] labels_predicted):
@@ -14,6 +15,14 @@ cpdef double calc_accuracy(int[::1] labels_ground_truth, int[::1] labels_predict
     accuracy = 100 * (correctly_classified / len(labels_ground_truth))
 
     return accuracy
+
+cpdef double calc_f1(int[::1] labels_ground_truth, int[::1] labels_predicted):
+    np_gt = np.array(labels_ground_truth)
+    np_pred = np.array(labels_predicted)
+
+    # print(f'precision: {precision_score(np_gt, np_pred):.2f}')
+    # print(f'recall: {recall_score(np_gt, np_pred):.2f}')
+    return f1_score(np.array(labels_ground_truth), np.array(labels_predicted))
 
 cpdef double calc_save_accuracy(int[::1] labels_ground_truth, int[::1] labels_predicted,
                                 str name, str folder):

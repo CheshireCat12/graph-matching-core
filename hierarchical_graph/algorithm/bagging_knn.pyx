@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 cimport numpy as np
 import numpy as np
 
@@ -6,29 +6,31 @@ from progress.bar import Bar
 
 from graph_pkg.algorithm.knn cimport KNNClassifier as KNN
 from graph_pkg.algorithm.graph_edit_distance cimport GED
-from graph_pkg.utils.functions.helper import calc_accuracy
+from graph_pkg.utils.functions.helper import calc_accuracy, calc_f1
 
 cdef class BaggingKNN:
 
-    def __init__(self, int n_estimators, GED ged):
+    def __init__(self, int n_estimators, GED ged, int seed=42, int num_cores=-1):
         self.n_estimators = n_estimators
         self.estimators = [KNN(ged, parallel=True) for _ in range(n_estimators)]
         self.graphs_estimators = [[] for _ in range(n_estimators)]
         self.labels_estimators = [[] for _ in range(n_estimators)]
         self.k_per_estimator = []
+        self.weights_per_estimator = np.zeros(n_estimators)
+        self.num_cores = num_cores
 
-        # np.random.seed(7)
-        np.random.seed(42)
+        np.random.seed(seed)
 
     def proportion(self, labels):
+        """Verify if the repartition of the classes is homogenous within the training subsets."""
         nb_ones = np.count_nonzero(labels)
         size = len(labels)
         nb_zeros = size - nb_ones
 
         proportion_1 = nb_ones / size
         proportion_0 = nb_zeros / size
-        print(f'\nproportion of 0: {nb_zeros}/{size} {proportion_0:.2f}')
-        print(f'proportion of 1: {nb_ones}/{size} {proportion_1:.2f}')
+        print(f'proportion of 0: {nb_zeros}/{size} {proportion_0:.2f}')
+        print(f'proportion of 1: {nb_ones}/{size} {proportion_1:.2f}\n')
 
 
 
@@ -36,25 +38,30 @@ cdef class BaggingKNN:
                      list labels_train,
                      double percentage_train,
                      int random_ks,
+                     double[::1] lambdas,
                      bint use_reduced_graphs=False):
         cdef:
             int num_samples, idx_estimator, graph_idx
             set all_graphs, out_of_bag
+            list weights
 
         self.h_graphs_train = h_graphs_train
         self.labels_train = labels_train
         self.np_labels_train = np.array(labels_train, dtype=np.int32)
 
         num_samples = int(len(labels_train) * percentage_train)
-        all_graphs = set(range(num_samples))
+        all_graphs = set(range(len(labels_train)))
 
 
-        lambdas = np.array([1.0])
         if use_reduced_graphs:
             print('Use Reduced graphs')
-            lambdas = np.array([1.0, 0.8, 0.6, 0.4, 0.2])
+            lambdas = np.array(lambdas)
+        else:
+            lambdas = np.array([1.0])
 
         k_values = [1, 3, 5] #, 7, 9, 11]
+
+        bar = Bar('Training', max=self.n_estimators)
 
         for idx_estimator in range(self.n_estimators):
             graphs_choice = np.random.choice(len(labels_train), size=num_samples, replace=True)
@@ -62,10 +69,13 @@ cdef class BaggingKNN:
 
             out_of_bag = all_graphs.difference(graphs_choice)
 
-            for graph_idx, lambda_c in zip(graphs_choice, lambda_choice):
-                self.graphs_estimators[idx_estimator].append(self.h_graphs_train.hierarchy[lambda_c][graph_idx])
-                self.labels_estimators[idx_estimator].append(self.labels_train[graph_idx])
+            # print(f'lambda choice: {lambda_choice}')
 
+            for idx_graph, lambda_c in zip(graphs_choice, lambda_choice):
+                self.graphs_estimators[idx_estimator].append(self.h_graphs_train.hierarchy[lambda_c][idx_graph])
+                self.labels_estimators[idx_estimator].append(self.labels_train[idx_graph])
+
+            # print('\nProportion training subset')
             # self.proportion(self.labels_estimators[idx_estimator])
 
             self.estimators[idx_estimator].train(self.graphs_estimators[idx_estimator],
@@ -79,7 +89,43 @@ cdef class BaggingKNN:
 
             self.k_per_estimator.append(k)
 
-        print(self.k_per_estimator)
+            self.performance_individual_estimator(idx_estimator, out_of_bag, k)
+
+            bar.next()
+        bar.finish()
+
+        # print(self.weights_per_estimator.base)
+
+    cpdef void performance_individual_estimator(self, int current_estimator, set oob_graphs, int k):
+        cdef:
+            list graphs = []
+            list labels = []
+            int[::1] np_labels
+
+        # print(len(oob_graphs))
+
+        for idx_graph in list(oob_graphs):
+            # print('err1')
+            graphs.append(self.h_graphs_train.hierarchy[1.0][idx_graph])
+            # print('err2')
+            labels.append(self.labels_train[idx_graph])
+
+        # print('Proportion of 1/0 in OOB:')
+        # self.proportion(labels)
+
+        # print('test1')
+        np_labels = np.array(labels, dtype=np.int32)
+        # print('test2')
+        predictions = self.estimators[current_estimator].predict(graphs, k, self.num_cores)
+        accuracy = calc_accuracy(np_labels, predictions)
+        # print('test3')
+        # print(f'proportion of 1/0 in predictions:')
+        # self.proportion(predictions)
+
+        # print(f'f1 score: {calc_f1(np_labels, predictions):.2f}\n'
+        #       f'accuracy: {accuracy:.2f}\n')
+
+        self.weights_per_estimator[current_estimator]= accuracy
 
     # cpdef tuple predict_GA(self, list graphs_pred, int[::1] ground_truth_labels, int k, int num_cores=-1):
     #     cdef:
@@ -164,13 +210,14 @@ cdef class BaggingKNN:
     #
     #     return acc_before_GA_opt, best_acc, best_omegas, best_predictions
 
-    cpdef int[:,::1] predict_overall(self, list graphs_pred, int num_cores=-1):
+    cpdef int[:,::1] predict_overall(self, list graphs_pred):
         overall_predictions = []
 
         bar = Bar('Processing', max=self.n_estimators)
         for idx, estimator in enumerate(self.estimators):
             k_pred = self.k_per_estimator[idx]
-            overall_predictions.append(estimator.predict(graphs_pred, k_pred, num_cores=num_cores))
+            overall_predictions.append(estimator.predict(graphs_pred, k_pred,
+                                                         num_cores=self.num_cores))
 
             bar.next()
 
@@ -181,14 +228,38 @@ cdef class BaggingKNN:
 
     cpdef tuple predict(self, int[:, ::1] overall_predictions, int[::1] ground_truth_labels):
         cdef:
-            int[::1] predictions
+            int[::1] final_predictions # , predictions_per_estimator
+            int[::1] predictions = -1 * np.ones(len(ground_truth_labels), dtype=np.int32)
 
-        predictions = np.array([Counter(arr).most_common()[0][0]
-                                for arr in np.array(overall_predictions).T])
+        for idx_prediction, predictions_per_estimator in enumerate(np.array(overall_predictions).T):
+            # print('predictions from all estimators')
+            weighted_prediction = defaultdict(int)
+            # print(predictions_per_estimator)
+            temp = []
+
+            for pred, weight in zip(predictions_per_estimator, self.weights_per_estimator):
+                temp.append((pred, weight))
+                # print(weight)
+                weighted_prediction[pred] += weight
+                # print('#########')
+
+
+            predictions[idx_prediction] = max(weighted_prediction, key=weighted_prediction.get)
+
+            # print(temp)
+            # print(weighted_prediction)
+            # print(f'ground_truth: {ground_truth_labels[idx_prediction]}')
+            # print(f'predicion: {predictions[idx_prediction]:.2f}')
+            # print('%%%%%%')
+
+
+        # predictions = np.array([Counter(arr).most_common()[0][0]
+        #                         for arr in np.array(overall_predictions).T])
 
         accuracy = calc_accuracy(ground_truth_labels, np.array(predictions, dtype=np.int32))
-
-        return accuracy, predictions
+        # print(f'f_1 score: {calc_f1(ground_truth_labels, predictions)}')
+        f1_score = calc_f1(ground_truth_labels, predictions)
+        return accuracy, f1_score, predictions
 
 #         np.random.seed(6)
 #
