@@ -8,6 +8,9 @@ package-lock.json
 draw/src/
 external/
 analysis/*.txt
+lib/
+Pipfile
+Pipfile.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

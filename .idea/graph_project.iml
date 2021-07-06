@@ -14,8 +14,11 @@
       <excludeFolder url="file://$MODULE_DIR$/draw/.ipynb_checkpoints" />
       <excludeFolder url="file://$MODULE_DIR$/draw/sigma.js" />
       <excludeFolder url="file://$MODULE_DIR$/draw/sigma.js/src" />
+      <excludeFolder url="file://$MODULE_DIR$/analysis/.ipynb_checkpoints" />
+      <excludeFolder url="file://$MODULE_DIR$/external" />
+      <excludeFolder url="file://$MODULE_DIR$/lib" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Pipenv (graph_project)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
