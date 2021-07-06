@@ -1,7 +1,7 @@
 import random
 
 
-cdef class LabelNodeProteins(LabelBase):
+cdef class LabelNodeProteinsTU(LabelBase):
 
     def __init__(self, int chem):
         self.chem = chem

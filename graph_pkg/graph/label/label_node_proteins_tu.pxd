@@ -1,6 +1,6 @@
 from graph_pkg.graph.label.label_base cimport LabelBase
 
-cdef class LabelNodeProteins(LabelBase):
+cdef class LabelNodeProteinsTU(LabelBase):
     cdef:
         readonly int chem
 

@@ -5,7 +5,7 @@ from graph_pkg.edit_cost.metrics cimport dirac
 
 ctypedef double (*metricptr)(int, int)
 
-cdef class EditCostProteins(EditCost):
+cdef class EditCostProteinsTU(EditCost):
 
     cdef:
         int chem_source, chem_target

@@ -1,4 +1,4 @@
-cdef class EditCostProteins(EditCost):
+cdef class EditCostProteinsTU(EditCost):
 
     def __init__(self,
                  double c_insert_node,
@@ -79,6 +79,6 @@ cdef class EditCostProteins(EditCost):
 
 def rebuild(data):
     cdef EditCost edit_cost
-    edit_cost = EditCostProteins(**data)
+    edit_cost = EditCostProteinsTU(**data)
 
     return edit_cost
