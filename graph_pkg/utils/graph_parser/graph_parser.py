@@ -19,7 +19,7 @@ __CHOSEN_DATASET = 1
 ##################
 # Init Constants #
 ##################
-__DATASETS = ['NCI1', 'PROTEINS', 'ENZYMES']
+__DATASETS = ['NCI1', 'PROTEINS', 'COLLAB', 'ENZYMES']
 __DATASET_NAME = __DATASETS[__CHOSEN_DATASET]
 __FOLDER = f'./data/{__DATASET_NAME}/'
 __EXTENSIONS = {
@@ -32,6 +32,7 @@ __EXTENSIONS = {
 # Take into account the number of classes
 __SPLIT_CLASSES = {'NCI1': (750, 250),
                    'PROTEINS': (330, 110),
+                   'COLLAB': (1000, 200)
                    # 'ENZYMES': (180, )
                    }
 

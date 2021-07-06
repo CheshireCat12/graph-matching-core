@@ -45,19 +45,7 @@ class RunnerKnnLC(Runner):
         if self.parameters.optimize:
             best_params = self.optimization()
 
-            best_acc_on_test = float('-inf')
-
-            for best_coeff in best_params:
-                acc_on_test = self.evaluate([best_coeff])
-
-                if acc_on_test > best_acc_on_test:
-                    best_acc_on_test = acc_on_test
-
-            print('='*50)
-            print(f'Accuracy on test {best_acc_on_test}')
-            print('='*50)
-
-
+            acc_on_test = self.evaluate(best_params)
 
 
         else:
@@ -212,10 +200,10 @@ class RunnerKnnLC(Runner):
 
 
 
-        best_omegas, *_ = best_params
-        best_omegas = np.array(best_omegas)
-        print('best_omegas')
-        print(best_omegas)
+        # best_omegas, *_ = best_params
+        # best_omegas = np.array(best_omegas)
+        # print('best_omegas')
+        # print(best_omegas)
 
 
         # knn.train(gag.h_aggregation_graphs, gag.aggregation_labels)
@@ -223,16 +211,31 @@ class RunnerKnnLC(Runner):
         knn_lc.load_h_distances(gag.h_graphs_test, self.parameters.folder_results,
                              is_test_set=True, num_cores=num_cores)
 
-        if self.parameters.dist:
-            predictions_final = knn_lc.predict_dist(best_omegas)
-        else:
-            overall_predictions = knn_lc.predict_score()
-            predictions_final = knn_lc.compute_pred_from_score(overall_predictions, best_omegas)
 
-        accuracy_final = calc_accuracy(np.array(gag.labels_test, dtype=np.int32),
-                                       predictions_final)
-        message = f'Acc: {accuracy_final:.3f}\n' \
-                  f'Linear combination: {best_omegas}'
+        if self.parameters.dist:
+            pass
+            # predictions_final = knn_lc.predict_dist(best_omegas)
+            # accuracy_final = calc_accuracy(np.array(gag.labels_test, dtype=np.int32),
+            #                            predictions_final)
+            # message = f'Acc: {accuracy_final:.3f}\n' \
+            #           f'Linear combination: {best_omegas}'
+        else:
+            best_acc = float('-inf')
+            message = ''
+            for best_omegas in best_params:
+                overall_predictions = knn_lc.predict_score()
+                predictions_final = knn_lc.compute_pred_from_score(overall_predictions, np.array(best_omegas))
+
+                accuracy_final = calc_accuracy(np.array(gag.labels_test, dtype=np.int32),
+                                               predictions_final)
+
+                if accuracy_final > best_acc:
+                    best_acc = accuracy_final
+
+                message += f'Acc: {accuracy_final:.2f}, Best so far: {best_acc:.2f}\n' \
+                           f'Linear combination: {best_omegas}\n'
+
+
 
         filename = f'acc_{"dist" if self.parameters.dist else "score"}'
         print(message)
