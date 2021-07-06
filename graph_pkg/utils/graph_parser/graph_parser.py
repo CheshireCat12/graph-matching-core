@@ -1,6 +1,6 @@
 """
 Graph parser is a file used to parse the graphs
-from NetworkRepository into a ".gxl" file
+from https://chrsmrrs.github.io/datasets/docs/datasets/ into a ".gxl" file
 
 @author: Anthony Gillioz
 @date: 04.03.2021
@@ -13,13 +13,15 @@ import xml.etree.ElementTree as ET
 import xml.dom.minidom as md
 import random
 
+from progress.bar import Bar
+
 # Choose which dataset to parse
-__CHOSEN_DATASET = 1
+__CHOSEN_DATASET = 4
 
 ##################
 # Init Constants #
 ##################
-__DATASETS = ['NCI1', 'PROTEINS', 'COLLAB', 'ENZYMES']
+__DATASETS = ['NCI1', 'PROTEINS', 'COLLAB', 'ENZYMES', 'REDDIT-BINARY']
 __DATASET_NAME = __DATASETS[__CHOSEN_DATASET]
 __FOLDER = f'./data/{__DATASET_NAME}/'
 __EXTENSIONS = {
@@ -28,17 +30,24 @@ __EXTENSIONS = {
         'graph_labels': f'{__DATASET_NAME}_graph_labels.txt',
         'node_labels': f'{__DATASET_NAME}_node_labels.txt',
     }
-# upper limit for train and val
-# Take into account the number of classes
-__SPLIT_CLASSES = {'NCI1': (750, 250),
-                   'PROTEINS': (330, 110),
-                   'COLLAB': (1000, 200)
-                   # 'ENZYMES': (180, )
+# upper limit for train and val per class
+# You have to take into account the number of classes to select the correct split size
+# E.g. with 2 classes the size of train will be 2*upper_limit_test.
+__SPLIT_CLASSES = {'NCI1': ((750, 750), (250, 250)),
+                   'PROTEINS': ((390, 270), (130, 90)),
+                   'COLLAB': ((1560, 465, 975), (520, 155, 325)),
+                   'ENZYMES': ((60,)*6, (20,)*6),
+                   'REDDIT-BINARY': ((600, 600), (200, 200))
+                   # 'REDDIT-MULTI-5K': ((240,)*5, (80,)*5)
                    }
 
 
 
 def parser(folder, dataset):
+    print('=' * 30)
+    print(f'== Parse graphs {__DATASET_NAME} ==')
+    print('=' * 30)
+
     # Create the graphs with the nodes and edges
     nodes_lbls_per_graph = load_nodes_per_graph_with_lbls(folder)
     edges = load_edges(folder)
@@ -53,6 +62,7 @@ def parser(folder, dataset):
     classes = set()
 
     for idx, graph_lbl in enumerate(graph_lbls):
+        graph_lbl = 0 if int(graph_lbl) < 0 else graph_lbl
         classes.add(int(graph_lbl))
         labels_per_graph[int(graph_lbl)].append((idx, int(graph_lbl)))
 
@@ -61,23 +71,19 @@ def parser(folder, dataset):
     random.seed(42)
     for class_ in sorted(classes):
         random.shuffle(labels_per_graph[class_])
-
+        print(f'Num samples class {class_}: {len(labels_per_graph[class_])}')
 
     graphs_train, graphs_val, graphs_test = [], [], []
 
-    for class_ in sorted(classes):
-        graphs_train += labels_per_graph[class_][:split_tr]
-        graphs_val += labels_per_graph[class_][split_tr:split_tr+split_va]
-        graphs_test += labels_per_graph[class_][split_tr+split_va:]
+    for idx_cl, class_ in enumerate(sorted(classes)):
+        graphs_train += labels_per_graph[class_][:split_tr[idx_cl]]
+        graphs_val += labels_per_graph[class_][split_tr[idx_cl]:split_tr[idx_cl]+split_va[idx_cl]]
+        graphs_test += labels_per_graph[class_][split_tr[idx_cl]+split_va[idx_cl]:]
 
-    # graphs_train = labels_per_graph[0][:750] + labels_per_graph[1][:750]
-    # graphs_val = labels_per_graph[0][750:1000] + labels_per_graph[1][750:1000]
-    # graphs_test = labels_per_graph[0][1000:] + labels_per_graph[1][1000:]
-    # print(len(labels_per_graph[0]))
-    # print(len(labels_per_graph[1]))
-    print(len(graphs_train))
-    print(len(graphs_val))
-    print(len(graphs_test))
+    print(f'Size Train set: {len(graphs_train)}')
+    print(f'Size Val set: {len(graphs_val)}')
+    print(f'Size Test set: {len(graphs_test)}')
+
     parse_class_xml(graphs_train, folder, 'train')
     parse_class_xml(graphs_val, folder, 'validation')
     parse_class_xml(graphs_test, folder, 'test')
@@ -104,6 +110,8 @@ def parse_class_xml(classes, folder, name):
 
 
 def parse_graph_xml(nodes_per_graph, edges_per_graph, folder):
+
+    bar = Bar(f'Create Graphs', max=len(nodes_per_graph.keys()))
 
     for graph_idx in nodes_per_graph.keys():
         graph_name = f'molecule_{graph_idx}'
@@ -147,7 +155,8 @@ def parse_graph_xml(nodes_per_graph, edges_per_graph, folder):
         with open(filename, mode='w') as f:
             f.write(newxml.toprettyxml(indent=' ', newl='\n'))
 
-
+        bar.next()
+    bar.finish()
 
 
 def create_edges_per_graph(nodes_lbls_per_graph, edges):
@@ -182,6 +191,13 @@ def load_nodes_per_graph_with_lbls(folder):
     graph_idx = load_file(folder, __EXTENSIONS['graph_idx'])
     node_labels = load_file(folder, __EXTENSIONS['node_labels'])
 
+    # print(node_labels)
+
+    if not node_labels:
+        # In case of a dataset does not have node labels
+        # All the labels are set to 1 (arbitrary choice).
+        node_labels = ['1\n'] * len(graph_idx)
+
     nodes_per_graph = defaultdict(list)
     Node = namedtuple('Node', ['node_id', 'node_lbl'])
 
@@ -194,9 +210,14 @@ def load_nodes_per_graph_with_lbls(folder):
 
 def load_file(folder, extension):
     filename = os.path.join(folder, extension)
-    with open(filename, mode='r') as fp:
-        data = fp.readlines()
-    return data
+    # Check if the file exist
+    # Handle the exception if a dataset doesn't have a node labels for example.
+    if os.path.exists(filename):
+        with open(filename, mode='r') as fp:
+            data = fp.readlines()
+        return data
+    else:
+        return []
 
 
 def main():

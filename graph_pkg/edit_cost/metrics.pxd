@@ -9,3 +9,5 @@ cdef double dirac_mutagenicity(int chem_source, int chem_target)
 
 cdef double dirac_NCI1(int chem_source, int chem_target)
 
+cdef double dirac(int source, int target)
+
