@@ -42,6 +42,7 @@ cdef class BaggingKNN:
                      bint use_reduced_graphs=False):
         cdef:
             int num_samples, idx_estimator, graph_idx
+            # double lambda_choice
             set all_graphs, out_of_bag
             list weights
 
@@ -59,6 +60,10 @@ cdef class BaggingKNN:
         else:
             lambdas = np.array([1.0])
 
+        # self.lambda_per_estimator = np.random.choice(lambdas,
+        #                                              size=self.n_estimators,
+        #                                              replace=True) # ,p=[0.3, 0.25, 0.2, 0.15, 0.1]) # lambdas/np.sum(lambdas))
+
         k_values = [1, 3, 5] #, 7, 9, 11]
 
         bar = Bar('Training', max=self.n_estimators)
@@ -69,9 +74,11 @@ cdef class BaggingKNN:
 
             out_of_bag = all_graphs.difference(graphs_choice)
 
-            # print(f'lambda choice: {lambda_choice}')
+            # lambda_choice = self.lambda_per_estimator[idx_estimator]
 
+            # for idx_graph in graphs_choice:
             for idx_graph, lambda_c in zip(graphs_choice, lambda_choice):
+                # self.graphs_estimators[idx_estimator].append(self.h_graphs_train.hierarchy[lambda_choice][idx_graph])
                 self.graphs_estimators[idx_estimator].append(self.h_graphs_train.hierarchy[lambda_c][idx_graph])
                 self.labels_estimators[idx_estimator].append(self.labels_train[idx_graph])
 
@@ -94,35 +101,32 @@ cdef class BaggingKNN:
             bar.next()
         bar.finish()
 
-        # print(self.weights_per_estimator.base)
 
     cpdef void performance_individual_estimator(self, int current_estimator, set oob_graphs, int k):
         cdef:
+            # double lambda_choice
             list graphs = []
             list labels = []
             int[::1] np_labels
 
-        # print(len(oob_graphs))
+        # lambda_choice = self.lambda_per_estimator[current_estimator]
 
         for idx_graph in list(oob_graphs):
-            # print('err1')
+            # graphs.append(self.h_graphs_train.hierarchy[lambda_choice][idx_graph])
             graphs.append(self.h_graphs_train.hierarchy[1.0][idx_graph])
-            # print('err2')
             labels.append(self.labels_train[idx_graph])
 
         # print('Proportion of 1/0 in OOB:')
         # self.proportion(labels)
 
-        # print('test1')
         np_labels = np.array(labels, dtype=np.int32)
-        # print('test2')
         predictions = self.estimators[current_estimator].predict(graphs, k, self.num_cores)
-        accuracy = calc_accuracy(np_labels, predictions)
-        # print('test3')
+        accuracy = round(calc_accuracy(np_labels, predictions) / 100, 2)
+
         # print(f'proportion of 1/0 in predictions:')
         # self.proportion(predictions)
 
-        # print(f'f1 score: {calc_f1(np_labels, predictions):.2f}\n'
+        # print(f'\nf1 score: {calc_f1(np_labels, predictions):.2f}\n'
         #       f'accuracy: {accuracy:.2f}\n')
 
         self.weights_per_estimator[current_estimator]= accuracy
@@ -210,13 +214,18 @@ cdef class BaggingKNN:
     #
     #     return acc_before_GA_opt, best_acc, best_omegas, best_predictions
 
-    cpdef int[:,::1] predict_overall(self, list graphs_pred):
-        overall_predictions = []
+    cpdef int[:,::1] predict_overall(self, HierarchicalGraphs graphs_pred):
+        cdef:
+            int k_pred
+            double lambda_choice
+            list overall_predictions = []
 
         bar = Bar('Processing', max=self.n_estimators)
         for idx, estimator in enumerate(self.estimators):
             k_pred = self.k_per_estimator[idx]
-            overall_predictions.append(estimator.predict(graphs_pred, k_pred,
+            # lambda_choice = self.lambda_per_estimator[idx]
+            overall_predictions.append(estimator.predict(graphs_pred.hierarchy[1.0],
+                                                         k_pred,
                                                          num_cores=self.num_cores))
 
             bar.next()
@@ -235,10 +244,10 @@ cdef class BaggingKNN:
             # print('predictions from all estimators')
             weighted_prediction = defaultdict(int)
             # print(predictions_per_estimator)
-            temp = []
+            # temp = []
 
             for pred, weight in zip(predictions_per_estimator, self.weights_per_estimator):
-                temp.append((pred, weight))
+                # temp.append((pred, weight))
                 # print(weight)
                 weighted_prediction[pred] += weight
                 # print('#########')

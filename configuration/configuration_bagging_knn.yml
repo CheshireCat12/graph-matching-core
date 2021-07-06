@@ -35,13 +35,13 @@ NCI1:
   best_alpha: 0.7
   folder_results: ./results/bagging_knn/NCI1
   bagging_params:
-    n_estimators: 134
+    n_estimators: -1
     percentage_train_data: -1
     random_k: -1
     lambdas: -1
 general:
   hierarchy_params:
-    percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
+    percentages: [1.0, 0.8, 0.6, 0.4, 0.2] #, 0.9, 0.8, 0.7, 0.6]
   centrality_measure: betweenness
   parallel: True
   deletion_strategy: compute_once
@@ -50,7 +50,7 @@ general:
   use_reduced_graphs: True
   fine_tuning:
     # range of values for the number of estimators: [start, end, step]
-    n_estimators: [60, 100, 20]
+    n_estimators: [40, 100, 20] # [60, 100, 20]
     lambdas: [[1.0, 0.8, 0.6, 0.4, 0.2]] # , [1.0, 0.8, 0.6, 0.4], [1.0, 0.8, 0.6], [1.0, 0.8]]
-    percentage_data_train: [1.0, 1.5, 2.0] # [0.8, 1.0, 1.2, 1.4]
+    percentage_data_train: [1.0] #, 1.5, 2.0] # [0.8, 1.0, 1.2, 1.4]
     random_k: [True] # [False, True]

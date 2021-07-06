@@ -83,6 +83,20 @@ cdef class KNNLinearCombination:
 
 
     cpdef int[::1] predict_dist(self, double[::1] omegas):
+        """
+        With this method, all the distance matrices are merged into one distance matrix.
+        The matrices are merged by summing them up together.
+        The importance of each distance matrix is given by the vector omegas.
+        
+        The final distance matrix is obtained like:
+            D_final = O.T D
+                    = o_1·d_1 + o_2·d_2 + ... + o_n·d_n
+                    
+        Once D_final is obtained, the classification is done as in a standard KNN model.
+        
+        :param omegas: Vector that weight the strengt of the distance matrices
+        :return: 
+        """
         cdef:
             int dim1, dim2
             int[::1] predictions
@@ -91,11 +105,14 @@ cdef class KNNLinearCombination:
 
         assert self.are_distances_loaded, f'Please call first load_h_distances().'
 
-        # print(f'-- Start Prediction --')
         # Create distances matrix
         dim1, dim2 = self.h_distances.shape[1:3]
         combination_distances = np.zeros((dim1, dim2))
+
+        # Normalize the omega vector to have the o_i \in [0,1]
         normalized_omegas = omegas / np.sum(omegas)
+
+        # Summing up the distance matrices
         for idx, _ in enumerate(PERCENT_HIERARCHY):
             combination_distances += np.array(self.h_distances[idx, :, :]) * normalized_omegas[idx]
 
@@ -112,6 +129,11 @@ cdef class KNNLinearCombination:
         return predictions
 
     cpdef int[:, ::1] predict_score(self):
+        """
+        Predict the class for all the hierarchy levels.
+        The predictions of each level are then combined for the final prediction.
+        :return: 
+        """
         cdef:
             int dim1, dim2
             int[::1] h_predictions, predictions
@@ -135,38 +157,30 @@ cdef class KNNLinearCombination:
 
             overall_predictions.append(h_predictions)
 
-        # predictions = np.array([Counter(arr).most_common()[0][0]
-        #                         for arr in np.array(overall_predictions).T])
-
         return np.array(overall_predictions)
 
     cpdef int[::1] compute_pred_from_score(self, int[:, ::1] overall_predictions, double[::1] omegas):
+        """
+        Take the predictions from each level and combined them with respect to the weights omega.
+        
+        :param overall_predictions: 
+        :param omegas: 
+        :return: 
+        """
+        # Normalize the omega values to be in [0, 1]
         normalized_omegas = omegas / np.sum(omegas)
-        predictions = -1 * np.ones_like(overall_predictions[0])
-        for idx, preds in enumerate(np.array(overall_predictions).T):
-            # temp = defaultdict(lambda x: 0)
-            temp = {}
-            for pred, val in zip(preds, normalized_omegas):
-                temp[pred] = temp.get(pred, 0) + val
-            # temp = Counter({pred: val for pred, val in zip(preds, normalized_omegas)})
 
-            temp = Counter(temp)
-            # print(temp.most_common()[0][0])
-            # print(Counter(preds).most_common()[0][0])
-            #
-            # print(temp)
-            # print(Counter(preds))
-            #
-            # print(preds)
-            # print(np.asarray(omegas))
-            #
-            # print("####")
+        # Create an empty vector for the final predictions of the model
+        predictions = -1 * np.ones_like(overall_predictions[0])
+
+        for idx, preds in enumerate(np.array(overall_predictions).T):
+            class_accumulation = {}
+            for pred, val in zip(preds, normalized_omegas):
+                class_accumulation[pred] = class_accumulation.get(pred, 0) + val
+
+            temp = Counter(class_accumulation)
             predictions[idx] = temp.most_common()[0][0]
-            # preds
-            # omegas
-            # break
-        # predictions = np.array([Counter({pred: val for pred, val in zip(preds, normalized_omegas)}).most_common()[0][0]
-        #                         for preds in np.array(overall_predictions).T])
+
         return predictions
 
 

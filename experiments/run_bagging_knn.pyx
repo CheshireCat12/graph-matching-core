@@ -104,7 +104,7 @@ class RunnerBaggingKnn(Runner):
             #     with open(path_filename, 'rb') as f:
             #         overall_predictions = np.load(f)
             # else:
-            overall_predictions = classifier.predict_overall(gag.graphs_val)
+            overall_predictions = classifier.predict_overall(gag.h_graphs_val)
 
             # with open(path_filename, 'wb') as f:
             #     np.save(f, overall_predictions)
@@ -123,7 +123,7 @@ class RunnerBaggingKnn(Runner):
                     best_acc = acc_val
                     best_params = (n_estimators, percentage_train, random_k, lambdas_loop)
 
-            self.save_stats(message, 'opt_bagging_weights_abbl_lambda.txt', save_params=False)
+            self.save_stats(message, 'bagging_single_lambda_opt.txt', save_params=False)
 
         best_n_estimators, best_percentage_train, best_random_k, best_lambdas = best_params
 
@@ -146,6 +146,9 @@ class RunnerBaggingKnn(Runner):
         ####################
         ## Set parameters ##
         ####################
+        params_edit_cost = self.parameters.coordinator['params_edit_cost']
+        best_alpha = self.parameters.best_alpha
+        self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
 
         coordinator_params = self.parameters.coordinator
         centrality_measure = self.parameters.centrality_measure
@@ -176,7 +179,7 @@ class RunnerBaggingKnn(Runner):
                                best_percentage_train, k_test, best_lambdas,
                                use_reduced_graphs=use_reduced_graphs)
 
-        test_predictions = final_classifier.predict_overall(gag.graphs_test)
+        test_predictions = final_classifier.predict_overall(gag.h_graphs_test)
 
         final_acc, final_f1_score, final_predictions = final_classifier.predict(test_predictions,
                                                                 np.array(gag.labels_test, dtype=np.int32))
@@ -214,7 +217,7 @@ class RunnerBaggingKnn(Runner):
         final_acc_aggregation = -1
 
         message = f'Acc test: {final_acc:.2f}\n' \
-                  f'f1 score: {final_f1_score:.2f}' \
+                  f'f1 score: {final_f1_score:.2f}\n' \
                   f'Acc aggregation: {final_acc_aggregation:.2f}\n' \
                   f'Best parameters\n' \
                   f'\tn_estimators: {best_n_estimators}\n' \
@@ -223,7 +226,7 @@ class RunnerBaggingKnn(Runner):
 
         print(message)
 
-        self.save_stats(message, 'final_bagging_weights_abbl_lambda.txt')
+        self.save_stats(message, 'bagging_single_lambda.txt')
 
         # best_n_estimators, best_percentage_train, best_random_k, best_omegas = (120, 1.4, True, None)
         # best_omegas = [1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0,
