@@ -15,7 +15,7 @@ from graph_pkg.graph.node import Node
                           (('Cl',), ('Na',), (11., 11., 1.1, 1.1, 'dirac'), 22.),
 
                           ])
-def test_euclidean_norm(coord1, coord2, e_cost, expected):
+def test_dirac_mutagenicity_norm(coord1, coord2, e_cost, expected):
     node0 = Node(0, LabelNodeMutagenicity(*coord1))
     node1 = Node(1, LabelNodeMutagenicity(*coord2))
 

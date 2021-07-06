@@ -14,7 +14,7 @@ from graph_pkg.graph.node import Node
                           ((12,), (7,), (11., 11., 1.1, 1.1, 'dirac'), 22.),
 
                           ])
-def test_euclidean_norm(coord1, coord2, e_cost, expected):
+def test_dirac_nci1_norm(coord1, coord2, e_cost, expected):
     node0 = Node(0, LabelNodeNCI1(*coord1))
     node1 = Node(1, LabelNodeNCI1(*coord2))
 
