@@ -92,6 +92,8 @@ cdef class LoaderBase:
             idx_from = self._format_idx(element['@from'])
             idx_to = self._format_idx(element['@to'])
             lbl_edge = self._formatted_lbl_edge(element)
+            if idx_from == idx_to:
+                continue
             tmp_edge = Edge(idx_from, idx_to, lbl_edge)
 
             self._constructed_graph.add_edge(tmp_edge)

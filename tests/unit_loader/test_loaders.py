@@ -4,6 +4,10 @@ from graph_pkg.loader.loader_AIDS import LoaderAIDS
 from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 from graph_pkg.loader.loader_NCI1 import LoaderNCI1
+from graph_pkg.loader.loader_proteins_tu import LoaderProteinsTU
+from graph_pkg.loader.loader_enzymes import LoaderEnzymes
+from graph_pkg.loader.loader_collab import LoaderCollab
+from graph_pkg.loader.loader_reddit_binary import LoaderRedditBinary
 from graph_pkg.loader.loader_protein import LoaderProtein
 
 
@@ -104,6 +108,106 @@ def test_loader_NCI1_len(graphs_NCI1):
                           ])
 def test_loader_NCI1_value(graphs_NCI1, idx_graph, gr_name, num_nodes):
     graph = graphs_NCI1[idx_graph]
+
+    assert graph.name == gr_name
+    assert len(graph) == num_nodes
+
+######################### Proteins TU #######################
+
+@pytest.fixture()
+def graphs_proteins_tu():
+    loader = LoaderProteinsTU()
+    graphs = loader.load()
+
+    return graphs
+
+
+def test_loader_proteins_tu_len(graphs_proteins_tu):
+    assert len(graphs_proteins_tu) == 1113
+
+
+@pytest.mark.parametrize('idx_graph, gr_name, num_nodes',
+                         [(0, 'molecule_0', 42),
+                          (-1, 'molecule_999', 15),
+                          ])
+def test_loader_proteins_tu_value(graphs_proteins_tu, idx_graph, gr_name, num_nodes):
+    graph = graphs_proteins_tu[idx_graph]
+
+    assert graph.name == gr_name
+    assert len(graph) == num_nodes
+
+
+######################### Enzymes #######################
+
+@pytest.fixture()
+def graphs_enzymes():
+    loader = LoaderEnzymes()
+    graphs = loader.load()
+
+    return graphs
+
+
+def test_loader_enzymes_len(graphs_enzymes):
+    assert len(graphs_enzymes) == 600
+
+
+@pytest.mark.parametrize('idx_graph, gr_name, num_nodes',
+                         [(0, 'molecule_0', 37),
+                          (-1, 'molecule_99', 5),
+                          ])
+def test_loader_enzymes_value(graphs_enzymes, idx_graph, gr_name, num_nodes):
+    graph = graphs_enzymes[idx_graph]
+
+    assert graph.name == gr_name
+    assert len(graph) == num_nodes
+
+
+
+######################### collab #######################
+
+@pytest.fixture()
+def graphs_collab():
+    loader = LoaderCollab()
+    graphs = loader.load()
+
+    return graphs
+
+
+def test_loader_collab_len(graphs_collab):
+    assert len(graphs_collab) == 5000
+
+
+@pytest.mark.parametrize('idx_graph, gr_name, num_nodes',
+                         [(0, 'molecule_0', 45),
+                          (-1, 'molecule_999', 60),
+                          ])
+def test_loader_collab_value(graphs_collab, idx_graph, gr_name, num_nodes):
+    graph = graphs_collab[idx_graph]
+
+    assert graph.name == gr_name
+    assert len(graph) == num_nodes
+
+
+######################### Reddit Binary #######################
+
+@pytest.fixture()
+def graphs_reddit_binary():
+    loader = LoaderRedditBinary()
+    graphs = loader.load()
+
+    return graphs
+
+
+def test_loader_reddit_binary_len(graphs_reddit_binary):
+    assert len(graphs_reddit_binary) == 2000
+
+
+@pytest.mark.parametrize('idx_graph, gr_name, num_nodes',
+                         [(0, 'molecule_0', 218),
+                          (-1, 'molecule_999', 373),
+                          ])
+def test_loader_reddit_binary_value(graphs_reddit_binary, idx_graph, gr_name, num_nodes):
+    graph = graphs_reddit_binary[idx_graph]
 
     assert graph.name == gr_name
     assert len(graph) == num_nodes
