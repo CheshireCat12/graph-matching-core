@@ -25,6 +25,9 @@ cdef class EditCost:
             self.alpha_edge = 1.
             self.change_alpha = False
 
+    cpdef void update_alpha(self, double alpha):
+        self._init_alpha(alpha)
+
     def __repr__(self):
         return f'cost_node{self.c_insert_node}_cost_edge{self.c_insert_edge}_alpha{self.alpha_node}'
 

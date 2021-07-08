@@ -64,8 +64,16 @@ cdef class Coordinator:
             self._init_mutagenicity()
         elif self.dataset == 'NCI1':
             self._init_NCI1()
+        elif self.dataset == 'proteins_tu':
+            self._init_proteins_tu()
+        elif self.dataset == 'enzymes':
+            self._init_enzymes()
+        elif self.dataset == 'collab':
+            self._init_collab()
+        elif self.dataset == 'reddit_binary':
+            self._init_reddit_binary()
         else:
-            raise ValueError(f'The dataset {self.dataset} is not available!')
+            raise ValueError(f'The dataset {self.dataset} is not implemented!')
 
         self.graphs = self.loader.load()
         self.ged = GED(self.edit_cost)
@@ -85,6 +93,22 @@ cdef class Coordinator:
     cdef void _init_NCI1(self):
         self.loader = LoaderNCI1(self.folder_dataset)
         self.edit_cost = EditCostNCI1(*self.params_edit_cost)
+
+    cdef void _init_proteins_tu(self):
+        self.loader = LoaderProteinsTU(self.folder_dataset)
+        self.edit_cost = EditCostProteinsTU(*self.params_edit_cost)
+
+    cdef void _init_enzymes(self):
+        self.loader = LoaderEnzymes(self.folder_dataset)
+        self.edit_cost = EditCostEnzymes(*self.params_edit_cost)
+
+    cdef void _init_collab(self):
+       self.loader = LoaderCollab(self.folder_dataset)
+       self.edit_cost = EditCostCollab(*self.params_edit_cost)
+
+    cdef void _init_reddit_binary(self):
+        self.loader = LoaderRedditBinary(self.folder_dataset)
+        self.edit_cost = EditCostRedditBinary(*self.params_edit_cost)
 
     def __repr__(self):
         return f'Coordinator - Dataset: {self.dataset}; ' \

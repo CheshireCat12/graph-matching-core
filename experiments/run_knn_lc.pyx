@@ -11,27 +11,27 @@ from progress.bar import Bar
 import os
 
 
-cpdef void _write_results(double acc, double exec_time, parameters, name):
-    Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
-    # name = f'percent_remain_{parameters.percentage}_' \
-    #        f'measure_{parameters.centrality_measure}_' \
-    #        f'del_strat_{parameters.deletion_strategy}.txt'
-    filename = os.path.join(parameters.folder_results, name)
-    with open(filename, mode='a+') as fp:
-        fp.write(str(parameters))
-        fp.write(f'\n\nAcc: {acc}; Time: {exec_time}\n'
-                 f'{"="*50}\n\n')
-
-cpdef void _write_results_new(list accuracies, list exec_times, parameters, name):
-    Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
-
-    filename = os.path.join(parameters.folder_results, name)
-
-    with open(filename, mode='a+') as fp:
-        fp.write(str(parameters))
-        fp.write(f'\n\nAcc: {",".join([str(val) for val in accuracies])};'
-                 f'\nAlphas: {",".join([str(val) for val in exec_times])}\n'
-                 f'{"="*50}\n\n')
+# cpdef void _write_results(double acc, double exec_time, parameters, name):
+#     Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
+#     # name = f'percent_remain_{parameters.percentage}_' \
+#     #        f'measure_{parameters.centrality_measure}_' \
+#     #        f'del_strat_{parameters.deletion_strategy}.txt'
+#     filename = os.path.join(parameters.folder_results, name)
+#     with open(filename, mode='a+') as fp:
+#         fp.write(str(parameters))
+#         fp.write(f'\n\nAcc: {acc}; Time: {exec_time}\n'
+#                  f'{"="*50}\n\n')
+#
+# cpdef void _write_results_new(list accuracies, list exec_times, parameters, name):
+#     Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
+#
+#     filename = os.path.join(parameters.folder_results, name)
+#
+#     with open(filename, mode='a+') as fp:
+#         fp.write(str(parameters))
+#         fp.write(f'\n\nAcc: {",".join([str(val) for val in accuracies])};'
+#                  f'\nAlphas: {",".join([str(val) for val in exec_times])}\n'
+#                  f'{"="*50}\n\n')
 
 
 class RunnerKnnLC(Runner):

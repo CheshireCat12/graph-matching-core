@@ -16,6 +16,8 @@ cdef class EditCost:
 
     cdef void _init_alpha(self, double alpha)
 
+    cpdef void update_alpha(self, double alpha)
+
     cdef int _init_metric(self) except? -1
 
     cpdef double cost_insert_node(self, Node node) except? -1

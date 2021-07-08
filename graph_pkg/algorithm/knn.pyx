@@ -18,7 +18,7 @@ cdef class KNNClassifier:
         :param ged: GED
         """
         self.ged = ged
-        self.mat_dist = MatrixDistances(ged, parallel)
+        self.mat_dist = MatrixDistances(ged, parallel, verbose=verbose)
         self.verbose = verbose
 
     cpdef void train(self, list graphs_train, list labels_train):

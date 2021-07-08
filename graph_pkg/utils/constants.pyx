@@ -18,7 +18,12 @@ cdef:
     dict DEFAULT_FOLDERS = {'letter': './data/Letter/Letter/HIGH/',
                             'AIDS': './data/AIDS/data/',
                             'mutagenicity': './data/Mutagenicity/data/',
-                            'NCI1': './data/NCI1/data/'}
+                            'NCI1': './data/NCI1/data/',
+                            'proteins_tu': './data/PROTEINS/data/',
+                            'enzymes': './data/ENZYMES/data/',
+                            'collab': './data/COLLAB/data/',
+                            'reddit_binary': './data/REDDIT-BINARY/data'
+                            }
 
     dict DEFAULT_FOLDERS_LABELS = DEFAULT_FOLDERS
 
@@ -42,15 +47,25 @@ cdef:
     }
     dict CODE_TO_LBL_MUTAGENICITY = {val: key for key, val in MUTAGENICITY_LBL_TO_CODE.items()}
 
-    dict NCI1_LBL_TO_CODE = {
-        '0': 0, '1': 1,
-    }
+    dict NCI1_LBL_TO_CODE = {str(i): i for i in range(2)}
+
+    dict PROTEINS_TU_LBL_TO_CODE = {str(i): i for i in range(1, 3)}
+
+    dict ENZYMES_TO_CODE = {str(i): i for i in range(1, 7)}
+
+    dict COLLAB_TO_CODE = {str(i): i for i in range(1, 4)}
+
+    dict REDDIT_BINARY_TO_CODE = {str(i): i for i in range(2)}
 
     dict DEFAULT_LABELS_TO_CODE = {
         'letter': LETTER_LBL_TO_CODE,
         'AIDS': AIDS_LBL_TO_CODE,
         'mutagenicity': MUTAGENICITY_LBL_TO_CODE,
         'NCI1': NCI1_LBL_TO_CODE,
+        'proteins_tu': PROTEINS_TU_LBL_TO_CODE,
+        'enzymes': ENZYMES_TO_CODE,
+        'collab': COLLAB_TO_CODE,
+        'reddit_binary': REDDIT_BINARY_TO_CODE,
     }
 
     ###############################

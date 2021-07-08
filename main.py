@@ -70,7 +70,8 @@ if __name__ == '__main__':
                         help='Choose the experiment to run.')
     parser.add_argument('-d', '--dataset', type=str,
                         default='letter',
-                        choices=['letter', 'AIDS', 'mutagenicity', 'NCI1'],
+                        choices=['letter', 'AIDS', 'mutagenicity', 'NCI1',
+                                 'proteins_tu', 'enzymes', 'collab', 'reddit_binary'],
                         help='Choose the dataset.')
     parser.add_argument('-a', '--all', type=bool,
                         default=False,

@@ -1,28 +1,29 @@
-letter:
-  coordinator:
-    dataset: letter
-    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, euclidean]
-    folder_dataset: ./data/Letter/Letter/HIGH/
-  k: 5
-  best_alpha: 0.55
-  folder_results: ./results/h_knn/letter
 AIDS:
   coordinator:
     dataset: AIDS
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
     folder_dataset: ./data/AIDS/data/
-  k: 1
-  best_alpha: 0.7
-  folder_results: ./results/h_knn/AIDS
+  h_knn:
+    current_percentage: 1.0
+    1.0:
+      k: 5
+      alpha: 0.9
+    0.8:
+      k: 5
+      alpha: 0.95
+  folder_results: ./results/h_knnV2/AIDS
 mutagenicity:
   coordinator:
     dataset: mutagenicity
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
     folder_dataset: ./data/Mutagenicity/data/
     folder_labels: ./data/Mutagenicity/data/
-  k: 3
-  best_alpha: 0.60
-  folder_results: ./results/h_knn/mutagenicity
+  h_knn:
+    current_percentage: 1.0
+    1.0:
+      k: 3
+      alpha: 0.6
+  folder_results: ./results/h_knnV2/mutagenicity
 NCI1:
   coordinator:
     dataset: NCI1
@@ -31,17 +32,38 @@ NCI1:
     folder_labels: ./data/NCI1/data/
   k: 5
   best_alpha: 0.7
-  folder_results: ./results/h_knn/NCI1
+  folder_results: ./results/h_knnV2/NCI1
+proteins_tu:
+  coordinator:
+    dataset: proteins_tu
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/PROTEINS/data/
+    folder_labels: ./data/PROTEINS/data/
+  k: 5
+  folder_results: ./results/h_knnV2/proteins_tu
+enzymes:
+  coordinator:
+    dataset: enzymes
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/ENZYMES/data/
+    folder_labels: ./data/ENZYMES/data/
+  k: 5
+  folder_results: ./results/h_knnV2/enzymes
 general:
-  finetune: False
-  tuning:
-    alpha: [1, 20, 0.05]
-    ks: [1, 3, 5]
-  hierarchy_params:
-    percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
-    centrality_measures: [pagerank, betweenness]
-  centrality_measure: pagerank
+  optimize: False
+  percentages_to_opt: [1.0, 0.8, 0.6, 0.4, 0.2]
+  check_all_percentages: True
+  num_cores: 12
   parallel: True
   deletion_strategy: compute_once
   save_to_html: False
   save_predictions: True
+  tuning:
+    alpha: [1, 20, 0.05]
+    #    alpha: [0.05, 0.2, 0.05]
+    ks: [1, 3, 5, 7]
+  current_percentage_to_opt: 1.0
+  hierarchy_params:
+    percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
+    centrality_measures: [pagerank, betweenness]
+  current_centrality_measure: pagerank

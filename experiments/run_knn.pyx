@@ -42,8 +42,9 @@ cpdef void run_knn(parameters):
     graphs_val, labels_val = coordinator.val_split(conv_lbl_to_code=True)
     graphs_test, labels_test = coordinator.test_split(conv_lbl_to_code=True)
 
-    knn = KNNClassifier(coordinator.ged, parallel)
+    knn = KNNClassifier(coordinator.ged, parallel, verbose=True)
     knn.train(graphs_train, labels_train)
 
     _do_prediction(knn, graphs_val, labels_val, k, 'Validation')
     _do_prediction(knn, graphs_test, labels_test, k, 'Test')
+    _do_prediction(knn, graphs_val + graphs_test, labels_val + labels_test, k, 'Val + Test')
