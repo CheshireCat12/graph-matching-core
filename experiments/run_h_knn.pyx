@@ -156,9 +156,10 @@ class RunnerHKnn(Runner):
 
         coordinator_params = self.parameters.coordinator
         centrality_measure = self.parameters.current_centrality_measure
+        percentages = self.parameters.hierarchy_params['percentages']
+        
         num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
-        percentages = self.parameters.hierarchy_params['percentages']
         current_percentage_opt = self.parameters.current_percentage_to_opt
 
         gag = GAG(coordinator_params, percentages,

@@ -1,5 +1,6 @@
 from hierarchical_graph.centrality_measure.pagerank cimport PageRank
 from hierarchical_graph.centrality_measure.betweenness cimport Betweenness
+from hierarchical_graph.centrality_measure.random cimport Random
 
 cdef:
     #########################
@@ -77,6 +78,7 @@ cdef:
     dict MEASURES = {
         'pagerank': PageRank(),
         'betweenness': Betweenness(),
+        'random': Random(),
     }
 
 ########################

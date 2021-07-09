@@ -2,6 +2,7 @@ import os
 from glob import glob
 
 from xmltodict import parse
+from progress.bar import Bar
 
 from graph_pkg.utils.constants cimport EXTENSION_GRAPHS
 
@@ -47,6 +48,8 @@ cdef class LoaderBase:
 
         graphs = []
         print('** Loading Graphs **')
+
+        bar = Bar(f'Loading', max=len(graph_files))
         for graph_file in sorted(graph_files):
             with open(graph_file) as file:
                 graph_text = "".join(file.readlines())
@@ -57,6 +60,8 @@ cdef class LoaderBase:
 
             graphs.append(self._constructed_graph)
             # break
+            bar.next()
+        bar.finish
 
         print(f'==> {len(graphs)} graphs loaded')
         return graphs
