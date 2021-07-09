@@ -3,7 +3,9 @@ from random import shuffle, seed
 
 cdef class GathererHierarchicalGraphs:
 
-    def __init__(self, dict coordinator_params, list percentages, str centrality_measure, bint activate_aggregation=True):
+    def __init__(self, dict coordinator_params, list percentages,
+                 str centrality_measure, bint activate_aggregation=True,
+                 bint verbose=False):
         self.percentages = percentages
         # Retrieve graphs with labels
         self.coordinator = CoordinatorClassifier(**coordinator_params)
@@ -18,15 +20,19 @@ cdef class GathererHierarchicalGraphs:
         # Set the graph hierarchical
         self.measure = MEASURES[centrality_measure]
         self.h_graphs_train = HierarchicalGraphs(self.graphs_train, self.measure,
-                                                 percentage_hierarchy=percentages)
+                                                 percentage_hierarchy=percentages,
+                                                 verbose=verbose)
         self.h_graphs_val = HierarchicalGraphs(self.graphs_val, self.measure,
-                                               percentage_hierarchy=percentages)
+                                               percentage_hierarchy=percentages,
+                                               verbose=verbose)
         self.h_graphs_test = HierarchicalGraphs(self.graphs_test, self.measure,
-                                                percentage_hierarchy=percentages)
+                                                percentage_hierarchy=percentages,
+                                                verbose=verbose)
 
         if activate_aggregation:
             self.h_aggregation_graphs = HierarchicalGraphs(self.aggregation_graphs, self.measure,
-                                                           percentage_hierarchy=percentages)
+                                                           percentage_hierarchy=percentages,
+                                                           verbose=verbose)
 
 
     cpdef list k_fold_validation(self, int cv=5):

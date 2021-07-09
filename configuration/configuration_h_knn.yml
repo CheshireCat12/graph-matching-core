@@ -84,7 +84,7 @@ reddit_binary:
   folder_results: ./results/h_knnV2/reddit_binary
 general:
   optimize: True
-  percentages_to_opt: [1.0, 0.8, 0.6, 0.4, 0.2]
+  percentages_to_opt: [0.2, 0.4, 0.6, 0.8, 1.0]
   check_all_percentages: True
   num_cores: 12
   parallel: True

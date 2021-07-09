@@ -16,6 +16,7 @@ import os
 from itertools import product
 from collections import defaultdict
 import pandas as pd
+from progress.bar import Bar
 
 # 1. Run the experiment with the given dataset 2 times (Pagerank, Betweenness)
 #    1.1 with the optimize: True and percentage_to_opt: [1.,0, ....]
@@ -55,6 +56,16 @@ class RunnerHKnn(Runner):
     def run(self):
         print('Run KNN with Reduced Graphs')
 
+        # Init the graph gatherer
+        coordinator_params = self.parameters.coordinator
+        centrality_measure = self.parameters.current_centrality_measure
+        percentages = self.parameters.hierarchy_params['percentages']
+
+        self.gag = GAG(coordinator_params, percentages,
+                       centrality_measure, activate_aggregation=False)
+
+        self.test_evaluation = []
+
         if self.parameters.optimize:
             for percentage_to_opt in self.parameters.percentages_to_opt:
                 self.parameters.current_percentage_to_opt = percentage_to_opt
@@ -81,6 +92,19 @@ class RunnerHKnn(Runner):
                 self.evaluate(best_params)
                 # self.parameters.coordinator['params_edit_cost'] = temp_edit_cost
 
+        # if self.parameters.optimize:
+        #     self.save_stats(message, f'{centrality_measure}_test_results_h_knn_{current_percentage_opt}.txt')
+        # else:
+        #     write_params = current_percentage_opt == 1.0
+        #     self.save_stats(message, f'{centrality_measure}_test_results_not_opt.txt', save_params=write_params)
+        #
+        #
+        # Path(self.parameters.folder_results).mkdir(parents=True, exist_ok=True)
+        # filename = os.path.join(self.parameters.folder_results,
+        #                         f'{centrality_measure}_fine_tuning_{current_percentage_to_opt}.csv')
+        #
+        # dataframe = pd.DataFrame(accuracies, index=alphas, columns=ks)
+        # dataframe.to_csv(filename)
 
     def optimization(self):
         cdef:
@@ -89,47 +113,50 @@ class RunnerHKnn(Runner):
         ##################
         # Set parameters #
         ##################
-        # params_edit_cost = self.parameters.coordinator['params_edit_cost']
-        # self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, 0.5)
 
-        coordinator_params = self.parameters.coordinator
         centrality_measure = self.parameters.current_centrality_measure
         num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
-        percentages = self.parameters.hierarchy_params['percentages']
         current_percentage_to_opt = self.parameters.current_percentage_to_opt
 
-        gag = GAG(coordinator_params, percentages, centrality_measure, activate_aggregation=False)
-
-        knn = KNNClassifier(gag.coordinator.ged, parallel, verbose=False)
-        knn.train(gag.h_graphs_train.hierarchy[current_percentage_to_opt],
-                  gag.labels_train)
+        knn = KNNClassifier(self.gag.coordinator.ged, parallel, verbose=False)
+        knn.train(self.gag.h_graphs_train.hierarchy[current_percentage_to_opt],
+                  self.gag.labels_train)
 
         # Hyperparameters to tune
         alpha_start, alpha_end, alpha_step = self.parameters.tuning['alpha']
         alphas = [alpha_step * i for i in range(alpha_start, alpha_end)]
-        # alphas = np.arange(alpha_start, alpha_end, alpha_step)
         ks = self.parameters.tuning['ks']
 
         best_acc = float('-inf')
+        best_params = (None, None)
         accuracies = defaultdict(list)
 
-        for k_param, alpha in product(ks, alphas):
-            alpha = round(alpha, 2)
-            gag.coordinator.edit_cost.update_alpha(alpha)
+        hyperparameters = product(ks, alphas)
+        len_hyperparameters = len(ks) * len(alphas)
 
-            predictions = knn.predict(gag.h_graphs_val.hierarchy[current_percentage_to_opt],
+        bar = Bar(f'Processing Graphs level: {current_percentage_to_opt}', max=len_hyperparameters)
+
+        for k_param, alpha in hyperparameters:
+            alpha = round(alpha, 2)
+            self.gag.coordinator.edit_cost.update_alpha(alpha)
+
+            predictions = knn.predict(self.gag.h_graphs_val.hierarchy[current_percentage_to_opt],
                                       k=k_param, num_cores=num_cores)
 
-            acc = calc_accuracy(np.array(gag.labels_val, dtype=np.int32), predictions)
+            acc = calc_accuracy(np.array(self.gag.labels_val, dtype=np.int32), predictions)
 
             if acc >= best_acc:
                 best_acc = acc
                 best_params = (k_param, alpha)
-                print(f'Best acc {best_acc}, with {k_param}, {alpha}')
 
             accuracies[k_param].append(acc)
 
+            Bar.suffix = f'%(index)d/%(max)d | Best acc {best_acc:.2f}, with {best_params}'
+            bar.next()
+        bar.finish()
+
+        # Save the validation accuracy per hyperparameter
         Path(self.parameters.folder_results).mkdir(parents=True, exist_ok=True)
         filename = os.path.join(self.parameters.folder_results,
                                 f'{centrality_measure}_fine_tuning_{current_percentage_to_opt}.csv')
@@ -137,6 +164,7 @@ class RunnerHKnn(Runner):
         dataframe = pd.DataFrame(accuracies, index=alphas, columns=ks)
         dataframe.to_csv(filename)
 
+        # Save the best acc on validation
         message = f'Best acc on validation {current_percentage_to_opt}: {best_acc:.2f}, best params: {best_params}'
         print(message)
         self.save_stats(message, f'{centrality_measure}_opt_h_knn.txt',
@@ -150,31 +178,25 @@ class RunnerHKnn(Runner):
             KNNClassifier knn
 
         best_k, best_alpha = best_params
+        self.gag.coordinator.edit_cost.update_alpha(best_alpha)
+        # params_edit_cost = self.parameters.coordinator['params_edit_cost']
+        # self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
 
-        params_edit_cost = self.parameters.coordinator['params_edit_cost']
-        self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
-
-        coordinator_params = self.parameters.coordinator
         centrality_measure = self.parameters.current_centrality_measure
-        percentages = self.parameters.hierarchy_params['percentages']
-        
+        current_percentage_opt = self.parameters.current_percentage_to_opt
         num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
-        current_percentage_opt = self.parameters.current_percentage_to_opt
 
-        gag = GAG(coordinator_params, percentages,
-                  centrality_measure, activate_aggregation=False)
-
-        knn = KNNClassifier(gag.coordinator.ged, parallel, verbose=False)
-        knn.train(gag.h_graphs_train.hierarchy[current_percentage_opt],
-                  gag.labels_train)
+        knn = KNNClassifier(self.gag.coordinator.ged, parallel, verbose=False)
+        knn.train(self.gag.h_graphs_train.hierarchy[current_percentage_opt],
+                  self.gag.labels_train)
 
         start_time = time()
-        predictions = knn.predict(gag.h_graphs_test.hierarchy[current_percentage_opt],
+        predictions = knn.predict(self.gag.h_graphs_test.hierarchy[current_percentage_opt],
                                   k=best_k, num_cores=num_cores)
         prediction_time = time() - start_time
 
-        acc = calc_accuracy(np.array(gag.labels_test, dtype=np.int32), predictions)
+        acc = calc_accuracy(np.array(self.gag.labels_test, dtype=np.int32), predictions)
 
         message = f'Best acc on Test {current_percentage_opt}: {acc:.2f}, best params: {best_params}, time: {prediction_time}\n'
         print(message)
@@ -187,9 +209,9 @@ class RunnerHKnn(Runner):
             write_params = current_percentage_opt == 1.0
             self.save_stats(message, f'{centrality_measure}_test_results_not_opt.txt', save_params=write_params)
 
-
+        self.test_evaluation.append((current_percentage_opt, acc, prediction_time))
         # Reinitialize the coordinator params
-        self.parameters.coordinator['params_edit_cost'] = params_edit_cost
+        # self.parameters.coordinator['params_edit_cost'] = params_edit_cost
 
 class HyperparametersTuning:
 
