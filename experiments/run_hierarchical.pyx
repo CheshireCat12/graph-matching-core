@@ -3,12 +3,14 @@ import random
 from graph_pkg.utils.coordinator.coordinator import Coordinator
 from hierarchical_graph.centrality_measure.pagerank import PageRank
 from hierarchical_graph.centrality_measure.betweenness import Betweenness
+from hierarchical_graph.centrality_measure.random import Random
 from hierarchical_graph.utils.sigma_js import SigmaJS
 from hierarchical_graph.hierarchical_graphs import HierarchicalGraphs
 
 
 __MEASURES = {'pagerank': PageRank(),
-              'betweenness': Betweenness()}
+              'betweenness': Betweenness(),
+              'random': Random()}
 
 def run_hierarchical(parameters):
     random.seed(42)
@@ -21,7 +23,7 @@ def run_hierarchical(parameters):
 
     # Select the 10 biggest graphs
     sorted_by_len = sorted(graphs, key=lambda x: -len(x))
-    for graph in sorted_by_len[:10]:
+    for graph in sorted_by_len[:100]:
         print(graph.name)
         print(len(graph))
 
@@ -36,7 +38,7 @@ def run_hierarchical(parameters):
 
     selected_graphs = sorted_by_len[:parameters.num_graphs]
 
-    measures = ['pagerank', 'betweenness']
+    measures = ['pagerank', 'betweenness', 'random']
 
     sigma_js = SigmaJS(parameters.coordinator['dataset'],
                        parameters.folder_results,

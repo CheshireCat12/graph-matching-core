@@ -51,22 +51,72 @@ NCI1:
     dataset: NCI1
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0,  dirac]
     folder_dataset: ./data/NCI1/data/
-  k: 5
-  best_alpha: 0.7
+  h_knn:
+    current_percentage: 1.0
+    1.0:
+      k: 7
+      alpha: 0.85
+    # PageRank
+    0.8:
+      k: 3
+      alpha: 0.9
+    0.6:
+      k: 5
+      alpha: 0.95
+    0.4:
+      k: 7
+      alpha: 0.95
+    0.2:
+      k: 7
+      alpha: 0.85
   folder_results: ./results/h_knnV2/NCI1
 proteins_tu:
   coordinator:
     dataset: proteins_tu
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
     folder_dataset: ./data/PROTEINS/data/
-  k: 5
+  h_knn:
+    current_percentage: 1.0
+    1.0:
+      k: 7
+      alpha: 0.85
+    # PageRank
+    0.8:
+      k: 3
+      alpha: 0.65
+    0.6:
+      k: 5
+      alpha: 0.4
+    0.4:
+      k: 7
+      alpha: 0.95
+    0.2:
+      k: 7
+      alpha: 0.85
   folder_results: ./results/h_knnV2/proteins_tu
 enzymes:
   coordinator:
     dataset: enzymes
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
     folder_dataset: ./data/ENZYMES/data/
-  k: 5
+  h_knn:
+    current_percentage: 1.0
+    1.0:
+      k: 3
+      alpha: 0.95
+    # PageRank
+    0.8:
+      k: 3
+      alpha: 0.65
+    0.6:
+      k: 5
+      alpha: 0.4
+    0.4:
+      k: 7
+      alpha: 0.95
+    0.2:
+      k: 7
+      alpha: 0.85
   folder_results: ./results/h_knnV2/enzymes
 collab:
   coordinator:
@@ -83,8 +133,8 @@ reddit_binary:
   k: 5
   folder_results: ./results/h_knnV2/reddit_binary
 general:
-  optimize: True
-  percentages_to_opt: [0.2, 0.4, 0.6, 0.8, 1.0]
+  optimize: False
+  percentages_to_opt: [1.0, 0.8, 0.6, 0.4, 0.2] # [0.2, 0.4, 0.6, 0.8]
   check_all_percentages: True
   num_cores: 12
   parallel: True

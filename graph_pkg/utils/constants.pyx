@@ -90,6 +90,8 @@ THRESHOLDS_SIGMAJS = {
     'AIDS': 1,
     'mutagenicity': 5,
     'NCI1': 5,
+    'proteins_tu': 5,
+    'enzymes': 1,
 }
 
 DATASETS_TO_ADD_EXTRA_LAYOUT = ['mutagenicity', 'NCI1']

@@ -4,7 +4,7 @@ cimport numpy as np
 
 cdef class Random(CentralityMeasure):
 
-    def __init__(self, int seed=42):
+    def __init__(self, int seed=19):
         super(Random, self).__init__('random')
         np.random.seed(seed)
 
