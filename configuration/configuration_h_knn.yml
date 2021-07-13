@@ -102,8 +102,8 @@ enzymes:
   h_knn:
     current_percentage: 1.0
     1.0:
-      k: 3
-      alpha: 0.95
+      k: 1
+      alpha: 0.7
     # PageRank
     0.8:
       k: 3
@@ -133,8 +133,8 @@ reddit_binary:
   k: 5
   folder_results: ./results/h_knnV2/reddit_binary
 general:
-  optimize: False
-  percentages_to_opt: [1.0, 0.8, 0.6, 0.4, 0.2] # [0.2, 0.4, 0.6, 0.8]
+  optimize: True
+  percentages_to_opt: [0.2, 0.4, 0.6, 0.8, 1.0] #[1.0, 0.8, 0.6, 0.4, 0.2] # [0.2, 0.4, 0.6, 0.8]
   check_all_percentages: True
   num_cores: 12
   parallel: True

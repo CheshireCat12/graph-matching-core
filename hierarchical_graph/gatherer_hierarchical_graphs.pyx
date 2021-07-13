@@ -1,3 +1,4 @@
+import random
 from random import shuffle, seed
 
 
@@ -5,7 +6,7 @@ cdef class GathererHierarchicalGraphs:
 
     def __init__(self, dict coordinator_params, list percentages,
                  str centrality_measure, bint activate_aggregation=True,
-                 bint verbose=False):
+                 bint verbose=False, bint full_dataset=True):
         self.percentages = percentages
         # Retrieve graphs with labels
         self.coordinator = CoordinatorClassifier(**coordinator_params)
@@ -16,6 +17,24 @@ cdef class GathererHierarchicalGraphs:
 
         self.aggregation_graphs = self.graphs_train + self.graphs_val
         self.aggregation_labels = self.labels_train + self.labels_val
+
+        if not full_dataset:
+            print('Work with a subset')
+            seed(42)
+            random.shuffle(self.graphs_train)
+            random.shuffle(self.graphs_val)
+            random.shuffle(self.graphs_test)
+            self.graphs_train = self.graphs_train[:200]
+            self.graphs_val = self.graphs_val[:80]
+            self.graphs_test = self.graphs_test[:80]
+
+            seed(42)
+            random.shuffle(self.labels_train)
+            random.shuffle(self.labels_val)
+            random.shuffle(self.labels_test)
+            self.labels_train = self.labels_train[:200]
+            self.labels_val = self.labels_val[:80]
+            self.labels_test = self.labels_test[:80]
 
         # Set the graph hierarchical
         self.measure = MEASURES[centrality_measure]

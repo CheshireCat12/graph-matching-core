@@ -61,8 +61,11 @@ class RunnerHKnn(Runner):
         centrality_measure = self.parameters.current_centrality_measure
         percentages = self.parameters.hierarchy_params['percentages']
 
+        run_full_dataset = False if self.parameters.coordinator['dataset'] in ['collab', 'reddit_binary'] else True
+
         self.gag = GAG(coordinator_params, percentages,
-                       centrality_measure, activate_aggregation=False)
+                       centrality_measure, activate_aggregation=False,
+                       full_dataset=run_full_dataset, verbose=True)
 
         self.test_evaluation = []
 
