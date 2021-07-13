@@ -136,7 +136,7 @@ general:
   optimize: True
   percentages_to_opt: [0.2, 0.4, 0.6] #, 0.8, 1.0] #[1.0, 0.8, 0.6, 0.4, 0.2] # [0.2, 0.4, 0.6, 0.8]
   check_all_percentages: True
-  num_cores: 12
+  num_cores: 8
   parallel: True
   deletion_strategy: compute_once
   save_to_html: False

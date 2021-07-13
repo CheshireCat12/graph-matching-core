@@ -126,7 +126,7 @@ class RunnerHKnn(Runner):
         parallel = self.parameters.parallel
         current_percentage_to_opt = self.parameters.current_percentage_to_opt
 
-        knn = KNNClassifier(self.gag.coordinator.ged, parallel, verbose=False)
+        knn = KNNClassifier(self.gag.coordinator.ged, parallel, verbose=True)
         knn.train(self.gag.h_graphs_train.hierarchy[current_percentage_to_opt],
                   self.gag.labels_train)
 
