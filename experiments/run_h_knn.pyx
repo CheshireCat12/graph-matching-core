@@ -63,9 +63,13 @@ class RunnerHKnn(Runner):
 
         run_full_dataset = False if self.parameters.coordinator['dataset'] in ['collab', 'reddit_binary'] else True
 
+        self.save_stats('The code is running\n', 'log.txt')
+
         self.gag = GAG(coordinator_params, percentages,
                        centrality_measure, activate_aggregation=False,
                        full_dataset=run_full_dataset, verbose=True)
+
+        self.save_stats('The graphs are loaded and reduced\n', 'log.txt')
 
         self.test_evaluation = []
 

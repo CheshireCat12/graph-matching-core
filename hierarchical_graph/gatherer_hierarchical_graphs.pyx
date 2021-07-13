@@ -20,21 +20,22 @@ cdef class GathererHierarchicalGraphs:
 
         if not full_dataset:
             print('Work with a subset')
+            size_train, size_val, size_test = 2000, 800, 800
             seed(42)
             random.shuffle(self.graphs_train)
             random.shuffle(self.graphs_val)
             random.shuffle(self.graphs_test)
-            self.graphs_train = self.graphs_train[:200]
-            self.graphs_val = self.graphs_val[:80]
-            self.graphs_test = self.graphs_test[:80]
+            self.graphs_train = self.graphs_train[:size_train]
+            self.graphs_val = self.graphs_val[:size_val]
+            self.graphs_test = self.graphs_test[:size_test]
 
             seed(42)
             random.shuffle(self.labels_train)
             random.shuffle(self.labels_val)
             random.shuffle(self.labels_test)
-            self.labels_train = self.labels_train[:200]
-            self.labels_val = self.labels_val[:80]
-            self.labels_test = self.labels_test[:80]
+            self.labels_train = self.labels_train[:size_train]
+            self.labels_val = self.labels_val[:size_val]
+            self.labels_test = self.labels_test[:size_test]
 
         # Set the graph hierarchical
         self.measure = MEASURES[centrality_measure]
