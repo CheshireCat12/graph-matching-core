@@ -64,7 +64,11 @@ cdef class HierarchicalGraphs:
             delete_strat = self._update_graph_compute_once
 
 
+        mean_size_graph_original = 0
+        mean_size_graph_reduced = 0
+
         for graph in graphs:
+            mean_size_graph_original += len(graph)
             tmp_graph = copy.deepcopy(graph)
 
             # The graphs with less than 5 nodes aren't reduced!
@@ -76,9 +80,12 @@ cdef class HierarchicalGraphs:
             delete_strat(tmp_graph, num_nodes_to_del)
 
             reduced_graphs.append(tmp_graph)
+            mean_size_graph_reduced += len(tmp_graph)
 
         if self.verbose:
             print(f'~~ Running time: {time() - start_time:.2f}s')
+            print(f'~~     Mean size graphs original {mean_size_graph_original / len(graphs):.2f}')
+            print(f'~~     Mean size graphs reduced {mean_size_graph_reduced / len(graphs):.2f}')
 
         return reduced_graphs
 

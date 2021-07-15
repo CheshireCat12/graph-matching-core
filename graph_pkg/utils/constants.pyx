@@ -23,7 +23,8 @@ cdef:
                             'proteins_tu': './data/PROTEINS/data/',
                             'enzymes': './data/ENZYMES/data/',
                             'collab': './data/COLLAB/data/',
-                            'reddit_binary': './data/REDDIT-BINARY/data'
+                            'reddit_binary': './data/REDDIT-BINARY/data',
+                            'IMDB_binary': './data/IMDB-Binary/data'
                             }
 
     dict DEFAULT_FOLDERS_LABELS = DEFAULT_FOLDERS
@@ -58,6 +59,8 @@ cdef:
 
     dict REDDIT_BINARY_TO_CODE = {str(i): i for i in range(2)}
 
+    dict IMDB_BINARY_TO_CODE = {str(i): i for i in range(2)}
+
     dict DEFAULT_LABELS_TO_CODE = {
         'letter': LETTER_LBL_TO_CODE,
         'AIDS': AIDS_LBL_TO_CODE,
@@ -67,6 +70,7 @@ cdef:
         'enzymes': ENZYMES_TO_CODE,
         'collab': COLLAB_TO_CODE,
         'reddit_binary': REDDIT_BINARY_TO_CODE,
+        'IMDB_binary': IMDB_BINARY_TO_CODE,
     }
 
     ###############################
@@ -91,10 +95,11 @@ THRESHOLDS_SIGMAJS = {
     'mutagenicity': 5,
     'NCI1': 5,
     'proteins_tu': 5,
-    'enzymes': 1,
+    'enzymes': 5,
+    'IMDB_binary': 1,
 }
 
-DATASETS_TO_ADD_EXTRA_LAYOUT = ['mutagenicity', 'NCI1']
+DATASETS_TO_ADD_EXTRA_LAYOUT = ['mutagenicity', 'NCI1', 'enzymes', 'IMDB_binary']
 
 def get_default_lbls_to_code():
     """Access to the DEFAULT_LABELS_TO_CODE from python."""

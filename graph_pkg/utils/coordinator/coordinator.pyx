@@ -72,6 +72,8 @@ cdef class Coordinator:
             self._init_collab()
         elif self.dataset == 'reddit_binary':
             self._init_reddit_binary()
+        elif self.dataset == 'IMDB_binary':
+            self._init_IMDB()
         else:
             raise ValueError(f'The dataset {self.dataset} is not implemented!')
 
@@ -109,6 +111,10 @@ cdef class Coordinator:
     cdef void _init_reddit_binary(self):
         self.loader = LoaderRedditBinary(self.folder_dataset)
         self.edit_cost = EditCostRedditBinary(*self.params_edit_cost)
+
+    cdef void _init_IMDB(self):
+        self.loader = LoaderIMDB(self.folder_dataset)
+        self.edit_cost = EditCostIMDB(*self.params_edit_cost)
 
     def __repr__(self):
         return f'Coordinator - Dataset: {self.dataset}; ' \

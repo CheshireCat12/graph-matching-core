@@ -16,12 +16,12 @@ import random
 from progress.bar import Bar
 
 # Choose which dataset to parse
-__CHOSEN_DATASET = 2
+__CHOSEN_DATASET = 5
 
 ##################
 # Init Constants #
 ##################
-__DATASETS = ['NCI1', 'PROTEINS', 'COLLAB', 'ENZYMES', 'REDDIT-BINARY']
+__DATASETS = ['NCI1', 'PROTEINS', 'COLLAB', 'ENZYMES', 'REDDIT-BINARY', 'IMDB-BINARY']
 __DATASET_NAME = __DATASETS[__CHOSEN_DATASET]
 __FOLDER = f'./data/{__DATASET_NAME}/'
 __EXTENSIONS = {
@@ -36,9 +36,9 @@ __EXTENSIONS = {
 __SPLIT_CLASSES = {'NCI1': ((750, 750), (250, 250)),
                    'PROTEINS': ((390, 270), (130, 90)),
                    'COLLAB': ((1560, 465, 975), (520, 155, 325)),
-                   # 'COLLAB': ((100, 100, 100), (100, 100, 100)),
                    'ENZYMES': ((60,)*6, (20,)*6),
-                   'REDDIT-BINARY': ((600, 600), (200, 200))
+                   'REDDIT-BINARY': ((600, 600), (200, 200)),
+                   'IMDB-BINARY': ((300, 300), (100, 100)),
                    # 'REDDIT-MULTI-5K': ((240,)*5, (80,)*5)
                    }
 

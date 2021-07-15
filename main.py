@@ -25,7 +25,8 @@ __DATASETS = [
     # 'mutagenicity',
     'NCI1',
     'proteins_tu',
-    'enzymes'
+    'enzymes',
+    'IMDB_binary'
 ]
 
 
@@ -76,7 +77,8 @@ if __name__ == '__main__':
     parser.add_argument('-d', '--dataset', type=str,
                         default='letter',
                         choices=['letter', 'AIDS', 'mutagenicity', 'NCI1',
-                                 'proteins_tu', 'enzymes', 'collab', 'reddit_binary'],
+                                 'proteins_tu', 'enzymes',
+                                 'collab', 'reddit_binary', 'IMDB_binary'],
                         help='Choose the dataset.')
     parser.add_argument('-a', '--all', type=bool,
                         default=False,

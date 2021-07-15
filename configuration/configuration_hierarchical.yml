@@ -34,6 +34,12 @@ enzymes:
     params_edit_cost: !!python/tuple [11.0, 11.0, 1.1, 1.1, dirac]
     folder_dataset: ./data/ENZYMES/data/
   folder_results: ./results/hierarchical/enzymes
+IMDB_binary:
+  coordinator:
+    dataset: IMDB_binary
+    params_edit_cost: !!python/tuple [11.0, 11.0, 1.1, 1.1, dirac]
+    folder_dataset: ./data/IMDB-BINARY/data/
+  folder_results: ./results/hierarchical/IMDB_binary
 general:
   num_graphs: 100
   random_graph: True

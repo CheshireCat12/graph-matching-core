@@ -7,6 +7,7 @@ from graph_pkg.edit_cost.edit_cost_proteins_tu cimport EditCostProteinsTU
 from graph_pkg.edit_cost.edit_cost_enzymes cimport EditCostEnzymes
 from graph_pkg.edit_cost.edit_cost_collab cimport EditCostCollab
 from graph_pkg.edit_cost.edit_cost_reddit_binary cimport EditCostRedditBinary
+from graph_pkg.edit_cost.edit_cost_IMDB cimport EditCostIMDB
 from graph_pkg.algorithm.graph_edit_distance cimport GED
 from graph_pkg.loader.loader_base cimport LoaderBase
 from graph_pkg.loader.loader_AIDS cimport LoaderAIDS
@@ -17,6 +18,8 @@ from graph_pkg.loader.loader_proteins_tu cimport LoaderProteinsTU
 from graph_pkg.loader.loader_enzymes cimport LoaderEnzymes
 from graph_pkg.loader.loader_collab cimport LoaderCollab
 from graph_pkg.loader.loader_reddit_binary cimport LoaderRedditBinary
+from graph_pkg.loader.loader_IMDB cimport LoaderIMDB
+
 
 cdef class Coordinator:
 
@@ -47,3 +50,5 @@ cdef class Coordinator:
     cdef void _init_collab(self)
 
     cdef void _init_reddit_binary(self)
+
+    cdef void _init_IMDB(self)

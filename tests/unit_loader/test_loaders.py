@@ -28,6 +28,8 @@ def test_all_letters(folder, num_graphs):
     loader_letter = LoaderLetter(folder)
     graphs = loader_letter.load()
 
+
+
     assert len(graphs) == num_graphs
 
 @pytest.mark.parametrize('idx_graph, gr_name, num_nodes',
@@ -40,8 +42,8 @@ def test_loader_ordered_letter_low(graphs_letter_low, idx_graph, gr_name, num_no
     assert graph.name == gr_name
     assert len(graph) == num_nodes
 
-####################### AIDS ###########################
-
+# ####################### AIDS ###########################
+#
 @pytest.fixture()
 def graphs_AIDS():
     loader_AIDS = LoaderAIDS()
@@ -235,16 +237,17 @@ def test_loader_reddit_binary_value(graphs_reddit_binary, idx_graph, gr_name, nu
 #
 #     assert graph.name == gr_name
 #     assert len(graph) == num_nodes
-
-#################### Loader with wrong folder ###############
-
-def test_loader_with_wrong_folder():
-    folder = './data/Letter/Letter'
-    loader = LoaderLetter(folder)
-    with pytest.raises(FileNotFoundError) as execinfo:
-        loader.load()
-    print(execinfo.value.args)
-
-    msg_error = execinfo.value.args[0]
-    msg_expected = f'No graphs found in {folder}'
-    assert msg_error == msg_expected
+#
+# #################### Loader with wrong folder ###############
+#
+# def test_loader_with_wrong_folder():
+#     folder = './data/Letter/Letter'
+#     loader = LoaderLetter(folder)
+#     with pytest.raises(FileNotFoundError) as execinfo:
+#         loader.load()
+#     print(execinfo.value.args)
+#
+#     msg_error = execinfo.value.args[0]
+#     msg_expected = f'No graphs found in {folder}'
+#     assert msg_error == msg_expected
+#

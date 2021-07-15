@@ -13,6 +13,7 @@ cdef:
     dict ENZYMES_TO_CODE
     dict COLLAB_TO_CODE
     dict REDDIT_BINARY_TO_CODE
+    dict IMDB_BINARY_TO_CODE
     dict DEFAULT_LABELS_TO_CODE
 
     list PERCENT_HIERARCHY

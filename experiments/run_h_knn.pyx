@@ -63,7 +63,7 @@ class RunnerHKnn(Runner):
 
         run_full_dataset = False if self.parameters.coordinator['dataset'] in ['collab', 'reddit_binary'] else True
 
-        self.save_stats('The code is running\n', 'log.txt')
+        self.save_stats('The code is running\n', 'log.txt', save_params=False)
 
         self.gag = GAG(coordinator_params, percentages,
                        centrality_measure, activate_aggregation=False,
@@ -126,7 +126,7 @@ class RunnerHKnn(Runner):
         parallel = self.parameters.parallel
         current_percentage_to_opt = self.parameters.current_percentage_to_opt
 
-        knn = KNNClassifier(self.gag.coordinator.ged, parallel, verbose=True)
+        knn = KNNClassifier(self.gag.coordinator.ged, parallel, verbose=False)
         knn.train(self.gag.h_graphs_train.hierarchy[current_percentage_to_opt],
                   self.gag.labels_train)
 
