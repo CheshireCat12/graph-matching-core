@@ -7,9 +7,9 @@ sigma.js/
 package-lock.json
 draw/src/
 external/
-analysis/*.txt
-analysis/*.npy
-analysis/*.csv
+analysis/**/*.txt
+analysis/**/*.npy
+analysis/**/.csv
 analysis/analysis_h_knn/*.png
 analysis/*.png
 
