@@ -6,7 +6,7 @@ AIDS:
   h_knn:
     current_percentage: 1.0
     1.0:
-      k: 3
+      k: 5
       alpha: 0.95
     # PageRank
     0.8:
@@ -30,8 +30,8 @@ mutagenicity:
   h_knn:
     current_percentage: 1.0
     1.0:
-      k: 5
-      alpha: 0.75
+      k: 7
+      alpha: 0.5
     # PageRank
     0.8:
       k: 3
@@ -52,10 +52,10 @@ NCI1:
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0,  dirac]
     folder_dataset: ./data/NCI1/data/
   h_knn:
-    current_percentage: 1.0
+    current_percentage: 0.8
     1.0:
-      k: 7
-      alpha: 0.85
+      k: 1
+      alpha: 0.5
     # PageRank
     0.8:
       k: 3
@@ -78,8 +78,8 @@ proteins_tu:
   h_knn:
     current_percentage: 1.0
     1.0:
-      k: 7
-      alpha: 0.85
+      k: 3
+      alpha: 0.9
     # PageRank
     0.8:
       k: 3
@@ -103,7 +103,7 @@ enzymes:
     current_percentage: 1.0
     1.0:
       k: 1
-      alpha: 0.7
+      alpha: 0.9
     # PageRank
     0.8:
       k: 3
@@ -157,19 +157,21 @@ IMDB_binary:
       alpha: 0.85
   folder_results: ./results/h_knnV2/IMDB_binary
 general:
-  optimize: True
-  percentages_to_opt: [0.2, 0.4, 0.6, 0.8, 1.0] #[1.0, 0.8, 0.6, 0.4, 0.2] # [0.2, 0.4, 0.6, 0.8]
-  check_all_percentages: True
+  optimize: False
+  percentages_to_opt: [0.8] # [0.2, 0.4, 0.6, 0.8]
+  tuning:
+    alpha: [1, 20, 0.05]
+    ks: [1, 3, 5, 7]
+  n_random_turns: 10
+  check_all_percentages: False
   num_cores: 12
   parallel: True
   deletion_strategy: compute_once
   save_to_html: False
   save_predictions: True
-  tuning:
-    alpha: [1, 20, 0.05]
-    ks: [1, 3, 5, 7]
   current_percentage_to_opt: 1.0
   hierarchy_params:
     percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
     centrality_measures: [pagerank, betweenness, random]
   current_centrality_measure: pagerank
+  save_dist_matrix: True

@@ -28,26 +28,6 @@ from progress.bar import Bar
 #
 
 
-#
-# cpdef tuple _do_prediction(KNNClassifier knn, list graphs, list labels, int k, str set_):
-#     start_time = time()
-#     # Do the prediction
-#     predictions = knn.predict(graphs, k=k)
-#     prediction_time = time() - start_time
-#
-#     # transform the predictions and the labels to np.array
-#     predictions = np.asarray(predictions)
-#     lbls_test = np.array(labels, dtype=np.int32)
-#
-#     # Count the number of correctly classified element
-#     correctly_classified = np.sum(predictions == lbls_test)
-#     accuracy = 100 * (correctly_classified / len(graphs))
-#
-#     print(f'{set_} Accuracy {accuracy}')
-#     print(f'Prediction time: {prediction_time:.3f}\n')
-#
-#     return accuracy, prediction_time, predictions, lbls_test
-
 class RunnerHKnn(Runner):
 
     def __init__(self, parameters):
@@ -79,6 +59,41 @@ class RunnerHKnn(Runner):
                 best_params = self.optimization()
 
                 self.evaluate(best_params)
+        elif self.parameters.current_centrality_measure == 'random':
+
+            best_params = tuple(self.parameters.h_knn[1.0].values())
+
+            percentages_to_check = [1.0]
+            np.random.seed(42)
+            seeds = np.random.randint(1000, size=self.parameters.n_random_turns)
+
+            random_acc = []
+            random_time = []
+
+            for lambda_ in percentages_to_check:
+                self.test_evaluation = []
+                for seed in seeds:
+                    self.gag = GAG(coordinator_params, percentages,
+                                   centrality_measure, activate_aggregation=False,
+                                   full_dataset=run_full_dataset, verbose=True, new_seed=seed)
+                    self.parameters.current_percentage_to_opt = lambda_
+                    self.evaluate(best_params)
+
+                print(self.test_evaluation)
+                random_acc.append([acc for _, acc, _ in self.test_evaluation])
+                random_time.append([time for _, _, time in self.test_evaluation])
+
+            Path(self.parameters.folder_results).mkdir(parents=True, exist_ok=True)
+            filename_values = os.path.join(self.parameters.folder_results, f'random_values.csv')
+            filename_time = os.path.join(self.parameters.folder_results, f'time.csv')
+
+            dataframe = pd.DataFrame(np.array(random_acc).T, index=seeds, columns=percentages_to_check)
+            dataframe.to_csv(filename_values)
+
+
+            dataframe = pd.DataFrame(np.array(random_time).T, index=seeds, columns=percentages_to_check)
+            dataframe.to_csv(filename_time)
+
         else:
             params_from_file = self.parameters.h_knn
 
@@ -86,7 +101,7 @@ class RunnerHKnn(Runner):
             current_percentage = params_from_file['current_percentage']
             best_params = tuple(params_from_file[current_percentage].values())
 
-            # Select on which percentage test the obtained paramaters
+            # Select on which percentage test the obtained parameters
             if self.parameters.check_all_percentages:
                 percentage_to_check = self.parameters.hierarchy_params['percentages']
             else:
@@ -185,6 +200,7 @@ class RunnerHKnn(Runner):
             KNNClassifier knn
 
         best_k, best_alpha = best_params
+        print(best_params)
         self.gag.coordinator.edit_cost.update_alpha(best_alpha)
         # params_edit_cost = self.parameters.coordinator['params_edit_cost']
         # self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
@@ -197,6 +213,9 @@ class RunnerHKnn(Runner):
         knn = KNNClassifier(self.gag.coordinator.ged, parallel, verbose=False)
         knn.train(self.gag.h_graphs_train.hierarchy[current_percentage_opt],
                   self.gag.labels_train)
+
+        print(self.gag.h_graphs_test.hierarchy[0.8][1803].filename)
+        print(self.gag.h_graphs_train.hierarchy[0.8][1255].filename)
 
         start_time = time()
         predictions = knn.predict(self.gag.h_graphs_test.hierarchy[current_percentage_opt],
@@ -212,11 +231,24 @@ class RunnerHKnn(Runner):
 
         if self.parameters.optimize:
             self.save_stats(message, f'{centrality_measure}_test_results_h_knn_{current_percentage_opt}.txt')
+        elif self.parameters.current_centrality_measure == 'random':
+            pass
         else:
             write_params = current_percentage_opt == 1.0
             self.save_stats(message, f'{centrality_measure}_test_results_not_opt.txt', save_params=write_params)
 
         self.test_evaluation.append((current_percentage_opt, acc, prediction_time))
+
+        if self.parameters.save_dist_matrix:
+            # Save the validation accuracy per hyperparameter
+            folder = os.path.join(self.parameters.folder_results, 'distances')
+            Path(folder).mkdir(parents=True, exist_ok=True)
+            filename = os.path.join(folder,
+                                    f'{centrality_measure}_dist_{current_percentage_opt}.npy')
+
+            with open(filename, 'wb') as f:
+                np.save(f, knn.current_distances)
+
         # Reinitialize the coordinator params
         # self.parameters.coordinator['params_edit_cost'] = params_edit_cost
 
@@ -377,11 +409,5 @@ class HyperparametersTuning:
 
 
 cpdef void run_h_knn(parameters):
-    # parameters_tuning = HyperparametersTuning(parameters)
-    # if parameters.finetune:
-    #     parameters_tuning.fine_tune()
-    # else:
-    #     parameters_tuning.run_hierarchy()
-
     run_h_knn_ = RunnerHKnn(parameters)
     run_h_knn_.run()

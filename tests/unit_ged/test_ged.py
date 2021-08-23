@@ -20,6 +20,8 @@ from graph_pkg.loader.loader_AIDS import LoaderAIDS
 from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 from graph_pkg.loader.loader_NCI1 import LoaderNCI1
+from hierarchical_graph.hierarchical_graphs import HierarchicalGraphs
+from graph_pkg.utils.constants import get_measures
 
 
 @pytest.fixture()
@@ -246,24 +248,62 @@ def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_so
 
 @pytest.mark.parametrize('graph_name_source_target, expected',
                          [
-                             (['molecule_2767', 'molecule_2769'], 383.9),
-                             (['molecule_2769', 'molecule_2767'], 383.9),
-                             (['molecule_1897', 'molecule_1349'], 133.1),
-                             (['molecule_1897', 'molecule_1051'], 147.4),
+                             # (['molecule_2767', 'molecule_2769'], 383.9),
+                             # (['molecule_2769', 'molecule_2767'], 383.9),
+                             # (['molecule_1897', 'molecule_1349'], 133.1),
+                             # (['molecule_1897', 'molecule_1051'], 147.4),
+                             (['molecule_3726', 'molecule_3844'], 147.4),
+                             (['molecule_1108', 'molecule_1067'], 147.4),
+                             # (['molecule_3726', 'molecule_3844'], 147.4),
+
                          ])
 def test_NCI1(NCI1_graphs, graph_name_source_target, expected):
     graph_name_source, graph_name_target = graph_name_source_target
     graph_source = [graph for graph in NCI1_graphs if graph.name == graph_name_source][0]
     graph_target = [graph for graph in NCI1_graphs if graph.name == graph_name_target][0]
 
-    cst_cost_node = 11.0
-    cst_cost_edge = 1.1
+    cst_cost_node = 1.0
+    cst_cost_edge = 1.0
     ged = GED(EditCostNCI1(cst_cost_node, cst_cost_node,
-                           cst_cost_edge, cst_cost_edge, 'dirac'))
+                           cst_cost_edge, cst_cost_edge, 'dirac', alpha=0.9))
 
     results = ged.compute_edit_distance(graph_source, graph_target, heuristic=True)
 
+    C = np.array(ged.C)
+    C_star = np.array(ged.C_star)
+    phi = np.array(ged.phi)
+
+    C[C > 99999] = 9999
+    C_star[C_star > 99999] = 9999
+
+    np.savetxt('orC.csv', C, delimiter=',', fmt='%d')
+    np.savetxt('orC_star.csv', C_star, delimiter=',', fmt='%d')
+    np.savetxt('orPhi.csv', phi, delimiter=',', fmt='%d')
+
     print(results)
+    np.set_printoptions(threshold=sys.maxsize)
+    # print(np.array(graph_source.adjacency_matrix))
+
+    h_graphs = HierarchicalGraphs([graph_source, graph_target], get_measures()['pagerank'], [0.8, 0.6, 0.4, 0.2])
+
+    ged_ = ged.compute_edit_distance(h_graphs.hierarchy[0.8][0], h_graphs.hierarchy[0.8][1], heuristic=True)
+    C = np.array(ged.C)
+    C_star = np.array(ged.C_star)
+    phi = np.array(ged.phi)
+
+    C[C > 99999] = 9999
+    C_star[C_star > 99999] = 9999
+
+
+    np.savetxt('redC.csv', C, delimiter=',', fmt='%d')
+    np.savetxt('redC_star.csv', C_star, delimiter=',', fmt='%d')
+    np.savetxt('redPhi.csv', phi, delimiter=',', fmt='%d')
+    # print(h_graphs.hierarchy[0.8][0])
+    # print(np.array(h_graphs.hierarchy[0.8][0].adjacency_matrix))
+
+    print(f'ged reduced: {ged_}')
+
+
 
     assert round(results, 5) == expected
 

@@ -4,9 +4,13 @@ cimport numpy as np
 
 cdef class Random(CentralityMeasure):
 
-    def __init__(self, int seed=19):
+    def __init__(self, int seed=42):
         super(Random, self).__init__('random')
         np.random.seed(seed)
+
+    cpdef void reset_seed(self, int new_seed):
+        print(f'Change the seed {new_seed}')
+        np.random.seed(new_seed)
 
     cpdef double[::1] calc_centrality_score(self, Graph graph):
         """

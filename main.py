@@ -21,8 +21,8 @@ __EXPERIMENTS = {'complete_ged': run_complete_ged,
                  'bagging_knn': run_bagging_knn}
 
 __DATASETS = [
-    # 'AIDS',
-    # 'mutagenicity',
+    'AIDS',
+    'mutagenicity',
     'NCI1',
     'proteins_tu',
     'enzymes',

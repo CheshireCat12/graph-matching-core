@@ -9,6 +9,7 @@ cdef class KNNClassifier:
         list graphs_train
         list labels_train
         int[::1] np_labels_train
+        double[:, ::1] current_distances
         GED ged
         MatrixDistances mat_dist
 

@@ -22,7 +22,8 @@ AIDS:
     # genetic
 #    omegas: [0.595,0.53,0.419,0.335,0.623]
     # not weighted
-     omegas: [0.1, 0.1, 0.2, 0.3, 0.3]
+#     omegas: [0.1, 0.1, 0.2, 0.3, 0.3]
+    omegas: [1., 1., 1., 1., 1.]
   folder_results: ./results/knn_linear_combination_v2/AIDS
 mutagenicity:
   coordinator:
@@ -38,6 +39,7 @@ mutagenicity:
     # omegas: [0.15, 0.25, 0.15, 0.1, 0.8]
     # genetic
 #     omegas: [0.637,0.369,0.219,0.512,0.738]
+#    omegas: [0.397, 0.049, 0.081, 0.451, 0.922]
     # not weighted
      omegas: [1., 1., 1., 1., 1.]
 
@@ -60,24 +62,66 @@ NCI1:
     # grid search
     # omegas: [0.8, 0.3, 0.7, 0.3, 0.2]
     # genetic
-#     omegas: [0.787,0.186,0.445,0.489,0.059]
+     omegas: [0.787,0.186,0.445,0.489,0.059]
     # not weighted
-     omegas: [1., 1., 1., 1., 1.]
+#     omegas: [1., 1., 1., 1., 1.]
 
 
 #  linear_combination: [0.5, 0.2, 0.4, 0.5, 0.9]
 #   linear_combination: [0.6, 0.1, 0.2, 0.4, 0.5]
   folder_results: ./results/knn_linear_combination_v2/NCI1
+proteins_tu:
+  coordinator:
+    dataset: proteins_tu
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/PROTEINS/data/
+  k: 3
+  best_alpha: 0.9
+  #dist
+  knn_lc_params:
+    omegas: [1., 1., 1., 1., 1.]
+  folder_results: ./results/knn_linear_combination_v2/proteins_tu
+enzymes:
+  coordinator:
+    dataset: enzymes
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/ENZYMES/data/
+  k: 1
+  best_alpha: 0.9
+  #dist
+  knn_lc_params:
+    # genetic
+#    omegas: [0.893, 0.332, 0.821, 0.042, 0.108]
+    # uniform
+#    omegas: [1., 1., 1., 1., 1.]
+    # test
+    omegas: [0.893, 0.332, 0.821, 0.042, 0.108]
+  folder_results: ./results/knn_linear_combination_v2/enzymes
+IMDB_binary:
+  coordinator:
+    dataset: IMDB_binary
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/IMDB-BINARY/data/
+  k: 5
+  best_alpha: 0.95
+
+  knn_lc_params:
+    omegas: [1., 1., 1., 1., 1.]
+#    omegas: [0.4, 0.4, 0.1, 0.5, 0.9]
+#    omegas: [0.595, 0.53,  0.419, 0.335, 0.623]
+  # test
+#    omegas: [0.40, 0.00, 0.00, 0.10, 0.30]
+  folder_results: ./results/knn_linear_combination_v2/IMDB_binary
 general:
   hierarchy_params:
     percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
-    centrality_measures: [pagerank] # , betweenness]
-  centrality_measure: pagerank
+    centrality_measures: [pagerank] # betweenness]
+  centrality_measure: pagerank # betweenness
   parallel: True
   deletion_strategy: compute_once
   save_predictions: True
-#  optimization_strategy: linear
+  optimization_strategy: genetic_algorithm #  grid_search
   num_cores: 12
   optimize: True
-  cv: 5
+  cv: 1
   dist: False

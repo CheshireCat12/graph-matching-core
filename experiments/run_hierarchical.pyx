@@ -8,9 +8,11 @@ from hierarchical_graph.utils.sigma_js import SigmaJS
 from hierarchical_graph.hierarchical_graphs import HierarchicalGraphs
 
 
-__MEASURES = {'pagerank': PageRank(),
-              'betweenness': Betweenness(),
-              'random': Random()}
+__MEASURES = {
+    'pagerank': PageRank(),
+    'betweenness': Betweenness(),
+    'random': Random()
+}
 
 def run_hierarchical(parameters):
     random.seed(42)

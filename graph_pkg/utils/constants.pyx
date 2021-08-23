@@ -110,3 +110,6 @@ def get_code_to_lbls_letter():
 
 def get_code_to_lbls_muta():
     return CODE_TO_LBL_MUTAGENICITY
+
+def get_measures():
+    return MEASURES

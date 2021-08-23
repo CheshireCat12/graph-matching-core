@@ -16,9 +16,12 @@ cpdef double calc_accuracy(int[::1] labels_ground_truth, int[::1] labels_predict
 
     return accuracy
 
-cpdef double calc_f1(int[::1] labels_ground_truth, int[::1] labels_predicted):
+cpdef double calc_f1(int[::1] labels_ground_truth, int[::1] labels_predicted, str name_dataset):
     np_gt = np.array(labels_ground_truth)
     np_pred = np.array(labels_predicted)
+
+    if name_dataset == 'enzymes':
+        return 0
 
     # print(f'precision: {precision_score(np_gt, np_pred):.2f}')
     # print(f'recall: {recall_score(np_gt, np_pred):.2f}')

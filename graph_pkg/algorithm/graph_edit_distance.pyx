@@ -57,12 +57,17 @@ cdef class GED:
         self._create_c_matrix()
         self._create_c_star_matrix()
 
+        # print(np.array(self.C))
+        # print(np.array(self.C_star))
+
         _, col_ind = linear_sum_assignment(self.C_star)
         self.phi = col_ind.astype(dtype=np.int32)
 
 
         edit_cost += self._compute_cost_node_edit(self.phi)
+        # print(f'node cost {edit_cost}')
         edit_cost += self._compute_cost_edge_edit(self.phi)
+        # print(f'edge cost {edit_cost}')
 
         return edit_cost
 
@@ -163,6 +168,8 @@ cdef class GED:
 
         for i in range(self._n + self._m):
             cost += self.C[i][phi[i]]
+            print(i, phi[i], self.C[i][phi[i]])
+            print(cost)
 
         return cost
 

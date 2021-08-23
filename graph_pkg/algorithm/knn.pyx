@@ -48,19 +48,19 @@ cdef class KNNClassifier:
         :param k: int
         :return: predictions: list
         """
-        cdef:
-            double[:, ::1] distances
 
         if self.verbose:
             print('\n-- Start prediction --')
 
-        distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
+        self.current_distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
                                                         graphs_pred,
                                                         heuristic=True,
                                                         num_cores=num_cores)
 
+        print(f'dist {self.current_distances[1255][1803]}')
+
         # Get the index of the k smallest distances in the matrix distances.
-        idx_k_nearest = np.argpartition(distances, k, axis=0)[:k]
+        idx_k_nearest = np.argpartition(self.current_distances, k, axis=0)[:k]
 
         # Get the label of the k smallest distances.
         labels_k_nearest = np.asarray(self.np_labels_train)[idx_k_nearest]

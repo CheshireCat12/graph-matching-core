@@ -6,7 +6,7 @@ cdef class GathererHierarchicalGraphs:
 
     def __init__(self, dict coordinator_params, list percentages,
                  str centrality_measure, bint activate_aggregation=True,
-                 bint verbose=False, bint full_dataset=True):
+                 bint verbose=False, bint full_dataset=True, int new_seed=42):
         self.percentages = percentages
         # Retrieve graphs with labels
         self.coordinator = CoordinatorClassifier(**coordinator_params)
@@ -39,6 +39,10 @@ cdef class GathererHierarchicalGraphs:
 
         # Set the graph hierarchical
         self.measure = MEASURES[centrality_measure]
+
+        if centrality_measure == 'random':
+            self.measure.reset_seed(new_seed)
+
         self.h_graphs_train = HierarchicalGraphs(self.graphs_train, self.measure,
                                                  percentage_hierarchy=percentages,
                                                  verbose=verbose)
@@ -58,6 +62,10 @@ cdef class GathererHierarchicalGraphs:
     cpdef list k_fold_validation(self, int cv=5):
         cdef:
             list graphs, labels, folds
+
+        if cv == 1:
+            return [[self.h_graphs_train, self.labels_train, self.h_graphs_val, self.labels_val]]
+
         graphs = self.graphs_train + self.graphs_val
         labels = self.labels_train + self.labels_val
 
