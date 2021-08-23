@@ -19,6 +19,12 @@
       <excludeFolder url="file://$MODULE_DIR$/lib" />
       <excludeFolder url="file://$MODULE_DIR$/env" />
       <excludeFolder url="file://$MODULE_DIR$/analysis/analysis_h_knn/.ipynb_checkpoints" />
+      <excludeFolder url="file://$MODULE_DIR$/analysis/analysis_h_knn/AIDS" />
+      <excludeFolder url="file://$MODULE_DIR$/analysis/analysis_h_knn/enzymes" />
+      <excludeFolder url="file://$MODULE_DIR$/analysis/analysis_h_knn/IMDB_binary" />
+      <excludeFolder url="file://$MODULE_DIR$/analysis/analysis_h_knn/mutagenicity" />
+      <excludeFolder url="file://$MODULE_DIR$/analysis/analysis_h_knn/NCI1" />
+      <excludeFolder url="file://$MODULE_DIR$/analysis/analysis_h_knn/proteins_tu" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (graph_project) (2)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
