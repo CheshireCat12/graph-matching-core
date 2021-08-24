@@ -81,7 +81,8 @@ class RunnerCoarseToFine(Runner):
 
 
         self.save_predictions(predictions, np_labels_test, f'{filename}.npy')
-        self.save_predictions(np.array(idx_predicted, dtype=np.int32), np_labels_test, f'{filename}_idx_predicted.npy')
+        # If needed to compare the accuracy
+        # self.save_predictions(np.array(idx_predicted, dtype=np.int32), np_labels_test, f'{filename}_idx_predicted.npy')
 
 
         # self.save_predictions(predictions, np_labels_val, f'{filename}.npy')
