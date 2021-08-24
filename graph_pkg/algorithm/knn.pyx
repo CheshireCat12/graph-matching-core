@@ -57,8 +57,6 @@ cdef class KNNClassifier:
                                                         heuristic=True,
                                                         num_cores=num_cores)
 
-        print(f'dist {self.current_distances[1255][1803]}')
-
         # Get the index of the k smallest distances in the matrix distances.
         idx_k_nearest = np.argpartition(self.current_distances, k, axis=0)[:k]
 

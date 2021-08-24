@@ -20,8 +20,6 @@ from graph_pkg.loader.loader_AIDS import LoaderAIDS
 from graph_pkg.loader.loader_letter import LoaderLetter
 from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
 from graph_pkg.loader.loader_NCI1 import LoaderNCI1
-from hierarchical_graph.hierarchical_graphs import HierarchicalGraphs
-from graph_pkg.utils.constants import get_measures
 
 
 @pytest.fixture()
@@ -239,22 +237,22 @@ def test_mutagenicity(mutagenicity_graphs, dataframe_mutagenicity, graph_name_so
     # import numpy as np
     # np.savetxt(f'_c_{"X".join(graph_name_source_target)}.csv', np.asarray(ged.C), fmt='%10.3f', delimiter=';')
     # np.savetxt(f'c_star_{"X".join(graph_name_source_target)}.csv', np.asarray(ged.C_star), fmt='%10.3f', delimiter=';')
-    print(f'###### diff {results - expected}')
-    print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')
-    print(f'exp {expected}')
+    # print(f'###### diff {results - expected}')
+    # print(f'{graph_name_source_target}: new dist {results} - old dist {expected}')
+    # print(f'exp {expected}')
     assert results == expected
     # assert False
 
 
 @pytest.mark.parametrize('graph_name_source_target, expected',
                          [
-                             # (['molecule_2767', 'molecule_2769'], 383.9),
-                             # (['molecule_2769', 'molecule_2767'], 383.9),
-                             # (['molecule_1897', 'molecule_1349'], 133.1),
-                             # (['molecule_1897', 'molecule_1051'], 147.4),
-                             (['molecule_3726', 'molecule_3844'], 147.4),
-                             (['molecule_1108', 'molecule_1067'], 147.4),
+                             (['molecule_2767', 'molecule_2769'], 383.9),
+                             (['molecule_2769', 'molecule_2767'], 383.9),
+                             (['molecule_1897', 'molecule_1349'], 133.1),
+                             (['molecule_1897', 'molecule_1051'], 147.4),
                              # (['molecule_3726', 'molecule_3844'], 147.4),
+                             # (['molecule_1108', 'molecule_1067'], 147.4),
+                             # # (['molecule_3726', 'molecule_3844'], 147.4),
 
                          ])
 def test_NCI1(NCI1_graphs, graph_name_source_target, expected):
@@ -269,41 +267,8 @@ def test_NCI1(NCI1_graphs, graph_name_source_target, expected):
 
     results = ged.compute_edit_distance(graph_source, graph_target, heuristic=True)
 
-    C = np.array(ged.C)
-    C_star = np.array(ged.C_star)
-    phi = np.array(ged.phi)
 
-    C[C > 99999] = 9999
-    C_star[C_star > 99999] = 9999
-
-    np.savetxt('orC.csv', C, delimiter=',', fmt='%d')
-    np.savetxt('orC_star.csv', C_star, delimiter=',', fmt='%d')
-    np.savetxt('orPhi.csv', phi, delimiter=',', fmt='%d')
-
-    print(results)
-    np.set_printoptions(threshold=sys.maxsize)
-    # print(np.array(graph_source.adjacency_matrix))
-
-    h_graphs = HierarchicalGraphs([graph_source, graph_target], get_measures()['pagerank'], [0.8, 0.6, 0.4, 0.2])
-
-    ged_ = ged.compute_edit_distance(h_graphs.hierarchy[0.8][0], h_graphs.hierarchy[0.8][1], heuristic=True)
-    C = np.array(ged.C)
-    C_star = np.array(ged.C_star)
-    phi = np.array(ged.phi)
-
-    C[C > 99999] = 9999
-    C_star[C_star > 99999] = 9999
-
-
-    np.savetxt('redC.csv', C, delimiter=',', fmt='%d')
-    np.savetxt('redC_star.csv', C_star, delimiter=',', fmt='%d')
-    np.savetxt('redPhi.csv', phi, delimiter=',', fmt='%d')
-    # print(h_graphs.hierarchy[0.8][0])
-    # print(np.array(h_graphs.hierarchy[0.8][0].adjacency_matrix))
-
-    print(f'ged reduced: {ged_}')
-
-
+    print(f'ged : {results}')
 
     assert round(results, 5) == expected
 

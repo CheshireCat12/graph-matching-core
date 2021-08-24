@@ -214,9 +214,6 @@ class RunnerHKnn(Runner):
         knn.train(self.gag.h_graphs_train.hierarchy[current_percentage_opt],
                   self.gag.labels_train)
 
-        print(self.gag.h_graphs_test.hierarchy[0.8][1803].filename)
-        print(self.gag.h_graphs_train.hierarchy[0.8][1255].filename)
-
         start_time = time()
         predictions = knn.predict(self.gag.h_graphs_test.hierarchy[current_percentage_opt],
                                   k=best_k, num_cores=num_cores)
