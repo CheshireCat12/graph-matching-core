@@ -63,6 +63,7 @@ reddit_binary:
     folder_dataset: ./data/REDDIT-BINARY/data/
   k: 7
   best_alpha: 0.7
+  folder_results: ./results/coarse_to_fine/reddit_binary
 general:
   exp: pt4
   limit_to_test: [5]
