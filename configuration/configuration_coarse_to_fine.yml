@@ -32,10 +32,36 @@ NCI1:
   k: 5
   best_alpha: 0.7
   folder_results: ./results/coarse_to_fine/NCI1
+proteins_tu:
+  coordinator:
+    dataset: proteins_tu
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/PROTEINS/data/
+  k: 5
+  best_alpha: 0.9
+  folder_results: ./results/coarse_to_fine/proteins_tu
+enzymes:
+  coordinator:
+    dataset: enzymes
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/ENZYMES/data/
+  k: 5
+  best_alpha: 0.9
+  folder_results: ./results/coarse_to_fine/enzymes
+IMDB_binary:
+  coordinator:
+    dataset: IMDB_binary
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/IMDB-BINARY/data/
+  k: 5
+  best_alpha: 0.9
+  folder_results: ./results/coarse_to_fine/IMDB_binary
 general:
-  exp: pt3
+  exp: pt4
+  limit_to_test: [5]
   limit: 5
-  percentage_remaining_graphs: 0.05
+  percentages_to_test: [0.2, 0.1, 0.05]
+  percentage_remaining_graphs: 0.2
   hierarchy_params:
     percentages: [1.0, 0.2]
     centrality_measures: [pagerank] # , betweenness]

@@ -25,32 +25,32 @@ class RunnerCoarseToFine(Runner):
         best_alpha = self.parameters.best_alpha
         self.parameters.coordinator['params_edit_cost'] = (*params_edit_cost, best_alpha)
 
-        for measure in measures:
+        coordinator_params = self.parameters.coordinator
+        percentages = self.parameters.hierarchy_params['percentages']
+        centrality_measure = self.parameters.current_centrality_measure
+        gag = GAG(coordinator_params, percentages, centrality_measure)
+
+        for percentage in self.parameters.percentages_to_test:
+            self.parameters.percentage_remaining_graphs = percentage
             print('+ Tweaking parameters +')
-            print(f'+ Measure: {measure} +\n')
-
-            self.parameters.centrality_measure = measure
-
-            self._run_pred_val_test(validation=False)
+            print(f'+ Percentage Omega: {percentage} +\n')
 
 
-    def _run_pred_val_test(self, validation=True):
+            self._run_pred_val_test(gag, validation=False)
+
+
+    def _run_pred_val_test(self, gag, validation=True):
         cdef:
             CoarseToFine classifier
 
         # Set parameters
-        coordinator_params = self.parameters.coordinator
-        centrality_measure = self.parameters.centrality_measure
-        deletion_strategy = self.parameters.deletion_strategy
         exp = self.parameters.exp
         k = self.parameters.k
         limit = self.parameters.limit
         num_cores = self.parameters.num_cores
         parallel = self.parameters.parallel
-        percentages = self.parameters.hierarchy_params['percentages']
+        centrality_measure = self.parameters.current_centrality_measure
         percentage_remaining_graphs = self.parameters.percentage_remaining_graphs
-
-        gag = GAG(coordinator_params, percentages, centrality_measure)
 
         # Create and train the classifier
         classifier = CoarseToFine(gag.coordinator.ged, parallel)
@@ -63,6 +63,7 @@ class RunnerCoarseToFine(Runner):
         else:
             predictions = classifier.predict_percent(gag.h_graphs_test, k, limit,
                                                      percentage_remaining_graphs)
+            idx_predicted = [0] * len(gag.labels_test)
         prediction_time = time.time() - start_time
 
         np_labels_test = np.array(gag.labels_test, dtype=np.int32)

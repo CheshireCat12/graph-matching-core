@@ -67,7 +67,7 @@ cdef class CoarseToFine:
         idx_still_to_predict, *_ = np.where(predictions < np.int32(0))
         idx_predicted, *_ = np.where(predictions >= np.int32(0))
 
-        print(idx_still_to_predict)
+        # print(idx_still_to_predict)
 
         graphs_to_pred_with_100 = [h_graphs_pred.hierarchy[1.0][idx] for idx in idx_still_to_predict]
 
@@ -76,11 +76,11 @@ cdef class CoarseToFine:
                                                               heuristic=True,
                                                               num_cores=num_cores)
 
-        # self._make_predictions(predictions, h_distances_100,
-        #                        idx_still_to_predict.astype(np.int32), k, limit=-1)
+        self._make_predictions(predictions, h_distances_100,
+                               idx_still_to_predict.astype(np.int32), k, limit=-1)
 
-        for idx in idx_still_to_predict:
-            predictions[idx] = 0
+        # for idx in idx_still_to_predict:
+        #     predictions[idx] = 0
 
         return predictions, idx_predicted
 
@@ -121,7 +121,7 @@ cdef class CoarseToFine:
         idx_still_to_predict, *_ = np.where(predictions < 0)
 
 
-        print(len(idx_still_to_predict))
+        # print(len(idx_still_to_predict))
 
         # Create the tuples for between the closest graphs and the graphs that remains to be predicted
         prods = []

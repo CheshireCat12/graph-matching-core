@@ -163,8 +163,8 @@ cdef class GED:
 
         for i in range(self._n + self._m):
             cost += self.C[i][phi[i]]
-            print(i, phi[i], self.C[i][phi[i]])
-            print(cost)
+            # print(i, phi[i], self.C[i][phi[i]])
+            # print(cost)
 
         return cost
 
