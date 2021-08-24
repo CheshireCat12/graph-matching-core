@@ -56,6 +56,13 @@ IMDB_binary:
   k: 5
   best_alpha: 0.9
   folder_results: ./results/coarse_to_fine/IMDB_binary
+reddit_binary:
+  coordinator:
+    dataset: reddit_binary
+    params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
+    folder_dataset: ./data/REDDIT-BINARY/data/
+  k: 7
+  best_alpha: 0.7
 general:
   exp: pt4
   limit_to_test: [5]
@@ -68,5 +75,5 @@ general:
   current_centrality_measure: pagerank
   deletion_strategy: compute_once
   save_predictions: True
-  num_cores: 24
+  num_cores: 16
   parallel: True

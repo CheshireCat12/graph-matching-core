@@ -130,7 +130,12 @@ reddit_binary:
     dataset: reddit_binary
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0, dirac]
     folder_dataset: ./data/REDDIT-BINARY/data/
-  k: 5
+  h_knn:
+    current_percentage: 1.0
+    1.0:
+      k: 7
+      alpha: 0.7
+
   folder_results: ./results/h_knnV2/reddit_binary
 IMDB_binary:
   coordinator:
