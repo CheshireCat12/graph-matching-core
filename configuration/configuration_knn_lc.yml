@@ -91,9 +91,11 @@ enzymes:
   #dist
   knn_lc_params:
     # genetic
-#    omegas: [0.893, 0.332, 0.821, 0.042, 0.108]
+    # omegas: [0.893, 0.332, 0.821, 0.042, 0.108]
+    # new genetic
+    # [0.82462416 0.20272117 0.13497033 0.08721029 0.49654426]
     # uniform
-#    omegas: [1., 1., 1., 1., 1.]
+    # omegas: [1., 1., 1., 1., 1.]
     # test
     omegas: [0.893, 0.332, 0.821, 0.042, 0.108]
   folder_results: ./results/knn_linear_combination_v2/enzymes
@@ -123,5 +125,5 @@ general:
   optimization_strategy: genetic_algorithm #  grid_search
   num_cores: 12
   optimize: True
-  cv: 1
-  dist: False
+  cv: 5
+  dist: True
