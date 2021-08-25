@@ -58,6 +58,7 @@ cdef class GathererHierarchicalGraphs:
                                                            percentage_hierarchy=percentages,
                                                            verbose=verbose)
 
+    # cpdef HierarchicalGraphs create_bunch_random_deletion_graphs(self, times_repeat=10):
 
     cpdef list k_fold_validation(self, int cv=5):
         cdef:

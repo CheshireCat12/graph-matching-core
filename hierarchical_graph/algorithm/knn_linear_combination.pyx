@@ -1,12 +1,8 @@
 import numpy as np
 cimport numpy as np
 from collections import Counter
-from itertools import product
-from progress.bar import Bar
-from graph_pkg.utils.constants cimport PERCENT_HIERARCHY
 import os
 from pathlib import Path
-from collections import defaultdict
 
 cdef class KNNLinearCombination:
     """
@@ -59,7 +55,8 @@ cdef class KNNLinearCombination:
         self._init_folder_distances(folder_distances, is_test_set=is_test_set)
 
         size_pred_set = len(h_graphs_pred.hierarchy[1.0])
-        shape = (len(PERCENT_HIERARCHY), len(self.labels_train), size_pred_set)
+        self.percent_hierarchy = list(h_graphs_pred.hierarchy.keys())
+        shape = (len(self.percent_hierarchy), len(self.labels_train), size_pred_set)
         self.h_distances = np.empty(shape)
 
         file = os.path.join(self.folder_distances, f'h_distances.npy')
@@ -70,7 +67,7 @@ cdef class KNNLinearCombination:
                 self.h_distances = np.load(f)
         else:
             print('\nCompute the distances\n')
-            for idx, percentage in enumerate(PERCENT_HIERARCHY):
+            for idx, percentage in enumerate(self.percent_hierarchy):
                     self.h_distances[idx] = self.mat_dist.calc_matrix_distances(self.h_graphs_train.hierarchy[percentage],
                                                                            h_graphs_pred.hierarchy[percentage],
                                                                            heuristic=True,
@@ -113,7 +110,7 @@ cdef class KNNLinearCombination:
         normalized_omegas = omegas / np.sum(omegas)
 
         # Summing up the distance matrices
-        for idx, _ in enumerate(PERCENT_HIERARCHY):
+        for idx, _ in enumerate(self.percent_hierarchy):
             combination_distances += np.array(self.h_distances[idx, :, :]) * normalized_omegas[idx]
 
         # Get the index of the k smallest distances in the matrix distances.
@@ -143,7 +140,7 @@ cdef class KNNLinearCombination:
 
         print(f'-- Start Prediction (score) --')
 
-        for idx, _ in enumerate(PERCENT_HIERARCHY):
+        for idx, _ in enumerate(self.percent_hierarchy):
 
             # Get the index of the k smallest distances in the matrix distances.
             idx_k_nearest = np.argpartition(self.h_distances[idx, :, :], self.k, axis=0)[:self.k]
@@ -182,135 +179,3 @@ cdef class KNNLinearCombination:
             predictions[idx] = temp.most_common()[0][0]
 
         return predictions
-
-
-    # cpdef tuple optimize(self, HierarchicalGraphs h_graphs_pred,
-    #                      list labels_pred,
-    #                      int k,
-    #                      str optimization_strategy='linear',
-    #                      int num_cores=-1):
-    #     """
-    #     Predict the class for the graphs in X.
-    #     It returns the majority of the k nearest neighbor from the trainset.
-    #
-    #     - First it computes the distance matrix between the training set and the test set.
-    #     - Second it finds the k nearest points for the graphs in the test set.
-    #     - Take the majority class from the k nearest point of the training set.
-    #
-    #     :param graphs_pred: list
-    #     :param k: int
-    #     :return: predictions: list
-    #     """
-    #     cdef:
-    #         list alphas
-    #         int[::1] np_labels_pred
-    #         double[:, ::1] distances, tmp_distances
-    #         double[:, :, ::1] h_distances
-    #
-    #     print('\n-- Start prediction --')
-    #     np_labels_pred = np.array(labels_pred, dtype=np.int32)
-    #
-    #     h_distances = self._get_distances(h_graphs_pred, len(labels_pred), num_cores=num_cores)
-    #
-    #
-    #     if optimization_strategy == 'linear':
-    #         alphas = [i/10 for i in range(1, 10)]
-    #         population = np.array(list(product(alphas, repeat=len(PERCENT_HIERARCHY))))
-    #         accuracies = self.fitness(population, h_distances, np_labels_pred, k)
-    #
-    #         idx_best_acc = np.argmax(accuracies)
-    #
-    #         return accuracies[idx_best_acc], population[idx_best_acc]
-    #
-    #     elif optimization_strategy == 'genetic':
-    #         np.random.seed(6)
-    #
-    #         p_crossover = 0.85
-    #         p_mutation = 0.01
-    #
-    #         size_population = 100
-    #         round_val = 3
-    #         population = np.random.rand(size_population, len(PERCENT_HIERARCHY))
-    #         population = np.around(population, round_val)
-    #
-    #
-    #         best_acc = float('-inf')
-    #         best_alphas = None
-    #         gamma = 0.5
-    #         num_turn = 200
-    #         distribution_index = 3
-    #         bar = Bar('Processing', max=num_turn)
-    #
-    #         for _ in range(num_turn):
-    #             accuracies = self.fitness(population, h_distances, np_labels_pred, k)
-    #
-    #             idx_max_acc = np.argmax(accuracies)
-    #             if accuracies[idx_max_acc] > best_acc:
-    #                 best_acc = accuracies[idx_max_acc]
-    #                 best_alphas = population[idx_max_acc]
-    #                 print('')
-    #                 print(f'## Best of Best {best_acc:.2f}, alpha: {best_alphas}')
-    #                 print('')
-    #
-    #             prob = accuracies / np.sum(accuracies)
-    #
-    #             # tmp = list(range(len(population)))
-    #             idx_parents = np.random.choice(len(population),
-    #                                            len(population),
-    #                                            p=prob)
-    #             # print(idx_parents)
-    #             #
-    #             # print(sorted(idx_parents))
-    #             new_population = []
-    #
-    #             for idx in range(0, len(population), 2):
-    #                 idx_parent1, idx_parent2 = idx_parents[idx], idx_parents[idx+1]
-    #                 parent1, parent2 = population[idx_parent1], population[idx_parent2]
-    #                 child1, child2 = np.zeros(parent1.shape), np.zeros(parent2.shape)
-    #
-    #                 # Crossover
-    #                 for idx_gene, (gene1, gene2) in enumerate(zip(parent1,parent2)):
-    #                     # u = np.random.rand()
-    #                     # if u <= 0.5:
-    #                     #     beta = np.power(2*u, 1/(distribution_index + 1))
-    #                     # else:
-    #                     #     beta = np.power(1/(2*(1-u)), 1/(distribution_index + 1))
-    #                     # new_gene1 = 0.5 * ((1 + beta) * gene1 + (1 - beta) * gene2)
-    #                     # new_gene2 = 0.5 * ((1 - beta) * gene1 + (1 + beta) * gene2)
-    #                     # child1[idx_gene] = min(max(new_gene1, 0.), 1.0)
-    #                     # child2[idx_gene] = min(max(new_gene2, 0.), 1.0)
-    #
-    #
-    #                     low_range = max(min(gene1, gene2) - gamma * abs(gene1 - gene2), 0.0)
-    #                     high_range = min(max(gene1, gene2) + gamma * abs(gene1 - gene2), 1.0)
-    #                     child1[idx_gene] = np.random.uniform(low=low_range, high=high_range)
-    #                     child2[idx_gene] = np.random.uniform(low=low_range, high=high_range)
-    #
-    #
-    #                     # child1[idx_gene] = gamma * gene1 + (1-gamma) * gene2
-    #                     # child2[idx_gene] = gamma * gene1 + (1-gamma) * gene2 # (1-gamma) * gene1 + gamma * gene2
-    #
-    #                     # if np.random.randint(2) == 0:
-    #                     #     child1[idx_gene] = gene1
-    #                     #     child2[idx_gene] = gene2
-    #                     # else:
-    #                     #     child1[idx_gene] = gene2
-    #                     #     child2[idx_gene] = gene1
-    #
-    #                     #mutation
-    #                     if np.random.rand() <= p_mutation:
-    #                         # child1[idx_gene] = np.random.rand()
-    #                         child1[idx_gene] = np.random.uniform(low=low_range, high=high_range)
-    #                     if np.random.rand() <= p_mutation:
-    #                         # child2[idx_gene] = np.random.rand()
-    #                         child2[idx_gene] = np.random.uniform(low=low_range, high=high_range)
-    #
-    #                 new_population.append(child1)
-    #                 new_population.append(child2)
-    #
-    #             population = np.around(np.array(new_population), round_val)
-    #
-    #             bar.next()
-    #         bar.finish()
-    #
-    #         return best_acc, best_alphas

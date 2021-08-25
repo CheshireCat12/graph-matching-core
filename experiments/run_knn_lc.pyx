@@ -76,13 +76,11 @@ class RunnerKnnLC(Runner):
 
     def ga(self, knn_lc, gag, num_cores, dataset):
 
-        num_generations = 25
-        num_parents_mating = 2
-        sol_per_pop = 50
-        num_genes = 5
+        # num_generations = 100
+        # num_parents_mating = 2
+        # sol_per_pop = 50
+        # num_genes = 5
 
-
-        val = 23
         # Train the classifier
         knn_lc.train(gag.h_graphs_train, gag.labels_train)
 
@@ -102,24 +100,14 @@ class RunnerKnnLC(Runner):
             # print(acc)
             return acc
 
-        self.last_fitness = 0
         def callback_generation(ga_instance):
-            # global last_fitness
             print("Generation = {generation}".format(generation=ga_instance.generations_completed))
             print("Fitness    = {fitness}".format(fitness=ga_instance.best_solution()[1]))
-            # print("Change     = {change}".format(change=ga_instance.best_solution()[1] - self.last_fitness))
-            # last_fitness = ga_instance.best_solution()[1]
 
-        ga_instance = pygad.GA(num_generations=num_generations,
-                               num_parents_mating=num_parents_mating,
-                               fitness_func=fitness_func,
-                               sol_per_pop=sol_per_pop,
-                               num_genes=num_genes,
-                               # on_generation=callback_generation,
-                               mutation_type='adaptive',
-                               parent_selection_type='rank',
-                               gene_space={'low': 0.0, 'high': 1.0},
-                               )
+        ga_params = self.parameters.ga_params
+        ga_params['num_genes'] = len(gag.h_graphs_train.hierarchy.keys())
+        ga_params['fitness_func'] = fitness_func
+        ga_instance = pygad.GA(**ga_params)
 
         ga_instance.run()
 
@@ -130,6 +118,8 @@ class RunnerKnnLC(Runner):
         print("Parameters of the best solution : {solution}".format(solution=solution))
         print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
         print("Index of the best solution : {solution_idx}".format(solution_idx=solution_idx))
+
+        ga_params['fitness_func'] = 'func'
 
         return [solution]
 

@@ -11,7 +11,7 @@ cdef class KNNLinearCombination:
         str folder_distances
         MatrixDistances mat_dist
         HierarchicalGraphs h_graphs_train
-        list labels_train
+        list labels_train, percent_hierarchy
         int[::1] np_labels_train
         double[:, :, ::1] h_distances
         bint are_distances_loaded
