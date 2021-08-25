@@ -178,5 +178,5 @@ general:
   hierarchy_params:
     percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
     centrality_measures: [pagerank, betweenness, random]
-  current_centrality_measure: pagerank
+  current_centrality_measure: random
   save_dist_matrix: True
