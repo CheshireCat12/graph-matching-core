@@ -63,7 +63,7 @@ class RunnerHKnn(Runner):
 
             best_params = tuple(self.parameters.h_knn[1.0].values())
 
-            percentages_to_check = [1.0]
+            percentages_to_check = self.parameters.hierarchy_params['percentages'] #[1.0]
             np.random.seed(42)
             seeds = np.random.randint(1000, size=self.parameters.n_random_turns)
 

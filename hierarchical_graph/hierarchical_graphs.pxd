@@ -5,12 +5,15 @@ from graph_pkg.graph.graph cimport Graph
 cdef class HierarchicalGraphs:
 
     cdef:
+        bint verbose
+        int num_sub_bunch
+        str deletion_strategy
         readonly dict hierarchy
         list original_graphs
         list percentage_hierarchy
         CentralityMeasure measure
-        str deletion_strategy
-        bint verbose
+
+    cpdef void _create_hierarchy_random(self)
 
     cpdef void _create_hierarchy_of_graphs(self)
 

@@ -58,7 +58,12 @@ class RunnerKnnLC(Runner):
         percentages = self.parameters.hierarchy_params['percentages']
         cv = self.parameters.cv
 
-        gag = GAG(coordinator_params, percentages, centrality_measure)
+        augmented_random_graphs = self.parameters.augmented_random_graphs
+        num_sub_bunch = self.parameters.num_sub_bunch
+
+        gag = GAG(coordinator_params, percentages, centrality_measure,
+                  augmented_random_graphs=augmented_random_graphs,
+                  num_sub_bunch=num_sub_bunch)
 
         knn_lc = KNNLC(gag.coordinator.ged, k, parallel)
 
@@ -68,7 +73,7 @@ class RunnerKnnLC(Runner):
             return self.grid_search(knn_lc, gag, optimizer, cv, num_cores, dataset)
         elif self.parameters.optimization_strategy == 'genetic_algorithm':
 
-            optimizer = GeneticAlgorithm(0.0, 1.0, 5, n_genes=50, optimization_turn=50)
+            # optimizer = GeneticAlgorithm(0.0, 1.0, 5, n_genes=50, optimization_turn=50)
 
             return self.ga(knn_lc, gag, num_cores, dataset)
         else:
@@ -76,13 +81,13 @@ class RunnerKnnLC(Runner):
 
     def ga(self, knn_lc, gag, num_cores, dataset):
 
-        # num_generations = 100
-        # num_parents_mating = 2
-        # sol_per_pop = 50
-        # num_genes = 5
+        augmented_random_graphs = self.parameters.augmented_random_graphs
+        num_sub_bunch = self.parameters.num_sub_bunch
 
         # Train the classifier
-        knn_lc.train(gag.h_graphs_train, gag.labels_train)
+        knn_lc.train(gag.h_graphs_train, gag.labels_train,
+                     augmented_random_graphs=augmented_random_graphs,
+                     num_sub_bunch=num_sub_bunch)
 
         # Compute the distances in advance not to have to compute it every turn
         knn_lc.load_h_distances(gag.h_graphs_val, folder_distances='',
@@ -105,7 +110,7 @@ class RunnerKnnLC(Runner):
             print("Fitness    = {fitness}".format(fitness=ga_instance.best_solution()[1]))
 
         ga_params = self.parameters.ga_params
-        ga_params['num_genes'] = len(gag.h_graphs_train.hierarchy.keys())
+        ga_params['num_genes'] = (len(gag.h_graphs_train.hierarchy.keys()) - 1) * num_sub_bunch + 1
         ga_params['fitness_func'] = fitness_func
         ga_instance = pygad.GA(**ga_params)
 
@@ -227,7 +232,12 @@ class RunnerKnnLC(Runner):
         percentages = self.parameters.hierarchy_params['percentages']
         cv = self.parameters.cv
 
-        gag = GAG(coordinator_params, percentages, centrality_measure)
+        augmented_random_graphs = self.parameters.augmented_random_graphs
+        num_sub_bunch = self.parameters.num_sub_bunch
+
+        gag = GAG(coordinator_params, percentages, centrality_measure,
+                  augmented_random_graphs=augmented_random_graphs,
+                  num_sub_bunch=num_sub_bunch)
 
         knn_lc = KNNLC(gag.coordinator.ged, k, parallel)
 
@@ -240,9 +250,13 @@ class RunnerKnnLC(Runner):
 
 
         # knn.train(gag.h_aggregation_graphs, gag.aggregation_labels)
-        knn_lc.train(gag.h_graphs_train, gag.labels_train)
-        knn_lc.load_h_distances(gag.h_graphs_test, self.parameters.folder_results,
-                             is_test_set=True, num_cores=num_cores)
+        knn_lc.train(gag.h_graphs_train, gag.labels_train,
+                     augmented_random_graphs=augmented_random_graphs,
+                     num_sub_bunch=num_sub_bunch)
+        knn_lc.load_h_distances(gag.h_graphs_test,
+                                folder_distances='',
+                                # folder_distance = self.parameters.folder_results,
+                                is_test_set=True, num_cores=num_cores)
 
 
         if self.parameters.dist:

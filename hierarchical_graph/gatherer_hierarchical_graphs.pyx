@@ -6,7 +6,8 @@ cdef class GathererHierarchicalGraphs:
 
     def __init__(self, dict coordinator_params, list percentages,
                  str centrality_measure, bint activate_aggregation=True,
-                 bint verbose=False, bint full_dataset=True, int new_seed=42):
+                 bint verbose=False, bint full_dataset=True, int new_seed=42,
+                 bint augmented_random_graphs=False, int num_sub_bunch=1):
         self.percentages = percentages
         # Retrieve graphs with labels
         self.coordinator = CoordinatorClassifier(**coordinator_params)
@@ -45,7 +46,10 @@ cdef class GathererHierarchicalGraphs:
 
         self.h_graphs_train = HierarchicalGraphs(self.graphs_train, self.measure,
                                                  percentage_hierarchy=percentages,
-                                                 verbose=verbose)
+                                                 verbose=verbose,
+                                                 augmented_random_graphs=augmented_random_graphs,
+                                                 num_sub_bunch=num_sub_bunch
+                                                 )
         self.h_graphs_val = HierarchicalGraphs(self.graphs_val, self.measure,
                                                percentage_hierarchy=percentages,
                                                verbose=verbose)

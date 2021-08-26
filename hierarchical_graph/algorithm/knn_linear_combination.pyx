@@ -32,19 +32,25 @@ cdef class KNNLinearCombination:
         else:
             self.folder_distances = ''
 
-    cpdef void train(self, HierarchicalGraphs h_graphs_train, list labels_train):
+    cpdef void train(self, HierarchicalGraphs h_graphs_train, list labels_train,
+                     bint augmented_random_graphs=False, int num_sub_bunch=1):
         """
         Function used to train the KNN classifier.
         With KNN, the training step consists to save the training set.
         The saved training set is used later during the prediction step.
 
-        :param X_train: list
-        :param y_train: list
+        :param h_graphs_train: 
+        :param labels_train: 
+        :param num_sub_bunch: 
+        :param augmented_random_graph: 
         :return: 
         """
         self.h_graphs_train = h_graphs_train
         self.labels_train = labels_train
         self.np_labels_train = np.array(labels_train, dtype=np.int32)
+
+        self.augmented_random_graphs = augmented_random_graphs
+        self.num_sub_bunch = num_sub_bunch
 
     cpdef void load_h_distances(self, HierarchicalGraphs h_graphs_pred,
                                 str folder_distances='', bint is_test_set=False, int num_cores=-1):
@@ -56,7 +62,10 @@ cdef class KNNLinearCombination:
 
         size_pred_set = len(h_graphs_pred.hierarchy[1.0])
         self.percent_hierarchy = list(h_graphs_pred.hierarchy.keys())
-        shape = (len(self.percent_hierarchy), len(self.labels_train), size_pred_set)
+
+        dim1 = (len(self.percent_hierarchy) - 1) * self.num_sub_bunch + 1
+        shape = (dim1, len(self.labels_train), size_pred_set)
+
         self.h_distances = np.empty(shape)
 
         file = os.path.join(self.folder_distances, f'h_distances.npy')
@@ -67,17 +76,43 @@ cdef class KNNLinearCombination:
                 self.h_distances = np.load(f)
         else:
             print('\nCompute the distances\n')
-            for idx, percentage in enumerate(self.percent_hierarchy):
-                    self.h_distances[idx] = self.mat_dist.calc_matrix_distances(self.h_graphs_train.hierarchy[percentage],
-                                                                           h_graphs_pred.hierarchy[percentage],
-                                                                           heuristic=True,
-                                                                           num_cores=num_cores)
+            if self.augmented_random_graphs:
+                self._compute_distances_augmented_random_graphs(h_graphs_pred, num_cores)
+            else:
+                self._compute_distances_standard(h_graphs_pred, num_cores)
+
             if self.folder_distances:
                 with open(file, 'wb') as f:
                     np.save(f, self.h_distances)
 
         self.are_distances_loaded = True
 
+    cpdef void _compute_distances_augmented_random_graphs(self, HierarchicalGraphs h_graphs_pred, int num_cores):
+        idx = 0
+        for percentage in self.percent_hierarchy:
+            if percentage == 1.0:
+                self.h_distances[idx] = self.mat_dist.calc_matrix_distances(self.h_graphs_train.hierarchy[percentage],
+                                                                            h_graphs_pred.hierarchy[percentage],
+                                                                            heuristic=True,
+                                                                            num_cores=num_cores)
+                idx += 1
+            else:
+                for sub_idx in range(self.num_sub_bunch):
+                    self.h_distances[idx] = self.mat_dist.calc_matrix_distances(
+                        self.h_graphs_train.hierarchy[percentage][sub_idx],
+                        h_graphs_pred.hierarchy[percentage],
+                        heuristic=True,
+                        num_cores=num_cores)
+                    # print(idx, percentage)
+                    idx += 1
+
+
+    cpdef void _compute_distances_standard(self, HierarchicalGraphs h_graphs_pred, int num_cores):
+        for idx, percentage in enumerate(self.percent_hierarchy):
+            self.h_distances[idx] = self.mat_dist.calc_matrix_distances(self.h_graphs_train.hierarchy[percentage],
+                                                                        h_graphs_pred.hierarchy[percentage],
+                                                                        heuristic=True,
+                                                                        num_cores=num_cores)
 
     cpdef int[::1] predict_dist(self, double[::1] omegas):
         """
@@ -110,7 +145,11 @@ cdef class KNNLinearCombination:
         normalized_omegas = omegas / np.sum(omegas)
 
         # Summing up the distance matrices
-        for idx, _ in enumerate(self.percent_hierarchy):
+
+        indexes = range((len(self.percent_hierarchy) - 1) * self.num_sub_bunch + 1)
+
+        for idx in indexes:
+            # print(f'{idx}')
             combination_distances += np.array(self.h_distances[idx, :, :]) * normalized_omegas[idx]
 
         # Get the index of the k smallest distances in the matrix distances.

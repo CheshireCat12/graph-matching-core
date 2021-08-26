@@ -123,9 +123,12 @@ IMDB_binary:
   folder_results: ./results/knn_linear_combination_v2/IMDB_binary
 general:
   hierarchy_params:
-    percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
-    centrality_measures: [pagerank] # betweenness]
-  centrality_measure: pagerank # betweenness
+    percentages: [1.0, 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2] # , 0.1]
+#    percentages: [1.0, 0.8, 0.6, 0.4, 0.2]
+    centrality_measures: [random] # betweenness]
+  centrality_measure: random # betweenness
+  augmented_random_graphs: True
+  num_sub_bunch: 10
   parallel: True
   deletion_strategy: compute_once
   save_predictions: True
@@ -135,9 +138,9 @@ general:
   cv: 5
   dist: True
   ga_params:
-    num_generations: 100
+    num_generations: 200
     num_parents_mating: 4
-    sol_per_pop: 30
+    sol_per_pop: 20
     # single_point, uniform, scattered
     crossover_type: uniform
     # random, swap, inversion, scramble, adaptive

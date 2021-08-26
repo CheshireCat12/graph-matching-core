@@ -11,10 +11,11 @@ from graph_pkg.utils.constants cimport PERCENT_HIERARCHY
 
 cdef class HierarchicalGraphs:
 
-
     def __init__(self, list graphs, CentralityMeasure measure,
                  list percentage_hierarchy=PERCENT_HIERARCHY,
-                 str deletion_strategy='compute_once', bint verbose=True):
+                 str deletion_strategy='compute_once', bint verbose=True,
+                 bint augmented_random_graphs=False,
+                 int num_sub_bunch=1):
         self.hierarchy = {}
         self.original_graphs = graphs
         self.percentage_hierarchy = percentage_hierarchy
@@ -22,7 +23,12 @@ cdef class HierarchicalGraphs:
         self.deletion_strategy = deletion_strategy
         self.verbose = verbose
 
-        self._create_hierarchy_of_graphs()
+        if augmented_random_graphs:
+            self.num_sub_bunch = num_sub_bunch
+            self._create_hierarchy_random()
+
+        else:
+            self._create_hierarchy_of_graphs()
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -124,3 +130,28 @@ cdef class HierarchicalGraphs:
             idx_del = idx_to_delete[0]
 
             graph.remove_node_by_idx(idx_del)
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cpdef void _create_hierarchy_random(self):
+        """
+        Create many random reduced graph space with various random node deletion
+
+        :return:
+        """
+        cdef:
+            double percentage
+
+        if self.verbose:
+            print(f'\n** Create Random Graph Hierarchy **')
+
+        print(f'Create more random graph space #: {self.num_sub_bunch}')
+
+        for percentage in self.percentage_hierarchy:
+            if percentage == 1.0:
+                self.hierarchy[percentage] = self._reduce_graphs(self.original_graphs,
+                                                                 percentage)
+            else:
+                self.hierarchy[percentage] = [self._reduce_graphs(self.original_graphs,
+                                                                  percentage)
+                                              for _ in range(self.num_sub_bunch)]
