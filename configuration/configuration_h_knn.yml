@@ -7,7 +7,7 @@ AIDS:
     current_percentage: 1.0
     1.0:
       k: 5
-      alpha: 0.95
+      alpha: 0.9
     # PageRank
     0.8:
       k: 1
@@ -52,7 +52,7 @@ NCI1:
     params_edit_cost: !!python/tuple [1.0, 1.0, 1.0, 1.0,  dirac]
     folder_dataset: ./data/NCI1/data/
   h_knn:
-    current_percentage: 0.8
+    current_percentage: 1.0
     1.0:
       k: 1
       alpha: 0.5
@@ -146,7 +146,7 @@ IMDB_binary:
     current_percentage: 1.0
     1.0:
       k: 5
-      alpha: 0.9
+      alpha: 0.1
     # PageRank
     0.8:
       k: 3
@@ -163,7 +163,7 @@ IMDB_binary:
   folder_results: ./results/h_knnV2/IMDB_binary
 general:
   optimize: False
-  percentages_to_opt: [0.8] # [0.2, 0.4, 0.6, 0.8]
+  percentages_to_opt: [1.0] # [0.2, 0.4, 0.6, 0.8]
   tuning:
     alpha: [1, 20, 0.05]
     ks: [1, 3, 5, 7]

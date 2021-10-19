@@ -1,3 +1,8 @@
+from progress.bar import Bar
+import pygad
+import numpy as np
+cimport numpy as np
+
 from hierarchical_graph.algorithm.knn_linear_combination cimport KNNLinearCombination as KNNLC
 from experiments.runner import Runner
 from hierarchical_graph.gatherer_hierarchical_graphs cimport GathererHierarchicalGraphs as GAG
@@ -5,33 +10,7 @@ from graph_pkg.utils.functions.helper import calc_accuracy, calc_f1
 from graph_pkg.algorithm.optimizer.optimizer cimport Optimizer
 from graph_pkg.algorithm.optimizer.grid_search cimport GridSearch
 from graph_pkg.algorithm.optimizer.genetic_algorithm cimport GeneticAlgorithm
-import numpy as np
-cimport numpy as np
 
-from progress.bar import Bar
-
-
-# cpdef void _write_results(double acc, double exec_time, parameters, name):
-#     Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
-#     # name = f'percent_remain_{parameters.percentage}_' \
-#     #        f'measure_{parameters.centrality_measure}_' \
-#     #        f'del_strat_{parameters.deletion_strategy}.txt'
-#     filename = os.path.join(parameters.folder_results, name)
-#     with open(filename, mode='a+') as fp:
-#         fp.write(str(parameters))
-#         fp.write(f'\n\nAcc: {acc}; Time: {exec_time}\n'
-#                  f'{"="*50}\n\n')
-#
-# cpdef void _write_results_new(list accuracies, list exec_times, parameters, name):
-#     Path(parameters.folder_results).mkdir(parents=True, exist_ok=True)
-#
-#     filename = os.path.join(parameters.folder_results, name)
-#
-#     with open(filename, mode='a+') as fp:
-#         fp.write(str(parameters))
-#         fp.write(f'\n\nAcc: {",".join([str(val) for val in accuracies])};'
-#                  f'\nAlphas: {",".join([str(val) for val in exec_times])}\n'
-#                  f'{"="*50}\n\n')
 
 
 class RunnerKnnLC(Runner):
@@ -79,29 +58,78 @@ class RunnerKnnLC(Runner):
         percentages = self.parameters.hierarchy_params['percentages']
         cv = self.parameters.cv
 
-        gag = GAG(coordinator_params, percentages, centrality_measure)
+        augmented_random_graphs = self.parameters.augmented_random_graphs
+        num_sub_bunch = self.parameters.num_sub_bunch
+
+        gag = GAG(coordinator_params, percentages, centrality_measure,
+                  augmented_random_graphs=augmented_random_graphs,
+                  num_sub_bunch=num_sub_bunch)
 
         knn_lc = KNNLC(gag.coordinator.ged, k, parallel)
 
         if self.parameters.optimization_strategy == 'grid_search':
             optimizer = GridSearch(0.0, 1.0, 5, 1)
+
+            return self.grid_search(knn_lc, gag, optimizer, cv, num_cores, dataset)
         elif self.parameters.optimization_strategy == 'genetic_algorithm':
-            optimizer = GeneticAlgorithm(0.0, 1.0, 5, n_genes=50, optimization_turn=50)
+
+            # optimizer = GeneticAlgorithm(0.0, 1.0, 5, n_genes=50, optimization_turn=50)
+
+            return self.ga(knn_lc, gag, num_cores, dataset)
         else:
             raise NotImplementedError('Optimizer not implemented')
 
-        #########################################
-        # Configure the optimization parameters #
-        #########################################
+    def ga(self, knn_lc, gag, num_cores, dataset):
 
-        # Create the range of the coefficient (omega)
-        # omegas_range = [i / 10 for i in range(0, 10)]
-        # omegas_range = np.arange(0, 1, step=0.05)[1:]
+        augmented_random_graphs = self.parameters.augmented_random_graphs
+        num_sub_bunch = self.parameters.num_sub_bunch
 
-        # Create all the combinations of all the coefficients
-        # Remove the first element (0,0,0,0,0) (it would lead to an empty distance matrix)
-        # coefficients = list(product(omegas_range, repeat=len(percentages)))[1:]
+        # Train the classifier
+        knn_lc.train(gag.h_graphs_train, gag.labels_train,
+                     augmented_random_graphs=augmented_random_graphs,
+                     num_sub_bunch=num_sub_bunch)
 
+        # Compute the distances in advance not to have to compute it every turn
+        knn_lc.load_h_distances(gag.h_graphs_val, folder_distances='',
+                                is_test_set=False,
+                                num_cores=num_cores)
+
+        labels_val = gag.labels_val
+
+        def fitness_func(solution, solution_idx):
+            predictions = knn_lc.predict_dist(solution)
+            # else:
+            # predictions = knn_lc.compute_pred_from_score(overall_predictions, omegas)
+
+            acc = calc_accuracy(np.array(gag.labels_val, dtype=np.int32), predictions)
+            # print(acc)
+            return acc
+
+        def callback_generation(ga_instance):
+            print("Generation = {generation}".format(generation=ga_instance.generations_completed))
+            print("Fitness    = {fitness}".format(fitness=ga_instance.best_solution()[1]))
+
+        ga_params = self.parameters.ga_params
+        ga_params['num_genes'] = (len(gag.h_graphs_train.hierarchy.keys()) - 1) * num_sub_bunch + 1
+        ga_params['fitness_func'] = fitness_func
+        ga_instance = pygad.GA(**ga_params)
+
+        ga_instance.run()
+
+        ga_instance.plot_fitness()
+
+        # Returning the details of the best solution.
+        solution, solution_fitness, solution_idx = ga_instance.best_solution()
+        print("Parameters of the best solution : {solution}".format(solution=solution))
+        print("Fitness value of the best solution = {solution_fitness}".format(solution_fitness=solution_fitness))
+        print("Index of the best solution : {solution_idx}".format(solution_idx=solution_idx))
+
+        ga_params['fitness_func'] = 'func'
+
+        return [solution]
+
+
+    def grid_search(self, knn_lc, gag, optimizer, cv, num_cores, dataset):
         accuracies = np.zeros((len(optimizer.opt_values), cv))
         f1_scores = np.zeros((len(optimizer.opt_values), cv))
 
@@ -122,35 +150,30 @@ class RunnerKnnLC(Runner):
                 overall_predictions = knn_lc.predict_score()
 
             bar = Bar(f'Processing, Turn {idx+1}/{cv}', max=len(optimizer.opt_values))
-            for turn in range(optimizer.optimization_turn):
-                for idx_coef, omegas in enumerate(optimizer.opt_values):
-                    omegas = np.array(omegas)
+            for idx_coef, omegas in enumerate(optimizer.opt_values):
+                omegas = np.array(omegas)
 
-                    if self.parameters.dist:
-                        predictions = knn_lc.predict_dist(omegas)
-                    else:
-                        predictions = knn_lc.compute_pred_from_score(overall_predictions, omegas)
+                if self.parameters.dist:
+                    predictions = knn_lc.predict_dist(omegas)
+                else:
+                    predictions = knn_lc.compute_pred_from_score(overall_predictions, omegas)
 
-                    acc = calc_accuracy(np.array(labels_val, dtype=np.int32), predictions)
-                    f1_score = calc_f1(np.array(labels_val, dtype=np.int32), predictions, dataset)
+                acc = calc_accuracy(np.array(labels_val, dtype=np.int32), predictions)
+                f1_score = calc_f1(np.array(labels_val, dtype=np.int32), predictions, dataset)
 
-                    accuracies[idx_coef][idx] = acc
-                    optimizer.accuracies[idx_coef] = acc
-                    f1_scores[idx_coef][idx] = f1_score
+                accuracies[idx_coef][idx] = acc
+                optimizer.accuracies[idx_coef] = acc
+                f1_scores[idx_coef][idx] = f1_score
 
-                    # print('----', acc)
+                if acc > best_acc:
+                    best_acc = acc
+                    best_coeff = omegas
+                    print('|||', best_acc, omegas)
 
-                    if acc > best_acc:
-                        best_acc = acc
-                        best_coeff = omegas
-                        print('|||', best_acc, omegas)
-
-                    bar.next()
+                bar.next()
 
 
-                # print('***', np.array(optimizer.accuracies), sum(np.array(optimizer.accuracies)))
-
-                optimizer.update_values()
+            optimizer.update_values()
 
             print(f'best acc : {best_acc}, best coeff: {best_coeff}')
 
@@ -209,7 +232,12 @@ class RunnerKnnLC(Runner):
         percentages = self.parameters.hierarchy_params['percentages']
         cv = self.parameters.cv
 
-        gag = GAG(coordinator_params, percentages, centrality_measure)
+        augmented_random_graphs = self.parameters.augmented_random_graphs
+        num_sub_bunch = self.parameters.num_sub_bunch
+
+        gag = GAG(coordinator_params, percentages, centrality_measure,
+                  augmented_random_graphs=augmented_random_graphs,
+                  num_sub_bunch=num_sub_bunch)
 
         knn_lc = KNNLC(gag.coordinator.ged, k, parallel)
 
@@ -222,9 +250,13 @@ class RunnerKnnLC(Runner):
 
 
         # knn.train(gag.h_aggregation_graphs, gag.aggregation_labels)
-        knn_lc.train(gag.h_graphs_train, gag.labels_train)
-        knn_lc.load_h_distances(gag.h_graphs_test, self.parameters.folder_results,
-                             is_test_set=True, num_cores=num_cores)
+        knn_lc.train(gag.h_graphs_train, gag.labels_train,
+                     augmented_random_graphs=augmented_random_graphs,
+                     num_sub_bunch=num_sub_bunch)
+        knn_lc.load_h_distances(gag.h_graphs_test,
+                                # folder_distances='',
+                                folder_distances = self.parameters.folder_results,
+                                is_test_set=True, num_cores=num_cores)
 
 
         if self.parameters.dist:
@@ -250,8 +282,8 @@ class RunnerKnnLC(Runner):
                 message += f'Acc: {accuracy_final:.2f}, Best so far: {best_acc:.2f}\n' \
                            f'Linear combination: {best_omegas}\n'
 
-
-
+        filename = f'prediction_{"dist" if self.parameters.dist else "score"}'
+        self.save_predictions(predictions_final, np.array(gag.labels_test, dtype=np.int32), f'{filename}.npy')
         filename = f'acc_{"dist" if self.parameters.dist else "score"}'
         print(message)
         self.save_stats(message, name=f'{filename}.txt')

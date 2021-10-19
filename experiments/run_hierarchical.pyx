@@ -40,7 +40,7 @@ def run_hierarchical(parameters):
 
     selected_graphs = sorted_by_len[:parameters.num_graphs]
 
-    measures = ['pagerank', 'betweenness', 'random']
+    measures = ['pagerank'] #, 'betweenness', 'random']
 
     sigma_js = SigmaJS(parameters.coordinator['dataset'],
                        parameters.folder_results,

@@ -63,7 +63,8 @@ class RunnerHKnn(Runner):
 
             best_params = tuple(self.parameters.h_knn[1.0].values())
 
-            percentages_to_check = [1.0, 0.8, 0.6, 0.4, 0.2]
+            # percentages_to_check = [1.0, 0.8, 0.6, 0.4, 0.2]
+            percentages_to_check = self.parameters.hierarchy_params['percentages'] #[1.0]
             np.random.seed(42)
             seeds = np.random.randint(1000, size=self.parameters.n_random_turns)
 
@@ -246,6 +247,8 @@ class RunnerHKnn(Runner):
             with open(filename, 'wb') as f:
                 np.save(f, knn.current_distances)
 
+        filename = f'prediction_full'
+        self.save_predictions(predictions, np.array(self.gag.labels_test, dtype=np.int32), f'{filename}.npy')
         # Reinitialize the coordinator params
         # self.parameters.coordinator['params_edit_cost'] = params_edit_cost
 

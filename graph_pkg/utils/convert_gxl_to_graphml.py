@@ -15,9 +15,8 @@ def convert_letter_gxl_to_graphml(graph_files):
             print(graph['gxl']['graph'])
 
 
-
-
         break
+
 
 if __name__ == '__main__':
     graph_files = glob('./data/Letter/Letter/LOW/*.gxl')

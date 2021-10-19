@@ -41,7 +41,7 @@ IMDB_binary:
     folder_dataset: ./data/IMDB-BINARY/data/
   folder_results: ./results/hierarchical/IMDB_binary
 general:
-  num_graphs: 4110
+  num_graphs: 2000
   random_graph: True
   percentage: 1.0
   centrality_measure: pagerank
