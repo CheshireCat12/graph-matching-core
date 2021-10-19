@@ -61,7 +61,7 @@ cdef class LoaderBase:
             graphs.append(self._constructed_graph)
             # break
             bar.next()
-        bar.finish
+        bar.finish()
 
         print(f'==> {len(graphs)} graphs loaded')
         return graphs

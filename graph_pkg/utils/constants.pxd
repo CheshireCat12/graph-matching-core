@@ -1,5 +1,6 @@
 cdef:
     str EXTENSION_GRAPHS
+    str EXTENSION_GRAPHML
     str EXTENSION_SPLITS
 
     dict DEFAULT_FOLDERS

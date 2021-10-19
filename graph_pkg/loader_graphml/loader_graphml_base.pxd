@@ -2,6 +2,8 @@ from graph_pkg.graph.edge cimport Edge
 from graph_pkg.graph.graph cimport Graph
 from graph_pkg.graph.node cimport Node
 from graph_pkg.graph.label.label_base cimport LabelBase
+from graph_pkg.graph.label.label_node_embedding cimport LabelNodeEmbedding
+from graph_pkg.graph.label.label_edge cimport LabelEdge
 
 cdef class LoaderGraphMLBase:
 

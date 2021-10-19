@@ -1,6 +1,8 @@
+import json
+import numpy as np
 import os
-from glob import glob
 
+from glob import glob
 from xmltodict import parse
 from progress.bar import Bar
 
@@ -24,13 +26,20 @@ cdef class LoaderGraphMLBase:
         self._folder = folder
 
     cpdef int _format_idx(self, str idx):
-        raise NotImplementedError
+        return int(idx)
 
     cpdef LabelBase _formatted_lbl_node(self, attr):
-        raise NotImplementedError
+        cdef:
+            double[::1] vector
+
+
+
+        vector = np.array(json.loads(attr))
+
+        return LabelNodeEmbedding(vector)
 
     cpdef LabelBase _formatted_lbl_edge(self, attr):
-        raise NotImplementedError
+        return LabelEdge(0)
 
     cpdef list load(self):
         """
@@ -41,6 +50,7 @@ cdef class LoaderGraphMLBase:
         cdef object parsed_data
 
         files = os.path.join(self._folder, EXTENSION_GRAPHML)
+        print(files)
         graph_files = glob(files)
 
         if not graph_files:
@@ -54,23 +64,25 @@ cdef class LoaderGraphMLBase:
             with open(graph_file) as file:
                 graph_text = "".join(file.readlines())
                 *_, graph_filename = graph_file.split('/')
+
             parsed_data = parse(graph_text)
 
             self._construct_graph(graph_filename, parsed_data)
 
             graphs.append(self._constructed_graph)
-            # break
+
             bar.next()
-        bar.finish
+        bar.finish()
 
         print(f'==> {len(graphs)} graphs loaded')
         return graphs
 
     cpdef void _construct_graph(self, str graph_filename, object parsed_data):
-        graph_dict = parsed_data['gxl']['graph']
+        # print(parsed_data['graphml']['graph'])
+        graph_dict = parsed_data['graphml']['graph']
 
-        graph_idx = graph_dict['@id']
-        graph_edge_mode = graph_dict['@edgemode']
+        graph_idx = graph_filename
+        graph_edge_mode = graph_dict['@edgedefault']
         nodes = graph_dict['node']
         edges = graph_dict['edge'] if 'edge' in graph_dict.keys() else []
         num_nodes = len(nodes)
@@ -86,7 +98,9 @@ cdef class LoaderGraphMLBase:
 
             assert idx == idx_verification, f'There is a gap in the index {idx} from {graph_idx}'
 
-            lbl_node = self._formatted_lbl_node(element['attr'])
+            if isinstance(json.loads(element['data']['#text']), float):
+                print(graph_idx)
+            lbl_node = self._formatted_lbl_node(element['data']['#text'])
             self._constructed_graph.add_node(Node(idx, lbl_node))
 
             idx_verification += 1
@@ -94,8 +108,8 @@ cdef class LoaderGraphMLBase:
         if not isinstance(edges, list):
             edges = [edges]
         for element in edges:
-            idx_from = self._format_idx(element['@from'])
-            idx_to = self._format_idx(element['@to'])
+            idx_from = self._format_idx(element['@source'])
+            idx_to = self._format_idx(element['@target'])
             lbl_edge = self._formatted_lbl_edge(element)
             if idx_from == idx_to:
                 continue
