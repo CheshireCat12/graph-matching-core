@@ -254,8 +254,8 @@ class RunnerKnnLC(Runner):
                      augmented_random_graphs=augmented_random_graphs,
                      num_sub_bunch=num_sub_bunch)
         knn_lc.load_h_distances(gag.h_graphs_test,
-                                folder_distances='',
-                                # folder_distance = self.parameters.folder_results,
+                                # folder_distances='',
+                                folder_distances = self.parameters.folder_results,
                                 is_test_set=True, num_cores=num_cores)
 
 
@@ -282,8 +282,8 @@ class RunnerKnnLC(Runner):
                 message += f'Acc: {accuracy_final:.2f}, Best so far: {best_acc:.2f}\n' \
                            f'Linear combination: {best_omegas}\n'
 
-
-
+        filename = f'prediction_{"dist" if self.parameters.dist else "score"}'
+        self.save_predictions(predictions_final, np.array(gag.labels_test, dtype=np.int32), f'{filename}.npy')
         filename = f'acc_{"dist" if self.parameters.dist else "score"}'
         print(message)
         self.save_stats(message, name=f'{filename}.txt')

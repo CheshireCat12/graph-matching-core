@@ -246,6 +246,8 @@ class RunnerHKnn(Runner):
             with open(filename, 'wb') as f:
                 np.save(f, knn.current_distances)
 
+        filename = f'prediction_full'
+        self.save_predictions(predictions, np.array(self.gag.labels_test, dtype=np.int32), f'{filename}.npy')
         # Reinitialize the coordinator params
         # self.parameters.coordinator['params_edit_cost'] = params_edit_cost
 

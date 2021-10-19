@@ -8,8 +8,9 @@ cdef:
     #########################
 
     ### File Extensions ###
-    EXTENSION_GRAPHS = '*.gxl'
-    EXTENSION_SPLITS = '.cxl'
+    str EXTENSION_GRAPHS = '*.gxl'
+    str EXTENSION_GRAPHML = '*.graphml'
+    str EXTENSION_SPLITS = '.cxl'
 
     #########################
     ##  Folder Constants   ##
