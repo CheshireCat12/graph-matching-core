@@ -11,3 +11,4 @@ cdef double dirac_NCI1(int chem_source, int chem_target)
 
 cdef double dirac(int source, int target)
 
+cdef double euclidean_vector(double[::1] vec_src, double[::1] vec_trgt)

@@ -8,7 +8,7 @@ from progress.bar import Bar
 
 from graph_pkg.utils.constants cimport EXTENSION_GRAPHML
 
-cdef class LoaderGraphMLBase:
+cdef class LoaderGNNEmbeddingBase:
     """
     Base class to load the graphs from graphml format.
     Load and construct the graphs.
@@ -31,8 +31,6 @@ cdef class LoaderGraphMLBase:
     cpdef LabelBase _formatted_lbl_node(self, attr):
         cdef:
             double[::1] vector
-
-
 
         vector = np.array(json.loads(attr))
 
@@ -78,7 +76,6 @@ cdef class LoaderGraphMLBase:
         return graphs
 
     cpdef void _construct_graph(self, str graph_filename, object parsed_data):
-        # print(parsed_data['graphml']['graph'])
         graph_dict = parsed_data['graphml']['graph']
 
         graph_idx = graph_filename

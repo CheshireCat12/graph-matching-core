@@ -1,5 +1,5 @@
 data/
-data_GNN/
+data_gnn/
 *.html
 *.profile
 prof/

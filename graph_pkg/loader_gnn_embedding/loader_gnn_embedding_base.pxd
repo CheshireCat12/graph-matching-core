@@ -5,7 +5,7 @@ from graph_pkg.graph.label.label_base cimport LabelBase
 from graph_pkg.graph.label.label_node_embedding cimport LabelNodeEmbedding
 from graph_pkg.graph.label.label_edge cimport LabelEdge
 
-cdef class LoaderGraphMLBase:
+cdef class LoaderGNNEmbeddingBase:
 
     cdef:
         str _folder

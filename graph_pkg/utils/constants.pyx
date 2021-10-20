@@ -28,7 +28,12 @@ cdef:
                             'IMDB_binary': './data/IMDB-Binary/data'
                             }
 
+    dict DEFAULT_FOLDERS_GNN_EMBEDDING = {
+        'enzymes': './data_gnn/reduced_graphs_ENZYMES/data/'
+    }
+
     dict DEFAULT_FOLDERS_LABELS = DEFAULT_FOLDERS
+    dict DEFAULT_FOLDERS_GNN_EMBEDDING_LABELS = DEFAULT_FOLDERS_GNN_EMBEDDING
 
     #################################
     ##  Convert Labels Constants   ##
