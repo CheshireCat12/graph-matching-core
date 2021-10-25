@@ -4,7 +4,7 @@ import os
 from setuptools import setup, Extension
 from setuptools.command.install import install
 from setuptools.command.develop import develop
-
+from pathlib import Path
 
 install_requires = [
     'cython',
@@ -43,7 +43,7 @@ def friendly(command_subclass):
         github_repo = 'https://github.com/jacomyal/sigma.js.git'
         if not os.path.isdir(dir_):
             import git
-            git.Repo.clone_from(github_repo, dir_, branch='master')
+            git.Repo.clone_from(github_repo, dir_, branch='main')
 
     command_subclass.run = modified_run
     return command_subclass

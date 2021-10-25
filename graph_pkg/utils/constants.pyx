@@ -1,7 +1,3 @@
-from hierarchical_graph.centrality_measure.pagerank cimport PageRank
-from hierarchical_graph.centrality_measure.betweenness cimport Betweenness
-from hierarchical_graph.centrality_measure.random cimport Random
-
 cdef:
     #########################
     ##  General Constants  ##
@@ -85,11 +81,6 @@ cdef:
 
     list PERCENT_HIERARCHY = [1.0, 0.8, 0.6, 0.4, 0.2]
 
-    dict MEASURES = {
-        'pagerank': PageRank(),
-        'betweenness': Betweenness(),
-        'random': Random(),
-    }
 
 ########################
 ##  Sigma Constants   ##
@@ -116,6 +107,3 @@ def get_code_to_lbls_letter():
 
 def get_code_to_lbls_muta():
     return CODE_TO_LBL_MUTAGENICITY
-
-def get_measures():
-    return MEASURES

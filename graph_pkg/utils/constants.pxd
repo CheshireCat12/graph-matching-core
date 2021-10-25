@@ -20,5 +20,3 @@ cdef:
     dict DEFAULT_LABELS_TO_CODE
 
     list PERCENT_HIERARCHY
-
-    dict MEASURES
