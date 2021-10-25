@@ -29,7 +29,7 @@
       <excludeFolder url="file://$MODULE_DIR$/data_gnn" />
       <excludeFolder url="file://$MODULE_DIR$/data_gnn/reduced_graphs_ENZYMES/data" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.8 (graph_project) (2)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.9 (graph-matching-core)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

@@ -90,7 +90,7 @@ for e in extensions:
     e.cython_directives = {'language_level': "3",  # all are Python-3
                            'embedsignature': True}
 
-setup(name='graph_pkg',
+setup(name='graph-matching-core',
       version='0.1.1',
       description='A graph module',
       author='Anthony Gillioz',
