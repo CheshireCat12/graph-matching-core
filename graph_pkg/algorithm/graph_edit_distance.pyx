@@ -222,5 +222,3 @@ def rebuild(data):
     ged = GED(data['edit_cost'])
 
     return ged
-
-

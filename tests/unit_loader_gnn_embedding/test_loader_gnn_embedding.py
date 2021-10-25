@@ -11,4 +11,6 @@ def test_base_loader_embedding(folder, num_graphs):
     loader_base = LoaderGNNEmbeddingBase(folder)
     graphs = loader_base.load()
 
+    print(graphs[0])
+    # assert False
     assert len(graphs) == num_graphs

@@ -27,6 +27,38 @@ def test_train_split(dataset, folder_dataset, cost, expected_size):
 
         assert lbl == expected_lbl
 
+############## validation ##################
+
+@pytest.mark.parametrize('dataset, folder_dataset, cost, expected_size',
+                         [
+                             # ('letter', './data/Letter/Letter/HIGH/', 'euclidean', 750),
+                             # ('AIDS', './data/AIDS/data/', 'dirac', 250),
+                             # ('mutagenicity', './data/Mutagenicity/data/', 'dirac',  500),
+                             # ('NCI1', './data/NCI1/data/', 'dirac', 500),
+                             # ('proteins_tu', './data/PROTEINS/data/', 'dirac', 220),
+                             ('enzymes', './data_gnn/reduced_graphs_ENZYMES_full/data/', 'euclidean', 120),
+                             # ('collab', './data/COLLAB/data/', 'dirac', 1000),
+                             # ('reddit_binary', './data/REDDIT-BINARY/data/', 'dirac', 400),
+                         ])
+def test_val_split(dataset, folder_dataset, cost, expected_size):
+    coordinator = CoordinatorGNNEmbeddingClassifier(dataset, (1., 1., 1., 1., cost), folder_dataset)
+
+    X_val, y_val = coordinator.val_split()
+
+    assert len(X_val) == expected_size
+    assert len(y_val) == expected_size
+
+    loader_split = coordinator.loader_split
+    data = loader_split.load_val_split()
+    graph_to_lbl = {graph_filename: lbl for graph_filename, lbl in data}
+
+    print('validation')
+    for graph, lbl in zip(X_val, y_val):
+        expected_lbl = graph_to_lbl[graph.filename]
+        print(graph.filename)
+        assert lbl == expected_lbl
+
+    assert False
 
 ####### test ###########
 
@@ -53,44 +85,15 @@ def test_test_split(dataset, folder_dataset, cost, expected_size):
     data = loader_split.load_test_split()
     graph_to_lbl = {graph_filename: lbl for graph_filename, lbl in data}
 
+    print('test')
     for idx, (graph, lbl) in enumerate(zip(X_test, y_test)):
         expected_lbl = graph_to_lbl[graph.filename]
 
-        if idx == 127:
-            print(graph.filename)
-            assert False
+        print(graph.filename)
 
         assert lbl == expected_lbl
+    assert False
 
-
-############## validation ##################
-
-@pytest.mark.parametrize('dataset, folder_dataset, cost, expected_size',
-                         [
-                             # ('letter', './data/Letter/Letter/HIGH/', 'euclidean', 750),
-                             # ('AIDS', './data/AIDS/data/', 'dirac', 250),
-                             # ('mutagenicity', './data/Mutagenicity/data/', 'dirac',  500),
-                             # ('NCI1', './data/NCI1/data/', 'dirac', 500),
-                             # ('proteins_tu', './data/PROTEINS/data/', 'dirac', 220),
-                             ('enzymes', './data_gnn/reduced_graphs_ENZYMES/data/', 'euclidean', 120),
-                             # ('collab', './data/COLLAB/data/', 'dirac', 1000),
-                             # ('reddit_binary', './data/REDDIT-BINARY/data/', 'dirac', 400),
-                         ])
-def test_val_split(dataset, folder_dataset, cost, expected_size):
-    coordinator = CoordinatorGNNEmbeddingClassifier(dataset, (1., 1., 1., 1., cost), folder_dataset)
-
-    X_val, y_val = coordinator.val_split()
-
-    assert len(X_val) == expected_size
-    assert len(y_val) == expected_size
-
-    loader_split = coordinator.loader_split
-    data = loader_split.load_val_split()
-    graph_to_lbl = {graph_filename: lbl for graph_filename, lbl in data}
-
-    for graph, lbl in zip(X_val, y_val):
-        expected_lbl = graph_to_lbl[graph.filename]
-        assert lbl == expected_lbl
 
 #
 # ############## code labels ##################

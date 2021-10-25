@@ -41,9 +41,14 @@ cdef class MatrixDistances:
         :return: distances between the graphs in the given lists
         """
         if self.parallel:
-            return self._parallel_calc_matrix_distances(graphs_train, graphs_test, heuristic, num_cores)
+            return self._parallel_calc_matrix_distances(graphs_train,
+                                                        graphs_test,
+                                                        heuristic,
+                                                        num_cores)
         else:
-            return self._serial_calc_matrix_distances(graphs_train, graphs_test, heuristic)
+            return self._serial_calc_matrix_distances(graphs_train,
+                                                      graphs_test,
+                                                      heuristic)
 
     @cython.boundscheck(False)
     @cython.wraparound(False)

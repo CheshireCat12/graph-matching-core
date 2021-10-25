@@ -1,4 +1,6 @@
 import random
+import numpy as np
+cimport numpy as np
 
 
 cdef class LabelNodeEmbedding(LabelBase):
@@ -14,3 +16,6 @@ cdef class LabelNodeEmbedding(LabelBase):
 
     def sigma_position(self):
         return [random.uniform(0, 1) for _ in range(2)]
+
+    def __reduce__(self):
+        return self.__class__, (np.asarray(self.vector), )
