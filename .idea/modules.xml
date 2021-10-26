@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/graph-matching-core.iml" filepath="$PROJECT_DIR$/.idea/graph-matching-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../graph-matching-gnn-reduction/.idea/graph-matching-gnn-reduction.iml" filepath="$PROJECT_DIR$/../graph-matching-gnn-reduction/.idea/graph-matching-gnn-reduction.iml" />
     </modules>
   </component>
 </project>

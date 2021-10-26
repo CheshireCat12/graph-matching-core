@@ -12,8 +12,6 @@ external/
 analysis/**
 
 lib/
-Pipfile
-Pipfile.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

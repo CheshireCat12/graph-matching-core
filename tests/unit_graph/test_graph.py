@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
 from graph_pkg.graph.graph import Graph as gr
-# from graph_pkg.graph.network import Network as Graph
+# from graph_gnn_embedding.graph.network import Network as Graph
 from graph_pkg.graph.network import Node, Edge
 from itertools import combinations
 import numpy as np
