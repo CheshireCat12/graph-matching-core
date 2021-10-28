@@ -212,7 +212,7 @@ cdef class GED:
 
     def __reduce__(self):
         d = dict()
-        d['edit_cost'] =self.edit_cost
+        d['edit_cost'] = self.edit_cost
 
         return (rebuild, (d,))
 
