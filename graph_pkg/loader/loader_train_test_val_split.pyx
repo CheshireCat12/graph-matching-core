@@ -23,8 +23,8 @@ cdef class LoaderTrainTestValSplit:
         parsed_data = parse(split_text)
 
         index = 'fingerprints'
-        if 'Mutagenicity' in self.folder_dataset:
-            index = 'mutagenicity'
+        # if 'Mutagenicity' in self.folder_dataset:
+        #     index = 'mutagenicity'
 
         splits = parsed_data['GraphCollection'][index]['print']
 
