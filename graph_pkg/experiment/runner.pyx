@@ -30,3 +30,11 @@ cdef class Runner:
                 fp.write(str(self.parameters))
             fp.write(f'{message}\n'
                      f'{"="*50}\n\n')
+
+    cpdef void save_ged_distances(self, str name, double[:, ::1] distances):
+        folder_dist = os.path.join(self.folder, 'distances')
+        Path(folder_dist).mkdir(parents=True, exist_ok=True)
+        filename = os.path.join(folder_dist, f'ged_dist_{name}.npy')
+
+        with open(filename, 'wb') as f:
+            np.save(f, distances)

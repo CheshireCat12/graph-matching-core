@@ -25,6 +25,12 @@ cdef class Logger:
                 return self.__data
 
     def set_lvl(self, str lvl_name):
+        """
+        Change the level of the logger.
+        It is used to log experiment with multiple loop
+        :param lvl_name:
+        :return:
+        """
         self.lvl_name = lvl_name
         self.__data[lvl_name] = {}
 
