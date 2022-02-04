@@ -35,6 +35,12 @@ cdef class KNNClassifier:
         self.labels_train = labels_train
         self.np_labels_train = np.array(labels_train, dtype=np.int32)
 
+    cpdef double[:, ::1] compute_dist(self, list graphs_pred, int num_cores=-1):
+        return self.mat_dist.calc_matrix_distances(self.graphs_train,
+                                                   graphs_pred,
+                                                   heuristic=True,
+                                                   num_cores=num_cores)
+
     cpdef int[::1] predict(self, list graphs_pred, int k, int num_cores=-1):
         """
         Predict the class for the graphs in X.
@@ -52,10 +58,11 @@ cdef class KNNClassifier:
         if self.verbose:
             print('\n-- Start prediction --')
 
-        self.current_distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
-                                                        graphs_pred,
-                                                        heuristic=True,
-                                                        num_cores=num_cores)
+        # self.current_distances = self.mat_dist.calc_matrix_distances(self.graphs_train,
+        #                                                 graphs_pred,
+        #                                                 heuristic=True,
+        #                                                 num_cores=num_cores)
+        self.current_distances = self.compute_dist(graphs_pred, num_cores=num_cores)
 
         # Get the index of the k smallest distances in the matrix distances.
         idx_k_nearest = np.argpartition(self.current_distances, k, axis=0)[:k]

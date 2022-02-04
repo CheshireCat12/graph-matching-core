@@ -15,4 +15,6 @@ cdef class KNNClassifier:
 
     cpdef void train(self, list graphs_train, list labels_train)
 
+    cpdef double[:, ::1] compute_dist(self, list graphs_pred, int num_cores=*)
+
     cpdef int[::1] predict(self, list graphs_pred, int k, int num_cores=*)
