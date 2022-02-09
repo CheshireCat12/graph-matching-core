@@ -10,15 +10,19 @@ cdef class Kmeans:
         self.mat_dist = MatrixDistances(ged, parallel=True, verbose=False)
         self.n_cores = n_cores
 
-    cpdef list init_centroids(self, list graphs):
+    cpdef tuple init_centroids(self, list graphs):
         cdef:
             list centroids
 
         np.random.seed(self.seed)
-        random_idx = np.random.permutation(len(graphs))[:self.n_clusters]
-        centroids = [graphs[idx] for idx in random_idx]
+        idx_centroids = sorted(np.random.permutation(len(graphs))[:self.n_clusters])
+        # print(f'random_idx', sorted(idx_centroids))
+        centroids = [graphs[idx] for idx in idx_centroids]
+        # print(f'Length centroids : {len(centroids)}')
+        # print(f'centroid 2 {centroids[2]}')
+        # print(f'centroid 11 {centroids[11]}')
 
-        return centroids
+        return np.array(idx_centroids, dtype=np.int32), centroids
 
     cpdef double[:, ::1] compute_distances(self,
                                            list graphs,
@@ -28,28 +32,43 @@ cdef class Kmeans:
                                                    heuristic=True,
                                                    num_cores=self.n_cores)
 
-    cpdef int[::1] find_closest_cluster(self, double[:, ::1] distances):
-        # breakpoint()
-        test = np.array(np.argmin(distances, axis=1), dtype=np.int32)
-        print(test)
+    cpdef int[::1] find_closest_cluster(self, double[:, ::1] distances, int[::1] idx_centroids):
+        closest_pts = np.array(np.argmin(distances, axis=1), dtype=np.int32)
+        # print(np.array(idx_centroids))
+        # print('***************3')
+        # print(closest_pts)
+        # Change the cluster of the centroid by hand to be sure that at least one point is
+        # in each cluster
+        for idx, idx_c in enumerate(idx_centroids):
 
-        return test
+            closest_pts[idx_c] = idx
 
-    cpdef list update_centroids(self,
+
+
+
+        # print(closest_pts)
+        # print(len(closest_pts))
+        # print('******************2')
+        return closest_pts
+
+    cpdef tuple update_centroids(self,
                                 list graphs,
                                 list centroids,
+                                int[::1] idx_centroids,
                                 int[::1] labels):
         cdef:
             list new_centroids = []
+            list new_idx_centroids = []
             double[:, ::1] intra_cls_distances
 
         for k in range(self.n_clusters):
             cls_indices = np.where(np.array(labels)==k)[0]
-            # print(class_indices)
-            print(k)
+            # print(cls_indices)
+            # print(k)
             graphs_per_cls = [graphs[idx] for idx in cls_indices]
+            idx_per_cls = cls_indices # [idx_centroids[idx] for idx in cls_indices]
 
-            print(graphs_per_cls)
+            # print(graphs_per_cls)
 
             intra_cls_distances = self.compute_distances(graphs_per_cls, graphs_per_cls)
 
@@ -60,8 +79,9 @@ cdef class Kmeans:
             # print('num per cluster', len(np.array(intra_cls_distances[0])))
 
             new_centroids.append(graphs_per_cls[idx_new_centroid])
-        # print('##############################')
-        return new_centroids
+            new_idx_centroids.append(idx_per_cls[idx_new_centroid])
+            # print('##############################')
+        return np.array(new_idx_centroids, dtype=np.int32), new_centroids
 
     cpdef bint are_centroids_equal(self, list cur_centroids, list old_centroids):
         for c_centroid, o_centroid in zip(cur_centroids, old_centroids):
@@ -78,39 +98,40 @@ cdef class Kmeans:
 
             graphs_per_cls = [graphs[idx] for idx in cls_indices]
             # print(len(graphs_per_cls))
-            intra_cls_distances = self.compute_distances(graphs_per_cls, centroids)
+            intra_cls_distances = self.compute_distances(graphs_per_cls, [centroids[k]])
             # print(intra_cls_distances.base)
+            # print(np.array(intra_cls_distances))
             # breakpoint()
             # print()
             # print(np.sum(intra_cls_distances, axis=0))
             # print(np.sum(intra_cls_distances))
             error += np.sum(intra_cls_distances)
-
-        return error / self.n_clusters
+        return error # / self.n_clusters
 
     cpdef void fit(self, list graphs):
         cdef:
             list old_centroids
             double[:, ::1] distances
 
-        self.centroids = self.init_centroids(graphs)
+        self.idx_centroids, self.centroids = self.init_centroids(graphs)
 
         for turn in range(self.max_iter):
-
 
             old_centroids = self.centroids
 
             distances = self.compute_distances(graphs,
                                                self.centroids)
+            # print(np.array(distances)[33])
+            # print(np.argmin(np.array(distances)[33]))
 
-            self.labels = self.find_closest_cluster(distances)
+            self.labels = self.find_closest_cluster(distances, self.idx_centroids)
 
             self.error = self.compute_SOD(graphs, self.centroids, self.labels)
 
-            self.centroids = self.update_centroids(graphs,
-                                                   self.centroids,
-                                                   self.labels)
-
+            self.idx_centroids, self.centroids = self.update_centroids(graphs,
+                                                                       self.centroids,
+                                                                       self.idx_centroids,
+                                                                       self.labels)
             if self.are_centroids_equal(self.centroids, old_centroids):
                 break
 

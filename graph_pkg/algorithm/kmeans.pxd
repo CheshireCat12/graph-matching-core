@@ -11,20 +11,21 @@ cdef class Kmeans:
         public double error
         list graphs
         public list centroids
-        int[::1] labels
+        int[::1] labels, idx_centroids
         MatrixDistances mat_dist
 
-    cpdef list init_centroids(self, list graphs)
+    cpdef tuple init_centroids(self, list graphs)
 
     cpdef double[:, ::1] compute_distances(self,
                                            list graphs,
                                            list centroids)
 
-    cpdef int[::1] find_closest_cluster(self, double[:, ::1] distances)
+    cpdef int[::1] find_closest_cluster(self, double[:, ::1] distances, int[::1] idx_centroids)
 
-    cpdef list update_centroids(self,
+    cpdef tuple update_centroids(self,
                                 list graphs,
                                 list centroids,
+                                int[::1] idx_centroids,
                                 int[::1] labels)
 
     cpdef bint are_centroids_equal(self,
