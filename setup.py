@@ -6,6 +6,7 @@ from setuptools.command.install import install
 from setuptools.command.develop import develop
 from pathlib import Path
 
+
 install_requires = [
     'cython',
     'numpy',
@@ -91,7 +92,7 @@ for e in extensions:
                            'embedsignature': True}
 
 setup(name='graph-matching-core',
-      version='0.1.1',
+      version='0.1.2',
       description='A graph module',
       author='Anthony Gillioz',
       author_email='anthony.gillioz@outlook.com',

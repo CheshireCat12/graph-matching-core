@@ -52,13 +52,7 @@ cdef class EditCostVector(EditCost):
         self.vec_target = node_trgt.label.vector
 
         dist = self.metric(self.vec_source, self.vec_target)
-        # sigmoid_term = 1 / (2*self.c_insert_node)
-        # alpha = 1
-        # sigma = 5 #np.log(1/2)
-        #
-        # sub_cost = 1 / (sigmoid_term + np.exp(-alpha * dist + sigma))
-        #
-        # return self.alpha_node * sub_cost
+
         return self.alpha_node * fmin(dist, 2*self.c_insert_node)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
@@ -92,6 +86,6 @@ cdef class EditCostVector(EditCost):
 
 def rebuild(data):
     cdef EditCost edit_cost
-    edit_cost = EditCostGNNEmbedding(**data)
+    edit_cost = EditCostVector(**data)
 
     return edit_cost
