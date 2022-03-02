@@ -11,7 +11,7 @@ cdef class Kmeans:
         public double error
         list graphs
         public list centroids
-        int[::1] labels, idx_centroids
+        public int[::1] labels, idx_centroids
         MatrixDistances mat_dist
 
     cpdef tuple init_centroids(self, list graphs)

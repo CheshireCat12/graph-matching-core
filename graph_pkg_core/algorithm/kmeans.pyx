@@ -18,11 +18,8 @@ cdef class Kmeans:
 
         np.random.seed(self.seed)
         idx_centroids = sorted(np.random.permutation(len(graphs))[:self.n_clusters])
-        # print(f'random_idx', sorted(idx_centroids))
+
         centroids = [graphs[idx] for idx in idx_centroids]
-        # print(f'Length centroids : {len(centroids)}')
-        # print(f'centroid 2 {centroids[2]}')
-        # print(f'centroid 11 {centroids[11]}')
 
         return np.array(idx_centroids, dtype=np.int32), centroids
 
@@ -36,21 +33,12 @@ cdef class Kmeans:
 
     cpdef int[::1] find_closest_cluster(self, double[:, ::1] distances, int[::1] idx_centroids):
         closest_pts = np.array(np.argmin(distances, axis=1), dtype=np.int32)
-        # print(np.array(idx_centroids))
-        # print('***************3')
-        # print(closest_pts)
+
         # Change the cluster of the centroid by hand to be sure that at least one point is
         # in each cluster
         for idx, idx_c in enumerate(idx_centroids):
-
             closest_pts[idx_c] = idx
 
-
-
-
-        # print(closest_pts)
-        # print(len(closest_pts))
-        # print('******************2')
         return closest_pts
 
     cpdef tuple update_centroids(self,
@@ -128,7 +116,7 @@ cdef class Kmeans:
 
             self.labels = self.find_closest_cluster(distances, self.idx_centroids)
 
-            self.error = self.compute_SOD(graphs, self.centroids, self.labels)
+            # self.error = self.compute_SOD(graphs, self.centroids, self.labels)
 
             self.idx_centroids, self.centroids = self.update_centroids(graphs,
                                                                        self.centroids,

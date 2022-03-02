@@ -4,7 +4,6 @@ import os
 from setuptools import setup, Extension
 from setuptools.command.install import install
 from setuptools.command.develop import develop
-from pathlib import Path
 
 
 install_requires = [
