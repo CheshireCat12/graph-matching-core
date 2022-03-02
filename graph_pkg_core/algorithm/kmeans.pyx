@@ -54,6 +54,7 @@ cdef class Kmeans:
         for k in range(self.n_clusters):
             cls_indices = np.where(np.array(labels)==k)[0]
             # print(cls_indices)
+            # print('%%%%')
             # print(k)
             graphs_per_cls = [graphs[idx] for idx in cls_indices]
             idx_per_cls = cls_indices # [idx_centroids[idx] for idx in cls_indices]
@@ -82,7 +83,7 @@ cdef class Kmeans:
     cpdef double compute_SOD(self, list graphs, list centroids, int[::1] labels):
         cdef:
             double error = 0
-
+        print('#######')
         for k in range(self.n_clusters):
             cls_indices = np.where(np.array(labels) == k)[0]
 
@@ -94,8 +95,9 @@ cdef class Kmeans:
             # breakpoint()
             # print()
             # print(np.sum(intra_cls_distances, axis=0))
-            # print(np.sum(intra_cls_distances))
-            error += np.sum(intra_cls_distances)
+            print(np.sum(intra_cls_distances), len(graphs_per_cls), np.sum(intra_cls_distances) * len(graphs_per_cls))
+            error += np.sum(intra_cls_distances) * len(graphs_per_cls)
+        print('#######')
         return error # / self.n_clusters
 
     cpdef void fit(self, list graphs):
@@ -111,13 +113,14 @@ cdef class Kmeans:
 
             distances = self.compute_distances(graphs,
                                                self.centroids)
+            # print(np.array(distances))
             # print(np.array(distances)[33])
-            # print(np.argmin(np.array(distances)[33]))
+            # print(np.argmin(np.array(distances), axis=1))
 
             self.labels = self.find_closest_cluster(distances, self.idx_centroids)
 
-            # self.error = self.compute_SOD(graphs, self.centroids, self.labels)
-
+            self.error = self.compute_SOD(graphs, self.centroids, self.labels)
+            print('temp error', self.error)
             self.idx_centroids, self.centroids = self.update_centroids(graphs,
                                                                        self.centroids,
                                                                        self.idx_centroids,
@@ -126,3 +129,4 @@ cdef class Kmeans:
                 break
 
         self.error = self.compute_SOD(graphs, self.centroids, self.labels)
+        print(self.error)
