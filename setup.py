@@ -59,7 +59,6 @@ class CustomInstallCommand(install):
     pass
 
 
-
 def extension_modules():
     """
     Find the cython extension modules to install

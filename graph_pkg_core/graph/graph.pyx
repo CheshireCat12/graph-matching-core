@@ -109,6 +109,20 @@ cdef class Graph:
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
+    cpdef int[::1] degrees(self):
+        cdef:
+            int idx
+            int[::1] degrees
+
+        size_adj = self.adjacency_matrix.shape[0]
+        degrees = np.zeros(size_adj, dtype=np.int32)
+        for idx, row in enumerate(self.adjacency_matrix):
+            degrees[idx] += np.sum(row)
+
+        return degrees
+
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
     cpdef int[::1] out_degrees(self):
         """
         Take the out degree of every node and create a list of them.

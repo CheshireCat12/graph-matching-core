@@ -33,6 +33,8 @@ cdef class Graph:
 
     cpdef int add_edge(self, Edge edge) except? -1
 
+    cpdef int[::1] degrees(self)
+
     cpdef int[::1] in_degrees(self)
 
     cpdef int[::1] out_degrees(self)

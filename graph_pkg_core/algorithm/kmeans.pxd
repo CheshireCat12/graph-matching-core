@@ -10,31 +10,36 @@ cdef class Kmeans:
         int n_clusters, max_iter, seed, n_cores
         public double error
         list graphs
-        public list centroids
         public int[::1] labels, idx_centroids
+        double[:, :] full_distances
         MatrixDistances mat_dist
 
-    cpdef tuple init_centroids(self, list graphs)
+    cpdef void _init_distances(self, list graphs)
+
+    cpdef void set_n_cluster_and_seed(self, int n_clusters, int new_seed)
+
+    cpdef int[::1] init_centroids(self, list graphs)
 
     cpdef double[:, ::1] compute_distances(self,
                                            list graphs,
-                                           list centroids)
+                                           int[::1] centroids)
 
-    cpdef int[::1] find_closest_cluster(self, double[:, ::1] distances, int[::1] idx_centroids)
+    cpdef int[::1] find_closest_cluster(self,
+                                        double[:, :] distances,
+                                        int[::1] idx_centroids)
 
-    cpdef tuple update_centroids(self,
-                                list graphs,
-                                list centroids,
+    cpdef int[::1] update_centroids(self,
+                                double[:, :] distances,
                                 int[::1] idx_centroids,
                                 int[::1] labels)
 
     cpdef bint are_centroids_equal(self,
-                                   list c_centroids,
-                                   list old_centroids)
+                                   int[::1] c_centroids,
+                                   int[::1] old_centroids)
 
     cpdef double compute_SOD(self,
-                             list graphs,
-                             list centroids,
+                             double[:, :] distances,
+                             int[::1] idx_centroids,
                              int[::1] labels)
 
-    cpdef void fit(self, list graphs)
+    cpdef void fit(self)
