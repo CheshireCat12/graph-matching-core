@@ -14,8 +14,7 @@ cdef class LoaderTrainTestValSplit:
 
     cdef list _init_splits(self, str filename):
         cdef list data = []
-        print(join(self.folder_dataset,f'{filename}{EXTENSION_SPLITS}'))
-        # print(split_file)
+
         split_file = glob(join(self.folder_dataset,f'{filename}{EXTENSION_SPLITS}'))[0]
 
         with open(split_file) as file:

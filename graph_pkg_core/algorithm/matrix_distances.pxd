@@ -33,5 +33,3 @@ cdef class MatrixDistances:
                                     int num_cores=*)
 
     cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test, bint heuristic=*)
-
-

@@ -84,14 +84,18 @@ cdef class LoaderVector:
         graph_edge_mode = graph_dict['@edgedefault']
         nodes = graph_dict['node']
         edges = graph_dict['edge'] if 'edge' in graph_dict.keys() else []
-        num_nodes = len(nodes)
-        self._constructed_graph = Graph(graph_idx, graph_filename, num_nodes)
+
 
         # variable used to check if there is no gap in the indexes from the xml files
         idx_verification = 0
 
         if not isinstance(nodes, list):
             nodes = [nodes]
+
+        num_nodes = len(nodes)
+
+        self._constructed_graph = Graph(graph_idx, graph_filename, num_nodes)
+
         for element in nodes:
             idx = self._format_idx(element['@id'])
 
