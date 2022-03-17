@@ -22,6 +22,16 @@ cdef class EditCostVector(EditCost):
             self.metric = euclidean_vector
 
     cpdef double cost_insert_node(self, Node node) except? -1:
+        """
+        Compute the cost to insert a node in the graph
+        cost = alpha_node * cost insertion
+        
+        Args:
+            node: 
+
+        Returns:
+
+        """
         return self.c_cost_insert_node(node)
 
     cdef double c_cost_insert_node(self, Node node):
