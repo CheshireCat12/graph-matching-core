@@ -3,12 +3,9 @@
 Test labels
 """
 import pytest
-
-from graph_pkg.graph.label.label_edge import LabelEdge
-from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
-from graph_pkg.graph.label.label_node_AIDS import LabelNodeAIDS
-from graph_pkg.graph.label.label_node_mutagenicity import LabelNodeMutagenicity
-from graph_pkg.graph.label.label_node_NCI1 import LabelNodeNCI1
+import numpy as np
+from graph_pkg_core.graph.label.label_edge import LabelEdge
+from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
 
 
 @pytest.mark.parametrize('in_args, expected',
@@ -22,46 +19,30 @@ def test_label_edge(in_args, expected):
 
 
 @pytest.mark.parametrize('in_args',
-                         [(5., 6.),
-                          (1, 5.),
-                          (43., 4)])
-def test_label_letter(in_args):
-    label = LabelNodeLetter(*in_args)
+                         [np.array([5., 6.]),
+                          np.array([1, 5.]),
+                          np.array([43., 4])])
+def test_label_vector(in_args):
+    label = LabelNodeVector(in_args)
 
-    assert label.get_attributes() == in_args
-
-def test_label_AIDS():
-    expected = ('C', 0, 1, 6., 5.)
-    label = LabelNodeAIDS(*expected)
-
-    assert label.get_attributes() == expected
-
-def test_label_NCI1():
-    expected = (3, )
-    label = LabelNodeNCI1(*expected)
-
-    assert label.get_attributes() == expected
+    assert np.array_equal(label.get_attributes()[0], in_args) == True
 
 
 @pytest.mark.parametrize('in_args',
-                         [(5., 6.),
-                          (1, 5.),
-                          (43., 4)])
-def test_label_lettre_to_string(in_args):
-    label = LabelNodeLetter(*in_args)
+                         [np.array([5., 6.]),
+                          np.array([1, 5.]),
+                          np.array([43., 4])])
+def test_label_vector_to_string(in_args):
+    label = LabelNodeVector(in_args)
 
-    assert str(label) == f'Label attributes: {", ".join(str(float(element)) for element in in_args)}'
+    assert str(label) == f'Label attributes: {", ".join(str(element) for element in (in_args,))}'
 
 
 @pytest.mark.parametrize('lbl_1, lbl_2, expected',
-                         [(LabelNodeLetter(1, 2), LabelNodeLetter(1, 2), True),
-                          (LabelNodeLetter(1., 2.), LabelEdge(0), False),
+                         [(LabelNodeVector(np.array([1, 2])), LabelNodeVector(np.array([1, 2])), True),
+                          (LabelNodeVector(np.array([1, 3])), LabelNodeVector(np.array([1, 2])), False),
                           (LabelEdge(0), LabelEdge(0), True),
                           (LabelEdge(12), LabelEdge(2), False),
-                          (LabelNodeMutagenicity('C'), LabelNodeMutagenicity('C'), True),
-                          (LabelNodeMutagenicity('Cl'), LabelNodeMutagenicity('O'), False),
-                          (LabelNodeNCI1(3), LabelNodeNCI1(1), False),
-                          (LabelNodeNCI1(2), LabelNodeNCI1(2), True)
                           ])
 def test_label_equality(lbl_1, lbl_2, expected):
     equality = lbl_1 == lbl_2

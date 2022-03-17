@@ -1,168 +1,163 @@
-# -*- coding: utf-8 -*-
-import pytest
-from graph_pkg.graph.graph import Graph as gr
-# from graph_gnn_embedding.graph.network import Network as Graph
-from graph_pkg.graph.network import Node, Edge
 from itertools import combinations
+
 import numpy as np
+import pytest
+
+from graph_pkg_core.graph.edge import Edge
+from graph_pkg_core.graph.graph import Graph
+from graph_pkg_core.graph.label.label_edge import LabelEdge
+from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
+from graph_pkg_core.graph.node import Node
 
 
+@pytest.fixture()
+def my_graph():
+    return Graph('gr1', 'gr1.gxl', 2)
 
-#
-# @pytest.fixture()
-# def my_graph():
-#     return Graph('new graph')
-#
-#
-# @pytest.fixture()
-# def constructed_graph(my_graph):
-#     for i in range(0, 2):
-#         my_graph.add_node(Node(i, f'data{i}'))
-#
-#     my_graph.add_edge(Edge(0, 1))
-#
-#     return my_graph
-#
-#
-# @pytest.fixture()
-# def clique(my_graph):
-#     num_nodes = 4
-#     for i in range(num_nodes):
-#         my_graph.add_node(Node(i, f'data{i}'))
-#
-#     for n_idx1, n_idx2 in combinations(range(num_nodes), 2):
-#         my_graph.add_edge(Edge(n_idx1, n_idx2))
-#
-#     return my_graph
-#
-#
-# def test_label_of_graph(my_graph):
-#     assert my_graph.get_name() == 'new graph'
-#
-#
-# def test_insertion_node(my_graph):
-#     tmp_node = Node(1, 'test_node')
-#     my_graph.add_node(tmp_node)
-#
-#     nodes_expected = {1: tmp_node}
-#
-#     assert my_graph.get_nodes() == nodes_expected
-#
-#
-# def test_insertion_multi_nodes(my_graph):
-#     tmp_nodes = dict()
-#     for i in range(3):
-#         id_ = i
-#         node_tmp = Node(id_)
-#         tmp_nodes[id_] = node_tmp
-#         my_graph.add_node(node_tmp)
-#
-#     assert my_graph.get_nodes() == tmp_nodes
-#
-#
-# def test_insertion_edge(my_graph):
-#     my_graph.add_node(Node(1, 'node1'))
-#     my_graph.add_node(Node(2, 'node2'))
-#
-#     tmp_edge = Edge(1, 2)
-#     reversed_tmp_edge = Edge(2, 1)
-#     my_graph.add_edge(tmp_edge)
-#
-#     expected_edges_in = {1: [tmp_edge], 2: []}
-#     expected_edges_out = {1: [], 2: [reversed_tmp_edge]}
-#
-#     assert my_graph.get_edges_in() == expected_edges_in
-#     assert my_graph.get_edges_out() == expected_edges_out
-#
-#
-# @pytest.mark.parametrize('number_of_nodes', [3, 10])
-# def test_insertion_multiple_edges(my_graph, number_of_nodes):
-#     for i in range(number_of_nodes):
-#         my_graph.add_node(Node(i, f'node{i}'))
-#
-#     expected_edges_in = {i: [] for i in range(number_of_nodes)}
-#     expected_edges_out = {i: [] for i in range(number_of_nodes)}
-#
-#     for e_idx1, e_idx2 in [(0, 1), (0, 2)]:
-#         tmp_edge = Edge(e_idx1, e_idx2)
-#         reversed_tmp_edge = Edge(e_idx2, e_idx1)
-#         my_graph.add_edge(tmp_edge)
-#
-#         expected_edges_in[e_idx1].append(tmp_edge)
-#         expected_edges_out[e_idx2].append(reversed_tmp_edge)
-#
-#     assert my_graph.get_edges_in() == expected_edges_in
-#     assert my_graph.get_edges_out() == expected_edges_out
+
+def test_simple_graph():
+    my_graph = Graph('gr1', 'gr1.gxl', 1)
+
+    assert my_graph.name == 'gr1'
+    assert len(my_graph) == 0
+
+
+@pytest.mark.parametrize('num_nodes, idx_to_remove, expected_adj',
+                         [
+                             (1, 0, np.array([[]])),
+                             (2, 0, np.array([[0]])),
+                             (4, 1, np.array([[0, 1, 1],
+                                              [1, 0, 1],
+                                              [1, 1, 0]]))
+                         ])
+def test_remove_node(num_nodes, idx_to_remove, expected_adj):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+    nodes = []
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeVector(np.array([1 + i, 1])))
+        nodes.append(tmp_node)
+        my_graph.add_node(tmp_node)
+
+    for idx_start, idx_end in combinations(range(num_nodes), 2):
+        tmp_edge = Edge(idx_start, idx_end, LabelEdge(0))
+        my_graph.add_edge(tmp_edge)
+
+    my_graph.remove_node_by_idx(idx_to_remove)
+    nodes.pop(idx_to_remove)
+
+    assert my_graph.get_nodes() == nodes
+    assert len(my_graph) == num_nodes - 1
+    assert np.array_equiv(expected_adj, np.asarray(my_graph.adjacency_matrix))
+
+
+@pytest.mark.parametrize('num_nodes',
+                         [1, 5, 10])
+def test_add_node(num_nodes):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+    nodes = []
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeVector(np.array([1, 1])))
+        nodes.append(tmp_node)
+        my_graph.add_node(tmp_node)
+
+    assert my_graph.get_nodes() == nodes
+    assert len(my_graph) == num_nodes
+
+
+@pytest.mark.parametrize('num_nodes, error_idx',
+                         [(5, 5),
+                          (5, 8), ])
+def test_add_node_higher_than_num_nodes(num_nodes, error_idx):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+    tmp_node = Node(error_idx, LabelNodeVector(np.array([1, 1])))
+
+    with pytest.raises(AssertionError) as execinfo:
+        my_graph.add_node(tmp_node)
+
+    error_msg = execinfo.value.args[0]
+    expected_error_msg = f'The idx of the node {error_idx} exceed the number of nodes {num_nodes} authorized!'
+    assert error_msg == expected_error_msg
 #
 #
-# @pytest.mark.parametrize('n_idx1, n_idx2, e_idx1, e_idx2, expected_error_msg',
-#                          [(3, 4, 1, 2, 'The starting node 1 does not exist!'),
-#                           (1, 3, 1, 2, 'The ending node 2 does not exist!'),
-#                           (3, 1, 2, 1, 'The starting node 2 does not exist!')])
-# def test_insertion_edge_not_existent_node(my_graph, n_idx1, n_idx2, e_idx1, e_idx2, expected_error_msg):
-#     my_graph.add_node(Node(n_idx1))
-#     my_graph.add_node(Node(n_idx2))
+@pytest.mark.parametrize('num_nodes, expected_edges',
+                         [(2, {0: [None, Edge(0, 1, LabelEdge(0))],
+                               1: [Edge(1, 0, LabelEdge(0)), None]}),
+                          (3, {0: [None, Edge(0, 1, LabelEdge(0)), Edge(0, 2, LabelEdge(0))],
+                               1: [Edge(1, 0, LabelEdge(0)), None, Edge(1, 2, LabelEdge(0))],
+                               2: [Edge(2, 0, LabelEdge(0)), Edge(2, 1, LabelEdge(0)), None]})
+                          ])
+def test_add_clique_edge(num_nodes, expected_edges):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeVector(np.array([i, i])))
+        my_graph.add_node(tmp_node)
+
+    for idx_start, idx_end in combinations(range(num_nodes), 2):
+        tmp_edge = Edge(idx_start, idx_end, LabelEdge(0))
+        my_graph.add_edge(tmp_edge)
+
+    assert my_graph.get_edges() == expected_edges
+    assert my_graph.has_edge(0, num_nodes - 1) == True
+    assert my_graph.has_edge(num_nodes - 1, 0) == True
+    assert my_graph.has_edge(0, num_nodes + 1) == False
+
+
+@pytest.mark.parametrize('num_nodes, nodes, edge, expected_error_msg',
+                         [(5, [], Edge(7, 1, LabelEdge(0)), 'The starting node 7 does not exist!'),
+                          (5, [Node(0, LabelNodeVector(np.array([1, 1])))], Edge(0, 23, LabelEdge(0)),
+                           'The ending node 23 does not exist!')
+                          ])
+def test_insert_invalid_edge(num_nodes, nodes, edge, expected_error_msg):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+
+    for node in nodes:
+        my_graph.add_node(node)
+
+    with pytest.raises(AssertionError) as execinfo:
+        my_graph.add_edge(edge)
+
+    error_msg = execinfo.value.args[0]
+
+    assert error_msg == expected_error_msg
 #
-#     with pytest.raises(AssertionError) as execinfo:
-#         my_graph.add_edge(Edge(e_idx1, e_idx2))
-#
-#     exception_msg = execinfo.value.args[0]
-#     assert exception_msg == expected_error_msg
-#
-#
-# def test_deletion_edge(constructed_graph):
-#     constructed_graph.remove_edge_by_id(0, 1)
-#
-#     assert constructed_graph.get_edges_in() == {0: [], 1: []}
-#     assert constructed_graph.get_edges_out() == {0: [], 1: []}
-#
-#
-# def test_deletion_node(constructed_graph):
-#     constructed_graph.remove_node_by_id(1)
-#
-#     assert len(constructed_graph.get_nodes()) == 1
-#     assert constructed_graph.get_edges_in() == {0: []}
-#     assert constructed_graph.get_edges_out() == {0: []}
-#
-#
-# def test_deletion_edges_in_clique(clique):
-#     clique.remove_node_by_id(1)
-#     num_nodes = 4
-#
-#     expected_nodes, expected_edges_in, expected_edges_out = {}, {}, {}
-#
-#     for i in range(num_nodes):
-#         if i == 1:
-#             continue
-#         expected_nodes[i] = Node(i, f'data{i}')
-#
-#     expected_edges_in = {
-#         0: [],
-#         2: [],
-#         3: []
-#     }
-#
-#     # TODO: see if I can maintain the edges like that also easier for the
-#     #       adjacency matrix.
-#     expected_edges_out = {
-#         0: [Edge(0, 2), Edge(0, 3)],
-#         2: [Edge(2, 0), Edge(2, 3)],
-#         3: [Edge(3, 0), Edge(3, 2)]
-#     }
-#
-#     # for n_idx1, n_idx2 in combinations(range(num_nodes), 2):
-#     #     if n_idx1 == 1 or n_idx2 == 1:
-#     #         continue
-#     #
-#     #     expected_edges_in[n_idx1].append(Edge(n_idx1, n_idx2))
-#     #     expected_edges_out[n_idx2].append(Edge(n_idx2, n_idx1))
-#
-#     assert len(clique.get_nodes()) == 3
-#     assert clique.get_nodes() == expected_nodes
-#     # assert clique.get_edges_in() == expected_edges_in
-#     assert clique.get_edges_out() == expected_edges_out
-#
-#
-# def test_adjacency_matrix(constructed_graph):
-#     assert np.array_equal(constructed_graph.adjacency_matrix(),
-#                           np.array([[0, 1], [1, 0]]))
+
+@pytest.mark.parametrize('num_nodes, expected_matrix',
+                         [(2, np.array([[0, 1],
+                                        [1, 0]], dtype=np.int32)),
+                          (3, np.array([[0, 1, 1],
+                                        [1, 0, 1],
+                                        [1, 1, 0]], dtype=np.int32))
+                          ])
+def test_adjacency_matrix(num_nodes, expected_matrix):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeVector(np.array([i, i])))
+        my_graph.add_node(tmp_node)
+
+    for idx_start, idx_end in combinations(range(num_nodes), 2):
+        tmp_edge = Edge(idx_start, idx_end, LabelEdge(0))
+        my_graph.add_edge(tmp_edge)
+
+    assert np.array_equal(np.asarray(my_graph.adjacency_matrix), expected_matrix)
+
+
+@pytest.mark.parametrize('num_nodes, expected_matrix',
+                         [(2, np.array([1, 1], dtype=np.int32)),
+                          (3, np.array([2, 2, 2], dtype=np.int32))
+                          ])
+def test_degrees(num_nodes, expected_matrix):
+    my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
+
+    for i in range(num_nodes):
+        tmp_node = Node(i, LabelNodeVector(np.array([i, i])))
+        my_graph.add_node(tmp_node)
+
+    for idx_start, idx_end in combinations(range(num_nodes), 2):
+        tmp_edge = Edge(idx_start, idx_end, LabelEdge(0))
+        my_graph.add_edge(tmp_edge)
+
+    assert np.array_equal(np.asarray(my_graph.degrees()), expected_matrix)

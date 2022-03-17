@@ -6,8 +6,8 @@ cdef class Graph:
     cdef:
         readonly str name
         readonly str filename
-        public list nodes
-        public dict edges
+        readonly list nodes
+        readonly dict edges
 
         readonly unsigned int num_nodes_max
         public unsigned int num_nodes_current
@@ -34,10 +34,6 @@ cdef class Graph:
     cpdef int add_edge(self, Edge edge) except? -1
 
     cpdef int[::1] degrees(self)
-
-    cpdef int[::1] in_degrees(self)
-
-    cpdef int[::1] out_degrees(self)
 
     cpdef void remove_node_by_idx(self, int idx_node)
 

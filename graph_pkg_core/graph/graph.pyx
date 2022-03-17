@@ -26,9 +26,10 @@ cdef class Graph:
     def __init__(self, str name, str filename, int num_nodes):
         """
 
-        :param name:
-        :param filename:
-        :param num_nodes:
+        Args:
+            name:
+            filename:
+            num_nodes:
         """
         self.name = name
         self.filename = filename
@@ -40,25 +41,51 @@ cdef class Graph:
 
 
     cdef void _init_edges(self):
+        """Init empty edges dict with corresponding number of nodes"""
         self.num_edges = 0
         self.edges = {i: [None] * self.num_nodes_max for i in range(self.num_nodes_max)}
 
     cdef void _init_adjacency_matrix(self):
+        """Init empty adjacency matrix"""
         self.adjacency_matrix = np.zeros((self.num_nodes_max, self.num_nodes_max),
                                          dtype=np.int32)
 
     cdef bint _does_node_exist(self, int idx_node):
+        """
+        Check if the given node exist.
+        
+        The given node idx has to be 0 <= idx < |G|
+        and the node has to be in the nodes list
+        
+        Args:
+            idx_node: 
+
+        Returns: bool
+
+        """
         return 0 <= idx_node < self.num_nodes_max and \
                self.nodes[idx_node] is not None
 
     cpdef bint has_edge(self, int idx_start, int idx_end):
+        """
+        Check if the edge exist by its starting and ending node idx
+        
+        Args:
+            idx_start: 
+            idx_end: 
+
+        Returns:
+
+        """
         return 0 <= idx_start < self.num_nodes_max and \
                0 <= idx_end < self.num_nodes_max and \
                self.edges[idx_start][idx_end] is not None
 
     cpdef list get_nodes(self):
         """
-        :return: list of nodes
+        
+        Returns: list of nodes
+
         """
         return self.nodes
 
@@ -66,8 +93,11 @@ cdef class Graph:
         """
         Add a node to the graph.
         
-        :param node: 
-        :return: 
+        Args:
+            node: 
+
+        Returns:
+
         """
         assert node.idx < self.num_nodes_max, \
             f'The idx of the node {node.idx} exceed the number of nodes {self.num_nodes_max} authorized!'
@@ -80,7 +110,8 @@ cdef class Graph:
     cpdef dict get_edges(self):
         """
         
-        :return: return the dict of edges
+        Return: return the dict of edges
+        
         """
         return self.edges
 
@@ -88,9 +119,13 @@ cdef class Graph:
         """
         
         !! Caution, there is no verification if the indices exist!!
-        :param idx_node_start: 
-        :param idx_node_end: 
-        :return: Edge corresponding to the given nodes_idx
+        
+        Args:
+            idx_node_start: 
+            idx_node_end: 
+
+        Returns: Edge corresponding to the given nodes_idx
+
         """
         return self.edges[idx_node_start][idx_node_end]
 
@@ -110,6 +145,12 @@ cdef class Graph:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     cpdef int[::1] degrees(self):
+        """
+        Compute the degree of each node of the graph
+        
+        Returns: Memoryview of degrees
+
+        """
         cdef:
             int idx
             int[::1] degrees
@@ -121,44 +162,15 @@ cdef class Graph:
 
         return degrees
 
-    @cython.boundscheck(False)
-    @cython.wraparound(False)
-    cpdef int[::1] out_degrees(self):
-        """
-        Take the out degree of every node and create a list of them.
-         
-        :return: list of out degrees per nodes
-        """
-        cdef:
-            int i, j
-            int n, m
-            int[::1] degrees
-
-        n = self.adjacency_matrix.shape[0]
-        m = self.adjacency_matrix.shape[1]
-        degrees = np.zeros(n, dtype=np.int32)
-        for i in range(n):
-            for j in range(m):
-                degrees[i] += self.adjacency_matrix[i][j]
-
-        return degrees
-
-    cpdef int[::1] in_degrees(self):
-        """
-        Take the in degree of every node and create a list of them.
-
-        :return: list of out degrees per nodes
-        """
-        # TODO: implement the in_degree to take into account the undirected/directed graphs
-        raise NotImplementedError()
-        # return np.asarray(self.adjacency_matrix, dtype=np.int16).sum(axis=0)
-
     cpdef void remove_node_by_idx(self, int idx_node):
         """
         Remove the node by the given index.
         
-        :param idx_node: 
-        :return: 
+        Args:
+            idx_node: 
+
+        Returns:
+
         """
         assert self._does_node_exist(idx_node), f'The node {idx_node} can\'t be deleted'
 
@@ -177,11 +189,6 @@ cdef class Graph:
         self.num_nodes_max -= 1
 
         self.remove_all_edges_by_node_idx(idx_node)
-
-        # Uncomment if you want to add back a node to the graph
-        # !! You have to modify the add/remove edges as well
-        # self.nodes.append(None)
-        # print(self.nodes)
 
     cpdef void remove_all_edges_by_node_idx(self, int idx_node):
         """
@@ -204,9 +211,11 @@ cdef class Graph:
         self.adjacency_matrix = np.delete(self.adjacency_matrix, idx_node, 1)
 
     cdef void __del_edge(self, int idx_node, list edges):
-        cdef Edge edge
-        cdef int idx_to_pop= -1
-        cdef int idx
+        cdef:
+            Edge edge
+            int idx_to_pop= -1
+            int idx
+
         for idx, edge in enumerate(edges):
             if edge is None:
                 continue

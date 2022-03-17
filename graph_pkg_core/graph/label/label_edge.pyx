@@ -1,7 +1,10 @@
 cdef class LabelEdge(LabelBase):
+    """
+    Label edge contains the weights that may exist between 2 vertices
+    """
 
-    def __init__(self, valence):
-        self.valence = valence
+    def __init__(self, weight):
+        self.weight = weight
 
     cpdef tuple get_attributes(self):
-        return (self.valence, )
+        return (self.weight, )

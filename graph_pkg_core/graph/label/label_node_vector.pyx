@@ -1,17 +1,35 @@
-import random
-
+import numpy as np
+cimport numpy as np
+from cpython.object cimport Py_EQ
 
 cdef class LabelNodeVector(LabelBase):
-
-
+    """
+    LabelNodeVector contains as an np.array as attributes
+    """
     def __init__(self, cnp.ndarray vector):
+        """
+
+        Args:
+            vector: ndarray
+        """
         self.vector = vector
 
     cpdef tuple get_attributes(self):
-        return (self.vector, )
+        """
+        
+        Returns: Tuple(np.array, ) the array attribute
 
-    def sigma_attributes(self):
-        return f'Element: {self.vector}'
+        """
+        return (self.vector,)
 
-    def sigma_position(self):
-        return [random.uniform(0, 1) for _ in range(2)]
+    def __richcmp__(self, LabelBase other, int op):
+        assert isinstance(other, LabelNodeVector), f'The element {str(other)} is not an Label!'
+        cdef:
+            np.ndarray other_attr
+
+        if op == Py_EQ:
+            other_attr, *_ = other.get_attributes()
+
+            return np.array_equal(self.vector, other_attr)
+        else:
+            assert False

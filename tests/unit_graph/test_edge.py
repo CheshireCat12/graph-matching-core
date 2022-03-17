@@ -1,7 +1,7 @@
 import pytest
 
-from graph_pkg.graph.edge import Edge
-from graph_pkg.graph.label.label_edge import LabelEdge
+from graph_pkg_core.graph.edge import Edge
+from graph_pkg_core.graph.label.label_edge import LabelEdge
 
 
 @pytest.mark.parametrize('idx_start, idx_end, label_weight',
@@ -16,6 +16,7 @@ def test_simple_edge(idx_start, idx_end, label_weight):
     assert my_edge.idx_node_end == idx_end
     assert my_edge.weight == label
     assert str(my_edge) == f'Edge: {idx_start} --> {idx_end}, weight {label_weight}'
+
 
 @pytest.fixture()
 def my_edge():
