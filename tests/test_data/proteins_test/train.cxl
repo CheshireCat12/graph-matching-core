@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<GraphCollection>
+ <fingerprints>
+  <print file="gr_0.graphml" class="0"/>
+  <print file="gr_2.graphml" class="0"/>
+  <print file="gr_5.graphml" class="0"/>
+  <print file="gr_6.graphml" class="0"/>
+  <print file="gr_8.graphml" class="0"/>
+  <print file="gr_664.graphml" class="1"/>
+  <print file="gr_665.graphml" class="1"/>
+  <print file="gr_666.graphml" class="1"/>
+  <print file="gr_667.graphml" class="1"/>
+  <print file="gr_669.graphml" class="1"/>
+ </fingerprints>
+</GraphCollection>
