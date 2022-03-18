@@ -69,12 +69,14 @@ cdef class LoaderVector:
             self._construct_graph(graph_filename, parsed_data)
 
             graphs.append(self._constructed_graph)
+
             if self._verbose:
                 bar.next()
 
         if self._verbose:
             bar.finish()
             print(f'==> {len(graphs)} graphs loaded')
+
         return graphs
 
     cpdef void _construct_graph(self, str graph_filename, object parsed_data):

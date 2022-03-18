@@ -1,14 +1,6 @@
 import pytest
 
-from graph_pkg.loader.loader_AIDS import LoaderAIDS
-from graph_pkg.loader.loader_letter import LoaderLetter
-from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
-from graph_pkg.loader.loader_NCI1 import LoaderNCI1
-from graph_pkg.loader.loader_proteins_tu import LoaderProteinsTU
-from graph_pkg.loader.loader_enzymes import LoaderEnzymes
-from graph_pkg.loader.loader_collab import LoaderCollab
-from graph_pkg.loader.loader_reddit_binary import LoaderRedditBinary
-from graph_pkg.loader.loader_protein import LoaderProtein
+from graph_pkg_core.loader.loader_vector import LoaderVector
 
 
 ############## LETTER ##############

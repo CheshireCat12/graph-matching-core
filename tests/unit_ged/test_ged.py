@@ -5,21 +5,21 @@ import numpy as np
 import pytest
 import random
 
-from graph_pkg.algorithm.graph_edit_distance import GED
-from graph_pkg.edit_cost.edit_cost_AIDS import EditCostAIDS
-from graph_pkg.edit_cost.edit_cost_letter import EditCostLetter
-from graph_pkg.edit_cost.edit_cost_mutagenicity import EditCostMutagenicity
-from graph_pkg.edit_cost.edit_cost_NCI1 import EditCostNCI1
-from graph_pkg.graph.edge import Edge
-from graph_pkg.graph.graph import Graph
-from graph_pkg.graph.label.label_edge import LabelEdge
-from graph_pkg.graph.label.label_node_letter import LabelNodeLetter
-from graph_pkg.graph.label.label_node_mutagenicity import LabelNodeMutagenicity
-from graph_pkg.graph.node import Node
-from graph_pkg.loader.loader_AIDS import LoaderAIDS
-from graph_pkg.loader.loader_letter import LoaderLetter
-from graph_pkg.loader.loader_mutagenicity import LoaderMutagenicity
-from graph_pkg.loader.loader_NCI1 import LoaderNCI1
+from graph_pkg_core.algorithm.graph_edit_distance import GED
+from graph_pkg_core.edit_cost.edit_cost_AIDS import EditCostAIDS
+from graph_pkg_core.edit_cost.edit_cost_letter import EditCostLetter
+from graph_pkg_core.edit_cost.edit_cost_mutagenicity import EditCostMutagenicity
+from graph_pkg_core.edit_cost.edit_cost_NCI1 import EditCostNCI1
+from graph_pkg_core.graph.edge import Edge
+from graph_pkg_core.graph.graph import Graph
+from graph_pkg_core.graph.label.label_edge import LabelEdge
+from graph_pkg_core.graph.label.label_node_letter import LabelNodeLetter
+from graph_pkg_core.graph.label.label_node_mutagenicity import LabelNodeMutagenicity
+from graph_pkg_core.graph.node import Node
+from graph_pkg_core.loader.loader_AIDS import LoaderAIDS
+from graph_pkg_core.loader.loader_letter import LoaderLetter
+from graph_pkg_core.loader.loader_mutagenicity import LoaderMutagenicity
+from graph_pkg_core.loader.loader_NCI1 import LoaderNCI1
 
 
 @pytest.fixture()
