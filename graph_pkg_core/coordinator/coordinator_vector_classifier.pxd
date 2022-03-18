@@ -11,8 +11,8 @@ cdef class CoordinatorVectorClassifier(CoordinatorVector):
 
     cpdef tuple _split_dataset(self, list data)
 
-    cpdef tuple train_split(self)
+    cpdef tuple train_split(self, str filename=*)
 
-    cpdef tuple test_split(self)
+    cpdef tuple test_split(self, str filename=*)
 
-    cpdef tuple val_split(self)
+    cpdef tuple val_split(self, str filename=*)

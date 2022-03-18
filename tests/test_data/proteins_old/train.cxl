@@ -2,5 +2,8 @@
 <GraphCollection>
  <fingerprints>
   <print class="1" file="gr_0.graphml"/>
+  <print class="0" file="gr_1.graphml"/>
+  <print class="0" file="gr_2.graphml"/>
+  <print class="1" file="gr_3.graphml"/>
  </fingerprints>
 </GraphCollection>

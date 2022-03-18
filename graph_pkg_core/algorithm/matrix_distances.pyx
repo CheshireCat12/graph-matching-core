@@ -63,7 +63,8 @@ cdef class MatrixDistances:
             double[:, ::1] distances
             Graph graph_source, graph_target
 
-        print('~~ Serial Computation\n')
+        if self.verbose:
+            print('~~ Serial Computation\n')
 
         n = len(graphs_train)
         m = len(graphs_test)
@@ -115,7 +116,7 @@ cdef class MatrixDistances:
         num_cores = psutil.cpu_count() if num_cores <= 0 else num_cores
 
         if self.verbose:
-            print('~~ Parallel Computation')
+            print(f'~~ Parallel Computation')
             print(f'~~ Number of cores: {num_cores}')
 
         pool = Pool(num_cores)

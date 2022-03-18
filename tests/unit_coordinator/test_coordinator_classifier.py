@@ -1,136 +1,73 @@
+import os
+
 import pytest
 
-from graph_pkg.utils.coordinator.coordinator_classifier import CoordinatorClassifier
-from graph_pkg.utils.constants import get_default_lbls_to_code
+from graph_pkg_core.coordinator.coordinator_vector_classifier import CoordinatorVectorClassifier
+
+FOLDER_DATA = os.path.join(os.path.dirname(__file__),
+                           '../test_data/proteins_test')
+FOLDER_DATA_OLD = os.path.join(os.path.dirname(__file__),
+                               '../test_data/proteins_old')
 
 
 ###### Train #########
 
-@pytest.mark.parametrize('dataset, folder_dataset, cost, expected_size',
+@pytest.mark.parametrize('load_method, folder_dataset, expected_size, expected_names, expected_cls, filename',
                          [
-                          # ('letter', './data/Letter/Letter/HIGH/', 'euclidean', 750),
-                          # ('AIDS', './data/AIDS/data/', 'dirac', 250),
-                          # ('mutagenicity', './data/Mutagenicity/data/', 'dirac',  1500),
-                          ('NCI1', './data/NCI1/data/', 'dirac', 1500),
-                          # ('proteins_tu', './data/PROTEINS/data/', 'dirac', 660),
-                          # ('enzymes', './data/ENZYMES/data/', 'dirac', 360),
-                          # ('collab', './data/COLLAB/data/', 'dirac', 3000),
-                          # ('reddit_binary', './data/REDDIT-BINARY/data/', 'dirac', 1200),
-                          ])
-def test_train_split(dataset, folder_dataset, cost, expected_size):
-    coordinator = CoordinatorClassifier(dataset, (0.9, 0.9, 2.3, 2.3, cost), folder_dataset)
+                             ('train_split',
+                              FOLDER_DATA,
+                              10,
+                              ['gr_0.graphml', 'gr_2.graphml', 'gr_5.graphml', 'gr_6.graphml', 'gr_8.graphml',
+                               'gr_664.graphml', 'gr_665.graphml', 'gr_666.graphml', 'gr_667.graphml',
+                               'gr_669.graphml'],
+                              [0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+                              None),
+                             ('train_split',
+                              FOLDER_DATA_OLD,
+                              4,
+                              ['gr_0.graphml', 'gr_1.graphml', 'gr_2.graphml', 'gr_3.graphml'],
+                              [1, 0, 0, 1],
+                              None),
+                             ('val_split',
+                              FOLDER_DATA,
+                              6,
+                              ['gr_3.graphml', 'gr_22.graphml', 'gr_23.graphml', 'gr_671.graphml', 'gr_672.graphml',
+                               'gr_676.graphml'],
+                              [0, 0, 0, 1, 1, 1],
+                              None),
+                             ('test_split',
+                              FOLDER_DATA,
+                              6,
+                              ['gr_1.graphml', 'gr_4.graphml', 'gr_7.graphml', 'gr_663.graphml', 'gr_668.graphml',
+                               'gr_673.graphml'],
+                              [0, 0, 0, 1, 1, 1],
+                              None),
+                             ('test_split',
+                              FOLDER_DATA_OLD,
+                              3,
+                              ['gr_889.graphml', 'gr_890.graphml', 'gr_891.graphml'],
+                              [0, 0, 1],
+                              None),
+                             ('test_split',
+                              FOLDER_DATA_OLD,
+                              3,
+                              ['gr_891.graphml', 'gr_889.graphml', 'gr_890.graphml'],
+                              [1, 0, 0],
+                              'test_reverse'),
+                         ])
+def test_train_split(load_method, folder_dataset, expected_size, expected_names, expected_cls, filename):
+    coordinator = CoordinatorVectorClassifier('proteins',
+                                              (1., 1., 1., 1., 'euclidean'),
+                                              folder_dataset)
+    if filename is not None:
+        print(filename)
+        X_train, y_train = getattr(coordinator, load_method)(filename)
+    else:
+        X_train, y_train = getattr(coordinator, load_method)()
 
-    X_train, y_train = coordinator.train_split()
+    dict_ = {name: lbl for name, lbl in zip(expected_names, expected_cls)}
 
     assert len(X_train) == expected_size
     assert len(y_train) == expected_size
-
-    loader_split = coordinator.loader_split
-    data = loader_split.load_train_split()
-    graph_to_lbl = {graph_filename: lbl for graph_filename, lbl in data}
-
     for idx, (graph, lbl) in enumerate(zip(X_train, y_train)):
-        expected_lbl = graph_to_lbl[graph.filename]
-
-        if idx == 0:
-            print(graph.filename)
-            assert False
-        assert lbl == expected_lbl
-
-
-####### test ###########
-
-@pytest.mark.parametrize('dataset, folder_dataset, cost, expected_size',
-                         [
-                             # ('letter', './data/Letter/Letter/HIGH/', 'euclidean', 750),
-                             # ('AIDS', './data/AIDS/data/', 'dirac', 1500),
-                             # ('mutagenicity', './data/Mutagenicity/data/', 'dirac',  2337),
-                             ('NCI1', './data/NCI1/data/', 'dirac', 2110),
-                             # ('proteins_tu', './data/PROTEINS/data/', 'dirac', 233),
-                             # ('enzymes', './data/ENZYMES/data/', 'dirac', 120),
-                             # ('collab', './data/COLLAB/data/', 'dirac', 1000),
-                             # ('reddit_binary', './data/REDDIT-BINARY/data/', 'dirac', 400),
-                         ])
-def test_test_split(dataset, folder_dataset, cost, expected_size):
-    coordinator = CoordinatorClassifier(dataset, (0.9, 0.9, 2.3, 2.3, cost), folder_dataset)
-
-    X_test, y_test = coordinator.test_split()
-
-    assert len(X_test) == expected_size
-    assert len(y_test) == expected_size
-
-    loader_split = coordinator.loader_split
-    data = loader_split.load_test_split()
-    graph_to_lbl = {graph_filename: lbl for graph_filename, lbl in data}
-
-    for idx, (graph, lbl) in enumerate(zip(X_test, y_test)):
-        expected_lbl = graph_to_lbl[graph.filename]
-
-        if idx == 127:
-            print(graph.filename)
-            assert False
-
-        assert lbl == expected_lbl
-
-
-############## validation ##################
-
-@pytest.mark.parametrize('dataset, folder_dataset, cost, expected_size',
-                         [
-                             ('letter', './data/Letter/Letter/HIGH/', 'euclidean', 750),
-                             ('AIDS', './data/AIDS/data/', 'dirac', 250),
-                             ('mutagenicity', './data/Mutagenicity/data/', 'dirac',  500),
-                             ('NCI1', './data/NCI1/data/', 'dirac', 500),
-                             ('proteins_tu', './data/PROTEINS/data/', 'dirac', 220),
-                             ('enzymes', './data/ENZYMES/data/', 'dirac', 120),
-                             ('collab', './data/COLLAB/data/', 'dirac', 1000),
-                             ('reddit_binary', './data/REDDIT-BINARY/data/', 'dirac', 400),
-                         ])
-def test_val_split(dataset, folder_dataset, cost, expected_size):
-    coordinator = CoordinatorClassifier(dataset, (0.9, 0.9, 2.3, 2.3, cost), folder_dataset)
-
-    X_val, y_val = coordinator.val_split()
-
-    assert len(X_val) == expected_size
-    assert len(y_val) == expected_size
-
-    loader_split = coordinator.loader_split
-    data = loader_split.load_val_split()
-    graph_to_lbl = {graph_filename: lbl for graph_filename, lbl in data}
-
-    for graph, lbl in zip(X_val, y_val):
-        expected_lbl = graph_to_lbl[graph.filename]
-        assert lbl == expected_lbl
-
-
-############## code labels ##################
-
-@pytest.mark.parametrize('dataset, folder_dataset, cost, expected_size',
-                         [
-                             ('letter', './data/Letter/Letter/HIGH/', 'euclidean', 750),
-                             ('AIDS', './data/AIDS/data/', 'dirac', 250),
-                             ('mutagenicity', './data/Mutagenicity/data/', 'dirac',  1500),
-                             ('proteins_tu', './data/PROTEINS/data/', 'dirac', 660),
-                             ('enzymes', './data/ENZYMES/data/', 'dirac', 360),
-                             ('collab', './data/COLLAB/data/', 'dirac', 3000),
-                             ('reddit_binary', './data/REDDIT-BINARY/data/', 'dirac', 1200),
-                         ])
-def test_train_with_encoded_lbls(dataset, folder_dataset, cost, expected_size):
-    coordinator = CoordinatorClassifier(dataset, (0.9, 0.9, 2.3, 2.3, cost), folder_dataset)
-
-    X_train, y_train = coordinator.train_split(conv_lbl_to_code=True)
-
-    assert len(X_train) == expected_size
-    assert len(y_train) == expected_size
-
-    default_lbls_to_code = get_default_lbls_to_code()
-    lbls_to_code = default_lbls_to_code[dataset]
-
-    loader_split = coordinator.loader_split
-    data = loader_split.load_train_split()
-    graph_to_lbl = {graph_filename: lbl for graph_filename, lbl in data}
-
-    for graph, lbl in zip(X_train, y_train):
-        expected_lbl = graph_to_lbl[graph.filename]
-        expected_lbl = lbls_to_code[expected_lbl]
-        assert lbl == expected_lbl
+        assert dict_[graph.name] == lbl

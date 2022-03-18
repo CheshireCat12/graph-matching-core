@@ -28,33 +28,33 @@ cdef class LoaderTrainTestValSplit:
         splits = parsed_data['GraphCollection'][index]['print']
 
         for split in splits:
-            data.append((split['@file'], split['@class']))
+            data.append((split['@file'], int(split['@class'])))
 
         return data
 
-    cpdef list load_train_split(self):
+    cpdef list load_train_split(self, str filename='train'):
         """
         Gather the training set.
         It returns a list of tuple containing the data and their corresponding labels
 
         :return: list((data, label))
         """
-        return self._init_splits('train')
+        return self._init_splits(filename)
 
-    cpdef list load_test_split(self):
+    cpdef list load_test_split(self, str filename='test'):
         """
         Gather the test set.
         It returns a list of tuple containing the data and their corresponding labels
 
         :return: list((data, label))
         """
-        return self._init_splits('test')
+        return self._init_splits(filename)
 
-    cpdef list load_val_split(self):
+    cpdef list load_val_split(self, str filename='validation'):
         """
         Gather the validation set.
         It returns a list of tuple containing the data and their corresponding labels
 
         :return: list((data, label))
         """
-        return self._init_splits('validation')
+        return self._init_splits(filename)

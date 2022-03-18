@@ -1,4 +1,3 @@
-
 cdef class CoordinatorVectorClassifier(CoordinatorVector):
     """
     Coordinator Classifier is a subclass of the Coordinator.
@@ -18,34 +17,39 @@ cdef class CoordinatorVectorClassifier(CoordinatorVector):
     val_split(conv_lbl_to_code=False)
     """
 
-
     def __init__(self,
                  str dataset_name,
                  tuple params_edit_cost,
-                 str folder_dataset='',
-                 str folder_labels=''):
+                 str folder_dataset,
+                 str folder_labels=None,
+                 bint verbose = False):
         """
 
-        :param dataset:
-        :param params_edit_cost:
-        :param folder_dataset:
-        :param folder_labels:
+        Args:
+            dataset_name:
+            params_edit_cost:
+            folder_dataset:
+            folder_labels:
+            verbose:
         """
-        super().__init__(dataset_name, params_edit_cost, folder_dataset)
+        super().__init__(dataset_name, params_edit_cost, folder_dataset, verbose)
         self.folder_labels = folder_labels
         self.loader_split = LoaderTrainTestValSplit(self.folder_dataset)
 
-    property folder_labels:
-        def __get__(self):
-            return self._folder_dataset
-        def __set__(self, value):
-            assert value != '', 'Dataset Label folder not given!'
+    @property
+    def folder_labels(self):
+        return self._folder_labels
+
+    @property
+    def graph_filename_to_graph(self):
+        return {graph.filename: graph for graph in self.graphs}
+
+    @folder_labels.setter
+    def folder_labels(self, value):
+        if value is None:
+            self._folder_labels = self.folder_dataset
+        else:
             self._folder_labels = value
-
-    property graph_filename_to_graph:
-        def __get__(self):
-            return {graph.filename: graph for graph in self.graphs}
-
 
     cpdef tuple _split_dataset(self, list data):
         cdef:
@@ -60,40 +64,40 @@ cdef class CoordinatorVectorClassifier(CoordinatorVector):
 
         return graphs_split, labels_split
 
-    cpdef tuple train_split(self):
+    cpdef tuple train_split(self, str filename='train'):
         """
         Gather the training data.
         It returns a tuple of two lists. The first list contain the data.
         The second one contains the corresponding labels.
-
+    
         :return: tuple(list, list)
         """
         cdef:
             list data
 
-        data = self.loader_split.load_train_split()
+        data = self.loader_split.load_train_split(filename)
         return self._split_dataset(data)
 
-    cpdef tuple val_split(self):
+    cpdef tuple val_split(self, str filename='validation'):
         """
         Gather the validation data.
         It returns a tuple of two lists. The first list contain the data.
         The second one contains the corresponding labels.
-
+    
         :return: tuple(list, list)
         """
         cdef:
             list data
 
-        data = self.loader_split.load_val_split()
+        data = self.loader_split.load_val_split(filename)
         return self._split_dataset(data)
 
-    cpdef tuple test_split(self):
+    cpdef tuple test_split(self, str filename='test'):
         """
         Gather the test data.
         It returns a tuple of two lists. The first list contain the data.
         The second one contains the corresponding labels.
-
+    
         :return: tuple(list, list)
         """
         cdef:

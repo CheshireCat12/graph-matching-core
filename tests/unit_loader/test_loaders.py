@@ -1,10 +1,13 @@
+import os
+
 import pytest
 
 from graph_pkg_core.loader.loader_vector import LoaderVector
 
 ############## VECTOR ##############
 
-FOLDER_DATA = '../test_data/proteins_test'
+FOLDER_DATA = os.path.join(os.path.dirname(__file__),
+                           '../test_data/proteins_test')
 
 
 @pytest.mark.parametrize('folder, num_graphs, size_graphs, name_graphs',
@@ -21,8 +24,8 @@ FOLDER_DATA = '../test_data/proteins_test'
                               ),
                          ])
 def test_all_letters(folder, num_graphs, size_graphs, name_graphs):
-    loader_letter = LoaderVector(folder)
-    graphs = loader_letter.load()
+    loader_vector = LoaderVector(folder)
+    graphs = loader_vector.load()
 
     assert len(graphs) == num_graphs
     assert [len(graph) for graph in graphs] == size_graphs

@@ -1,3 +1,6 @@
+import os
+from itertools import product
+
 import numpy as np
 import pytest
 
@@ -10,7 +13,8 @@ from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
 from graph_pkg_core.graph.node import Node
 from graph_pkg_core.loader.loader_vector import LoaderVector
 
-FOLDER_DATA = '../test_data/proteins_old'
+FOLDER_DATA = os.path.join(os.path.dirname(__file__),
+                           '../test_data/proteins_old')
 
 
 @pytest.fixture()
@@ -102,9 +106,6 @@ def test_heuristic_size(defined_graph):
     cost_2 = ged.compute_edit_distance(graph_target, graph_source, heuristic=True)
 
     assert cost_1 == cost_2
-
-
-from itertools import product
 
 
 @pytest.mark.parametrize('idx_tr, idx_te, expected_dist',

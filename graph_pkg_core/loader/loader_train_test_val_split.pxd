@@ -7,8 +7,8 @@ cdef class LoaderTrainTestValSplit:
 
     cdef list _init_splits(self, str filename)
 
-    cpdef list load_train_split(self)
+    cpdef list load_train_split(self, str filename=*)
 
-    cpdef list load_test_split(self)
+    cpdef list load_test_split(self, str filename=*)
 
-    cpdef list load_val_split(self)
+    cpdef list load_val_split(self, str filename=*)

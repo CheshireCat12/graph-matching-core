@@ -33,18 +33,21 @@ cdef class CoordinatorVector:
         if verbose:
             print(self)
 
-    property dataset:
-        def __get__(self):
-            return self._dataset
-        def __set__(self, str value):
-            self._dataset = value
+    @property
+    def dataset(self):
+        return self._dataset
 
-    property folder_dataset:
-        def __get__(self):
-            return self._folder_dataset
-        def __set__(self, value):
-            assert value != '', 'Empty dataset folder!'
-            self._folder_dataset = value
+    @property
+    def folder_dataset(self):
+        return self._folder_dataset
+
+    @dataset.setter
+    def dataset(self, str value):
+        self._dataset = value
+
+    @folder_dataset.setter
+    def folder_dataset(self, str value):
+        self._folder_dataset = value
 
     cdef int _init_system(self) except? -1:
         """

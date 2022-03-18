@@ -1,5 +1,5 @@
 import numpy as np
-from graph_pkg.algorithm.levenshtein_distance import LevenshteinDistance
+from graph_pkg_core.algorithm.levenshtein_distance import LevenshteinDistance
 
 levi = LevenshteinDistance()
 
