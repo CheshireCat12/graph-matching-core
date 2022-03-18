@@ -60,7 +60,6 @@ cdef class GED:
         _, col_ind = linear_sum_assignment(self.C_star)
         self.phi = col_ind.astype(dtype=np.int32)
 
-
         edit_cost += self._compute_cost_node_edit(self.phi)
         edit_cost += self._compute_cost_edge_edit(self.phi)
 
@@ -94,7 +93,6 @@ cdef class GED:
             for j in range(self._m):
                 cost = self.edit_cost.c_cost_substitute_node(self.graph_source.nodes[i],
                                                              self.graph_target.nodes[j])
-                # print(f'cost sub {cost}')
                 self.C[i][j] = cost
 
         # Create node deletion part
@@ -122,8 +120,8 @@ cdef class GED:
             int[::1] out_degrees_source, out_degrees_target
             Edge edge_source, edge_target
 
-        out_degrees_source = self.graph_source.out_degrees()
-        out_degrees_target = self.graph_target.out_degrees()
+        out_degrees_source = self.graph_source.degrees()
+        out_degrees_target = self.graph_target.degrees()
 
         self.C_star = np.zeros((self._n + self._m, self._n + self._m),
                                dtype=np.float64)
@@ -163,8 +161,6 @@ cdef class GED:
 
         for i in range(self._n + self._m):
             cost += self.C[i][phi[i]]
-            # print(i, phi[i], self.C[i][phi[i]])
-            # print(cost)
 
         return cost
 
