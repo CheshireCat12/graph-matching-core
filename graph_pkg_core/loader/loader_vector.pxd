@@ -4,9 +4,9 @@ from graph_pkg_core.graph.node cimport Node
 from graph_pkg_core.graph.label.label_base cimport LabelBase
 from graph_pkg_core.graph.label.label_node_vector cimport LabelNodeVector
 from graph_pkg_core.graph.label.label_edge cimport LabelEdge
+from graph_pkg_core.utils.constants cimport EXTENSION_GRAPHML
 
 cdef class LoaderVector:
-
     cdef:
         bint _verbose
         str _folder
@@ -14,6 +14,8 @@ cdef class LoaderVector:
         Graph _constructed_graph
 
     cpdef int _format_idx(self, str idx)
+
+    cpdef int _gr_idx_from_filename(self, str graph_folder)
 
     cpdef LabelBase _formatted_lbl_node(self, attr)
 

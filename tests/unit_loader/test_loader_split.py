@@ -1,56 +1,36 @@
 import pytest
 
-from graph_pkg.loader.loader_train_test_val_split import LoaderTrainTestValSplit
+from graph_pkg_core.loader.loader_train_test_val_split import LoaderTrainTestValSplit
 
-@pytest.mark.parametrize('folder_dataset, expected_size, first_name_expected, first_lbl_expected, last_name_expected, last_lbl_expected',
-                         [('./data/Letter/Letter/HIGH/', 750, 'AP1_0000.gxl', 'A', 'ZP1_0049.gxl', 'Z'),
-                          ('./data/AIDS/data/', 250, '11808.gxl', 'a', '27997.gxl', 'i'),
-                          ('./data/Mutagenicity/data/', 1500, 'molecule_2767.gxl', 'mutagen', 'molecule_4337.gxl', 'nonmutagen'),
-                          ('./data/NCI1/data/', 1500, 'molecule_3650.gxl', '0', 'molecule_2512.gxl', '1'),
-                          ('./data/PROTEINS/data/', 660, 'molecule_2.gxl', '1', 'molecule_757.gxl', '2'),
-                          ('./data/ENZYMES/data/', 360, 'molecule_242.gxl', '1', 'molecule_40.gxl', '6'),
-                          ('./data/COLLAB/data/', 3000, 'molecule_1969.gxl', '1', 'molecule_4125.gxl', '3'),
-                          ('./data/REDDIT-BINARY/data/', 1200, 'molecule_1276.gxl', '0', 'molecule_1987.gxl', '1'),
-                          ])
-def test_split_train(folder_dataset, expected_size, first_name_expected, first_lbl_expected, last_name_expected, last_lbl_expected):
-    loader = LoaderTrainTestValSplit(folder_dataset)
-    data = loader.load_train_split()
-    first_graph, first_lbl = data[0]
-    last_graph, last_lbl = data[-1]
+FOLDER_DATA = '../test_data/proteins_test/'
+
+
+@pytest.mark.parametrize('load_method, expected_size, expected_names, expected_labels',
+                         [
+                             ('load_train_split',
+                              10,
+                              ['gr_0.graphml', 'gr_2.graphml', 'gr_5.graphml', 'gr_6.graphml', 'gr_8.graphml',
+                               'gr_664.graphml', 'gr_665.graphml', 'gr_666.graphml', 'gr_667.graphml',
+                               'gr_669.graphml'],
+                              ['0', '0', '0', '0', '0', '1', '1', '1', '1', '1']),
+                             ('load_val_split',
+                              6,
+                              ['gr_3.graphml', 'gr_22.graphml', 'gr_23.graphml', 'gr_671.graphml', 'gr_672.graphml',
+                               'gr_676.graphml'],
+                              ['0', '0', '0', '1', '1', '1']),
+                             ('load_test_split',
+                              6,
+                              ['gr_1.graphml', 'gr_4.graphml', 'gr_7.graphml', 'gr_663.graphml', 'gr_668.graphml',
+                               'gr_673.graphml'],
+                              ['0', '0', '0', '1', '1', '1']),
+                         ])
+def test_split_train(load_method, expected_size, expected_names, expected_labels):
+    loader = LoaderTrainTestValSplit(FOLDER_DATA)
+    data = getattr(loader, load_method)()
+
+    graph_names = [gr_name for gr_name, _ in data]
+    labels = [gr_lbl for _, gr_lbl in data]
+
     assert len(data) == expected_size
-    assert first_graph == first_name_expected
-    assert first_lbl == first_lbl_expected
-    assert last_graph == last_name_expected
-    assert last_lbl == last_lbl_expected
-
-
-@pytest.mark.parametrize('folder_dataset, expected_size',
-                         [('./data/Letter/Letter/HIGH/', 750),
-                          ('./data/AIDS/data/', 250),
-                          ('./data/Mutagenicity/data/', 500),
-                          ('./data/NCI1/data/', 500),
-                          ('./data/PROTEINS/data/', 220),
-                          ('./data/ENZYMES/data/', 120),
-                          ('./data/COLLAB/data/', 1000),
-                          ('./data/REDDIT-BINARY/data/', 400),
-                          ])
-def test_split_val(folder_dataset, expected_size):
-    loader = LoaderTrainTestValSplit(folder_dataset)
-    data = loader.load_val_split()
-    assert len(data) == expected_size
-
-
-@pytest.mark.parametrize('folder_dataset, expected_size',
-                         [('./data/Letter/Letter/HIGH/', 750),
-                          ('./data/AIDS/data/', 1500),
-                          ('./data/Mutagenicity/data/', 2337),
-                          ('./data/NCI1/data/', 2110),
-                          ('./data/PROTEINS/data/', 233),
-                          ('./data/ENZYMES/data/', 120),
-                          ('./data/COLLAB/data/', 1000),
-                          ('./data/REDDIT-BINARY/data/', 400),
-                          ])
-def test_split_test(folder_dataset, expected_size):
-    loader = LoaderTrainTestValSplit(folder_dataset)
-    data = loader.load_test_split()
-    assert len(data) == expected_size
+    assert graph_names == expected_names
+    assert labels == expected_labels

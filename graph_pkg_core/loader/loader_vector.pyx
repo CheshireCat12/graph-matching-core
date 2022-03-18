@@ -1,17 +1,15 @@
 import json
-import numpy as np
 import os
-
+import re
 from glob import glob
-from xmltodict import parse
+
+import numpy as np
 from progress.bar import Bar
-
-from graph_pkg_core.utils.constants cimport EXTENSION_GRAPHML
-
+from xmltodict import parse
 
 cdef class LoaderVector:
     """
-    Base class to load the graphs from graphml format.
+    Vector class to load the graphs from graphml format.
     Load and construct the graphs.
 
     Methods
@@ -22,13 +20,28 @@ cdef class LoaderVector:
     def __init__(self, str folder, bint verbose=False):
         """
 
-        :param folder:
+        Args:
+            folder: folder containing the data to load
+            verbose: print loading information if set to True
         """
         self._folder = folder
         self._verbose = verbose
 
     cpdef int _format_idx(self, str idx):
         return int(idx)
+
+    cpdef int _gr_idx_from_filename(self, str graph_folder):
+        """
+            Extract the idx of the graph from its filename
+            It retrieve the last number contained in the filename
+
+            Args:
+                graph_folder: 
+                
+            Returns: idx of the graph contained in its filename
+            
+            """
+        return int(re.findall(r'\d+', graph_folder)[-1])
 
     cpdef LabelBase _formatted_lbl_node(self, attr):
         vector = np.array(json.loads(attr))
@@ -58,9 +71,8 @@ cdef class LoaderVector:
             print('** Loading Graphs **')
             bar = Bar(f'Loading', max=len(graph_files))
 
-        for graph_file in sorted(graph_files):
+        for graph_file in sorted(graph_files, key=self._gr_idx_from_filename):
             with open(graph_file) as file:
-
                 graph_text = "".join(file.readlines())
                 *_, graph_filename = graph_file.split('/')
 
@@ -86,7 +98,6 @@ cdef class LoaderVector:
         graph_edge_mode = graph_dict['@edgedefault']
         nodes = graph_dict['node']
         edges = graph_dict['edge'] if 'edge' in graph_dict.keys() else []
-
 
         # variable used to check if there is no gap in the indexes from the xml files
         idx_verification = 0

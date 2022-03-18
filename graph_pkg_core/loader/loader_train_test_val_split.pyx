@@ -2,7 +2,6 @@ from os.path import join
 from glob import glob
 from xmltodict import parse
 
-
 cdef class LoaderTrainTestValSplit:
     """
     Load the split dataset.
@@ -15,7 +14,7 @@ cdef class LoaderTrainTestValSplit:
     cdef list _init_splits(self, str filename):
         cdef list data = []
 
-        split_file = glob(join(self.folder_dataset,f'{filename}{EXTENSION_SPLITS}'))[0]
+        split_file = glob(join(self.folder_dataset, f'{filename}{EXTENSION_SPLITS}'))[0]
 
         with open(split_file) as file:
             split_text = "".join(file.readlines())
@@ -32,7 +31,6 @@ cdef class LoaderTrainTestValSplit:
             data.append((split['@file'], split['@class']))
 
         return data
-
 
     cpdef list load_train_split(self):
         """
