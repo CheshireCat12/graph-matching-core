@@ -6,4 +6,16 @@ package contains the core files to perform graph matching.
 
 ## Install
 
+git clone https://github.com/CheshireCat12/graph-matching-core.git
 
+Create python virtual environment with python3.9
+python3.9 -m venv venv
+
+source venv/bin/activate
+
+pip install numpy
+
+pip install -e .
+
+Run tests:
+pytest tests
