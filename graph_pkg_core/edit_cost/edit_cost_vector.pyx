@@ -10,9 +10,11 @@ cdef class EditCostVector(EditCost):
                  double c_insert_edge,
                  double c_delete_edge,
                  str metric_name,
+                 bint use_wl_attr=False,
                  double alpha=-1.):
         super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name, alpha)
         self.metrics_available = ['euclidean']
+        self.use_wl_attr = use_wl_attr
         self._init_metric()
 
     cdef int _init_metric(self) except? -1:
@@ -58,6 +60,15 @@ cdef class EditCostVector(EditCost):
     cdef double c_cost_substitute_node(self, Node node_src, Node node_trgt):
         cdef:
             double dist, sub_cost, alpha, sigma
+
+        if self.use_wl_attr:
+            dist = dirac_hash(node_src.label.hash,
+                              node_trgt.label.hash)
+
+            # TODO: Find the correct function to compute the substitution cost with a dirac metric
+            return dist
+
+
         self.vec_source = node_src.label.vector
         self.vec_target = node_trgt.label.vector
 

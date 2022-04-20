@@ -3,11 +3,13 @@ from graph_pkg_core.graph.graph cimport Graph
 from graph_pkg_core.graph.node cimport Node
 from graph_pkg_core.graph.label.label_base cimport LabelBase
 from graph_pkg_core.graph.label.label_node_vector cimport LabelNodeVector
+from graph_pkg_core.graph.label.label_hash cimport LabelHash
 from graph_pkg_core.graph.label.label_edge cimport LabelEdge
 from graph_pkg_core.utils.constants cimport EXTENSION_GRAPHML
 
 cdef class LoaderVector:
     cdef:
+        bint use_wl_attr
         bint _verbose
         str _folder
         str __EXTENSION

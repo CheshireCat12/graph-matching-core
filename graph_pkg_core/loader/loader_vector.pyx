@@ -17,7 +17,7 @@ cdef class LoaderVector:
     load()
     """
 
-    def __init__(self, str folder, bint verbose=False):
+    def __init__(self, str folder, bint use_wl_attr=False, bint verbose=False):
         """
 
         Args:
@@ -26,6 +26,7 @@ cdef class LoaderVector:
         """
         self._folder = folder
         self._verbose = verbose
+        self.use_wl_attr = use_wl_attr
 
     cpdef int _format_idx(self, str idx):
         return int(idx)
@@ -44,8 +45,11 @@ cdef class LoaderVector:
         return int(re.findall(r'\d+', graph_folder)[-1])
 
     cpdef LabelBase _formatted_lbl_node(self, attr):
-        vector = np.array(json.loads(attr))
+        if self.use_wl_attr:
+            hash = str(attr)
+            return LabelHash(hash)
 
+        vector = np.array(json.loads(attr))
         return LabelNodeVector(vector)
 
     cpdef LabelBase _formatted_lbl_edge(self, attr):
@@ -113,10 +117,17 @@ cdef class LoaderVector:
             idx = self._format_idx(element['@id'])
 
             assert idx == idx_verification, f'There is a gap in the index {idx} from {graph_idx}'
-
-            if isinstance(json.loads(element['data']['#text']), float):
+            # print('-----')
+            # print(element['data'][0]['#text'])
+            # print('-----')
+            if isinstance(json.loads(element['data'][0]['#text']), float):
                 print(graph_idx)
-            lbl_node = self._formatted_lbl_node(element['data']['#text'])
+            #
+            # print('-----')
+            # print(element['data']['#text'])
+            # print('-----')
+            idx_attr = int(self.use_wl_attr)
+            lbl_node = self._formatted_lbl_node(element['data'][idx_attr]['#text'])
             self._constructed_graph.add_node(Node(idx, lbl_node))
 
             idx_verification += 1
