@@ -129,3 +129,9 @@ def test_real_graphs(test_graphs, idx_tr, idx_te, expected_dist):
     results = np.array(dists).reshape(len(idx_tr), len(idx_te))
 
     assert np.linalg.norm(results - expected_dist) < 1e-8
+
+
+def test_ged_as_function(defined_graph):
+    ged, tr, te = defined_graph
+
+    ged.compute_edit_distance
