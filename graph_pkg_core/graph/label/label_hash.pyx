@@ -4,7 +4,7 @@ from cpython.object cimport Py_EQ
 
 cdef class LabelHash(LabelBase):
     """
-    LabelNodeVector contains as an str as attributes
+    LabelNodeVector contains hash as str as attributes
     """
     def __init__(self, str hash):
         """

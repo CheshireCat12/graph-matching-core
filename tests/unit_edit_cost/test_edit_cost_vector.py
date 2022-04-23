@@ -26,7 +26,7 @@ def test_euclidean_norm(coord1, coord2, epsilon):
 
 
 @pytest.mark.parametrize('hash1, hash2, expected_cost',
-                         [('sdfs', 'woerj23o', 1.0),
+                         [('sdfs', 'woerj23o', 2.0),
                           ('asdf', 'asdf', 0.0)])
 def test_dirac_hash(hash1, hash2, expected_cost):
     node0 = Node(0, LabelHash(hash1))

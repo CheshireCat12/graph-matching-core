@@ -52,6 +52,7 @@ def test_loader_hash(folder, num_graphs, size_graphs, name_graphs):
     loader_vector = LoaderVector(folder, use_wl_attr=True)
     graphs = loader_vector.load()
     print(graphs)
+
     assert False
     # assert len(graphs) == num_graphs
     # assert [len(graph) for graph in graphs] == size_graphs
