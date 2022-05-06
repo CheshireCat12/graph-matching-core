@@ -30,6 +30,7 @@ def test_all_letters(folder, num_graphs, size_graphs, name_graphs):
     assert len(graphs) == num_graphs
     assert [len(graph) for graph in graphs] == size_graphs
     assert [graph.name for graph in graphs] == name_graphs
+    assert False
 
 FOLDER_Hash = os.path.join(os.path.dirname(__file__),
                            '../test_data/test_hash')

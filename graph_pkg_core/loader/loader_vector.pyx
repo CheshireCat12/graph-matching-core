@@ -120,14 +120,15 @@ cdef class LoaderVector:
             # print('-----')
             # print(element['data'][0]['#text'])
             # print('-----')
-            if isinstance(json.loads(element['data'][0]['#text']), float):
-                print(graph_idx)
+
             #
             # print('-----')
             # print(element['data']['#text'])
             # print('-----')
-            idx_attr = int(self.use_wl_attr)
-            lbl_node = self._formatted_lbl_node(element['data'][idx_attr]['#text'])
+            if self.use_wl_attr:
+                lbl_node = self._formatted_lbl_node(element['data'][1]['#text'])
+            else:
+                lbl_node = self._formatted_lbl_node(element['data']['#text'])
             self._constructed_graph.add_node(Node(idx, lbl_node))
 
             idx_verification += 1

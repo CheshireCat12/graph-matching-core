@@ -65,9 +65,9 @@ cdef class EditCostVector(EditCost):
             dist = dirac_hash(node_src.label.hash,
                               node_trgt.label.hash)
             
-            tau = self.c_insert_node        #substitution shoud be as expensive as deleting and inserting a node
+            tau = self.c_insert_node        #substitution shoud be as expensive as deleting and inserting a node (P. 34)
             # TODO: Find the correct function to compute the substitution cost with a dirac metric
-            return dist*2*tau
+            return self.alpha_node *dist*2*tau
 
 
         self.vec_source = node_src.label.vector
