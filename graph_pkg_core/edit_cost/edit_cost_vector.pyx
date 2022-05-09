@@ -10,11 +10,11 @@ cdef class EditCostVector(EditCost):
                  double c_insert_edge,
                  double c_delete_edge,
                  str metric_name,
-                 bint use_wl_attr=False,
+                 int wl_k = 0,
                  double alpha=-1.):
         super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name, alpha)
         self.metrics_available = ['euclidean']
-        self.use_wl_attr = use_wl_attr
+        self.wl_k = wl_k
         self._init_metric()
 
     cdef int _init_metric(self) except? -1:
@@ -61,9 +61,10 @@ cdef class EditCostVector(EditCost):
         cdef:
             double dist, sub_cost, alpha, sigma
 
-        if self.use_wl_attr:
-            dist = dirac_hash(node_src.label.hash,
-                              node_trgt.label.hash)
+        
+        for k in range(self.wl_k):
+            dist = dirac_hash(node_src.label.hash[k],
+                              node_trgt.label.hash[k])
             
             tau = self.c_insert_node        #substitution shoud be as expensive as deleting and inserting a node (P. 34)
             return self.alpha_node *dist*2*tau

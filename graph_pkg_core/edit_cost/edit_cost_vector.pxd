@@ -11,7 +11,7 @@ ctypedef double (*metricptr)(double[::1], double[::1])
 cdef class EditCostVector(EditCost):
 
     cdef:
-        bint use_wl_attr
+        int wl_k
         cnp.ndarray vec_source, vec_target
 
         list metrics_available
