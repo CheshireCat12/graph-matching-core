@@ -4,23 +4,23 @@ from cpython.object cimport Py_EQ
 
 cdef class LabelHash(LabelBase):
     """
-    LabelNodeVector contains hash as str as attributes
+    LabelNodeHash contains a list of hashes as attributes
     """
-    def __init__(self, str hash):
+    def __init__(self, list hashes):
         """
 
         Args:
-            hash: str
+            hash: list
         """
-        self.hash = hash
+        self.hashes = hashes
 
     cpdef tuple get_attributes(self):
         """
 
-        Returns: Tuple(str, ) the array attribute
+        Returns: Tuple(list, ) the array attribute
 
         """
-        return (self.hash,)
+        return (self.hashes,)
 
     def __richcmp__(self, LabelBase other, int op):
         assert isinstance(other, LabelHash), f'The element {str(other)} is not an Label!'
@@ -30,6 +30,6 @@ cdef class LabelHash(LabelBase):
         if op == Py_EQ:
             other_attr, *_ = other.get_attributes()
 
-            return self.hash == other_attr
+            return self.hashes == other_attr
         else:
             assert False

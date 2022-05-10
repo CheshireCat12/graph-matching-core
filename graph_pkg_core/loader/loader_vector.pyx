@@ -45,9 +45,14 @@ cdef class LoaderVector:
         return int(re.findall(r'\d+', graph_folder)[-1])
 
     cpdef LabelBase _formatted_lbl_node(self, attr):
+
         if self.use_wl_attr:
-            hash = attr
-            return LabelHash(hash)
+            vector = np.array(json.loads(attr[2:17]))
+            hashes_str = attr[:2]+attr[22:]
+            hashes_str = hashes_str.replace('\'', '')
+            hashes = hashes_str.strip('][').split(', ')
+            hashes.insert(0,vector)
+            return LabelHash(hashes)
 
         vector = np.array(json.loads(attr))
         return LabelNodeVector(vector)
@@ -128,7 +133,7 @@ cdef class LoaderVector:
             if self.use_wl_attr:
                 lbl_node = self._formatted_lbl_node(element['data'][1]['#text'])
             else:
-                lbl_node = self._formatted_lbl_node(element['data']['#text'])
+                lbl_node = self._formatted_lbl_node(element['data'][0]['#text'])
             self._constructed_graph.add_node(Node(idx, lbl_node))
 
             idx_verification += 1

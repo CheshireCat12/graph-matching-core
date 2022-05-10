@@ -4,6 +4,6 @@ cimport numpy as cnp
 
 cdef class LabelHash(LabelBase):
     cdef:
-        readonly str hash
+        readonly list hashes
 
     cpdef tuple get_attributes(self)

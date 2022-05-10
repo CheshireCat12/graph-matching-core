@@ -61,19 +61,25 @@ cdef class EditCostVector(EditCost):
         cdef:
             double dist, sub_cost, alpha, sigma
 
-        
+        dist = 0
+        tau = self.c_insert_node        #substitution shoud be as expensive as deleting and inserting a node (P. 34)
+    
+        self.vec_source = node_src.label.hashes[0]
+        self.vec_target = node_trgt.label.hashes[0]
+        dist += self.metric(self.vec_source, self.vec_target)
+        dist = self.alpha_node * fmin(dist, 2*self.c_insert_node)
+
         for k in range(self.wl_k):
-            dist = dirac_hash(node_src.label.hash[k],
-                              node_trgt.label.hash[k])
-            
-            tau = self.c_insert_node        #substitution shoud be as expensive as deleting and inserting a node (P. 34)
-            return self.alpha_node *dist*2*tau
+            dist += 2*tau*dirac_hash(node_src.label.hashes[k+1],
+                              node_trgt.label.hashes[k+1])
+                     
+        return self.alpha_node *dist
 
 
-        self.vec_source = node_src.label.vector
-        self.vec_target = node_trgt.label.vector
+        #self.vec_source = node_src.label.vector
+        #self.vec_target = node_trgt.label.vector
 
-        dist = self.metric(self.vec_source, self.vec_target)
+        #dist = self.metric(self.vec_source, self.vec_target)
 
         return self.alpha_node * fmin(dist, 2*self.c_insert_node)
 
