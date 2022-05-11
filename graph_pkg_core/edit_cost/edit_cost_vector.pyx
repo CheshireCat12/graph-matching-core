@@ -10,7 +10,7 @@ cdef class EditCostVector(EditCost):
                  double c_insert_edge,
                  double c_delete_edge,
                  str metric_name,
-                 int wl_k = 0,
+                 int wl_k = -1,
                  double alpha=-1.):
         super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name, alpha)
         self.metrics_available = ['euclidean']
@@ -60,7 +60,15 @@ cdef class EditCostVector(EditCost):
     cdef double c_cost_substitute_node(self, Node node_src, Node node_trgt):
         cdef:
             double dist, sub_cost, alpha, sigma
+        # original code: if no wl_k is specified (default: wl_k=-1) the original algorithm is used
+        if self.wl_k<0:
+            self.vec_source = node_src.label.vector
+            self.vec_target = node_trgt.label.vector
 
+            dist = self.metric(self.vec_source, self.vec_target)
+
+            return self.alpha_node * fmin(dist, 2*self.c_insert_node)
+        #Modified version to include the WL-hashes
         dist = 0
         tau = self.c_insert_node        #substitution shoud be as expensive as deleting and inserting a node (P. 34)
     
@@ -75,13 +83,6 @@ cdef class EditCostVector(EditCost):
                      
         return self.alpha_node *dist
 
-
-        #self.vec_source = node_src.label.vector
-        #self.vec_target = node_trgt.label.vector
-
-        #dist = self.metric(self.vec_source, self.vec_target)
-
-        return self.alpha_node * fmin(dist, 2*self.c_insert_node)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
         return self.c_cost_insert_edge(edge)

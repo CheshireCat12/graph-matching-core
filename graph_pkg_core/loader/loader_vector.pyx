@@ -133,7 +133,7 @@ cdef class LoaderVector:
             if self.use_wl_attr:
                 lbl_node = self._formatted_lbl_node(element['data'][1]['#text'])
             else:
-                lbl_node = self._formatted_lbl_node(element['data'][0]['#text'])
+                lbl_node = self._formatted_lbl_node(element['data']['#text'])
             self._constructed_graph.add_node(Node(idx, lbl_node))
 
             idx_verification += 1
