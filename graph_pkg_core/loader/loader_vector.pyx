@@ -47,6 +47,10 @@ cdef class LoaderVector:
     cpdef LabelBase _formatted_lbl_node(self, attr):
 
         if self.use_wl_attr:
+            if len(attr)<17:
+                vector = []
+                vector.append(np.array(json.loads(attr)))
+                return LabelHash(vector)
             vector = np.array(json.loads(attr[2:17]))
             hashes_str = attr[:2]+attr[22:]
             hashes_str = hashes_str.replace('\'', '')
