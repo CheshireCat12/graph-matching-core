@@ -78,8 +78,10 @@ cdef class EditCostVector(EditCost):
         dist = self.alpha_node * fmin(dist, 2*self.c_insert_node)
 
         for k in range(self.wl_k):
-            dist += 2*tau*dirac_hash(node_src.label.hashes[k+1],
-                              node_trgt.label.hashes[k+1])
+            if(k==self.wl_k-1):         #this does not add up all the versions but selects the iteration wl_k
+                dist = 0  
+                dist += tau*dirac_hash(node_src.label.hashes[k+1],
+                                node_trgt.label.hashes[k+1])
                      
         return self.alpha_node *dist
 
