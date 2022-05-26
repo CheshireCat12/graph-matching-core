@@ -80,4 +80,5 @@ cdef class CoordinatorVector:
         return f'{indent_}Parameters Coordinator:\n' \
                f'{indent_ * 2}Dataset: {self.dataset}\n' \
                f'{indent_ * 2}Parameters Cost: {edit_cst}\n' \
+               f'{indent_ * 2}Use Hashes (for WL) : {self.use_wl_attr}\n' \
                f'{indent_ * 2}Folder dataset: {self.folder_dataset}\n'
