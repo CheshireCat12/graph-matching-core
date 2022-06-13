@@ -10,13 +10,9 @@ cdef class EditCostVector(EditCost):
                  double c_insert_edge,
                  double c_delete_edge,
                  str metric_name,
-                 int wl_k = -1,
-                 list weights = [],
                  double alpha=-1.):
         super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name, alpha)
         self.metrics_available = ['euclidean']
-        self.wl_k = wl_k
-        self.weights = weights
         self._init_metric()
 
     cdef int _init_metric(self) except? -1:
@@ -62,30 +58,12 @@ cdef class EditCostVector(EditCost):
     cdef double c_cost_substitute_node(self, Node node_src, Node node_trgt):
         cdef:
             double dist, sub_cost, alpha, sigma
-        # original code: if no wl_k is specified (default: wl_k=-1) the original algorithm is used
-        if self.wl_k<0:
-            self.vec_source = node_src.label.vector
-            self.vec_target = node_trgt.label.vector
+        self.vec_source = node_src.label.vector
+        self.vec_target = node_trgt.label.vector
 
-            dist = self.metric(self.vec_source, self.vec_target)
+        dist = self.metric(self.vec_source, self.vec_target)
 
-            return self.alpha_node * fmin(dist, 2*self.c_insert_node)
-        #Modified version to include the WL-hashes
-        dist = 0
-        tau = self.c_insert_node      #substitution shoud be as expensive as deleting and inserting a node (P. 34)
-
-        dist += self.metric(node_src.label.hashes[0], node_trgt.label.hashes[0])
-        dist = fmin(dist, 2*self.c_insert_node)
-        if True: #sum up all the hash values onto the original cost
-            for k in range(self.wl_k): 
-                dist += self.weights[k]*tau*dirac_hash(node_src.label.hashes[k+1],
-                                       node_trgt.label.hashes[k+1])
-        else:
-            dist = self.weights[self.wl_k]*tau*dirac_hash(node_src.label.hashes[self.wl_k],
-                                    node_trgt.label.hashes[self.wl_k])
-                        
-        return self.alpha_node *dist
-
+        return self.alpha_node * fmin(dist, 2*self.c_insert_node)
 
     cpdef double cost_insert_edge(self, Edge edge) except? -1:
         return self.c_cost_insert_edge(edge)
@@ -111,8 +89,6 @@ cdef class EditCostVector(EditCost):
         d['c_delete_node'] = self.c_delete_node
         d['c_insert_edge'] = self.c_insert_edge
         d['c_delete_edge'] = self.c_delete_edge
-        d['wl_k'] = self.wl_k
-        d['weights'] = self.weights
         d['metric_name'] = self.metric_name
         d['alpha'] = self.alpha_node if self.change_alpha else -1
 
@@ -123,4 +99,3 @@ def rebuild(data):
     edit_cost = EditCostVector(**data)
 
     return edit_cost
-      
