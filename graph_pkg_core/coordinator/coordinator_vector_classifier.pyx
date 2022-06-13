@@ -22,6 +22,7 @@ cdef class CoordinatorVectorClassifier(CoordinatorVector):
                  tuple params_edit_cost,
                  str folder_dataset,
                  str folder_labels=None,
+                 bint use_wl_attr = False,
                  bint verbose = False):
         """
 
@@ -30,9 +31,10 @@ cdef class CoordinatorVectorClassifier(CoordinatorVector):
             params_edit_cost:
             folder_dataset:
             folder_labels:
+            use_wl_attr:
             verbose:
         """
-        super().__init__(dataset_name, params_edit_cost, folder_dataset, verbose)
+        super().__init__(dataset_name, params_edit_cost, folder_dataset, use_wl_attr, verbose)
         self.folder_labels = folder_labels
         self.loader_split = LoaderTrainTestValSplit(self.folder_dataset)
 

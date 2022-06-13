@@ -17,7 +17,7 @@ cdef class LoaderVector:
     load()
     """
 
-    def __init__(self, str folder, bint verbose=False):
+    def __init__(self, str folder, bint use_wl_attr=False, bint verbose=False):
         """
 
         Args:
@@ -26,6 +26,7 @@ cdef class LoaderVector:
         """
         self._folder = folder
         self._verbose = verbose
+        self.use_wl_attr = use_wl_attr
 
     cpdef int _format_idx(self, str idx):
         return int(idx)
@@ -44,8 +45,20 @@ cdef class LoaderVector:
         return int(re.findall(r'\d+', graph_folder)[-1])
 
     cpdef LabelBase _formatted_lbl_node(self, attr):
-        vector = np.array(json.loads(attr))
 
+        if self.use_wl_attr:
+            if len(attr)<17:
+                vector = []
+                vector.append(np.array(json.loads(attr)))
+                return LabelHash(vector)
+            vector = np.array(json.loads(attr[2:17]))
+            hashes_str = attr[:2]+attr[22:]
+            hashes_str = hashes_str.replace('\'', '')
+            hashes = hashes_str.strip('][').split(', ')
+            hashes.insert(0,vector)
+            return LabelHash(hashes)
+
+        vector = np.array(json.loads(attr))
         return LabelNodeVector(vector)
 
     cpdef LabelBase _formatted_lbl_edge(self, attr):
@@ -113,10 +126,18 @@ cdef class LoaderVector:
             idx = self._format_idx(element['@id'])
 
             assert idx == idx_verification, f'There is a gap in the index {idx} from {graph_idx}'
+            # print('-----')
+            # print(element['data'][0]['#text'])
+            # print('-----')
 
-            if isinstance(json.loads(element['data']['#text']), float):
-                print(graph_idx)
-            lbl_node = self._formatted_lbl_node(element['data']['#text'])
+            #
+            # print('-----')
+            # print(element['data']['#text'])
+            # print('-----')
+            if self.use_wl_attr:
+                lbl_node = self._formatted_lbl_node(element['data'][1]['#text'])
+            else:
+                lbl_node = self._formatted_lbl_node(element['data']['#text'])
             self._constructed_graph.add_node(Node(idx, lbl_node))
 
             idx_verification += 1

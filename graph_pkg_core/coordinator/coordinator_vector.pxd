@@ -9,6 +9,7 @@ cdef class CoordinatorVector:
     cdef:
         str _dataset
         str _folder_dataset
+        bint use_wl_attr
         readonly tuple params_edit_cost
         readonly list graphs
 

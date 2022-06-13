@@ -6,6 +6,7 @@ import pytest
 import numpy as np
 from graph_pkg_core.graph.label.label_edge import LabelEdge
 from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
+from graph_pkg_core.graph.label.label_hash import LabelHash
 
 
 @pytest.mark.parametrize('in_args, expected',
@@ -49,3 +50,10 @@ def test_label_equality(lbl_1, lbl_2, expected):
 
     assert equality == expected
 
+@pytest.mark.parametrize('in_args',
+                         ['jfoi23hjoi2h3o',
+                          'asodfno32o2odo'])
+def test_label_hash(in_args):
+    label = LabelHash(in_args)
+
+    assert label.get_attributes()[0] == in_args

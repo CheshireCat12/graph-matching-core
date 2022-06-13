@@ -25,6 +25,9 @@ cdef double dirac_NCI1(int chem_source, int chem_target):
 cdef double dirac(int source, int target):
     return float(source != target)
 
+cdef double dirac_hash(str source, str target):
+    return int(source != target)
+
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef double euclidean_vector(double[::1] vec_src, double[::1] vec_trgt):

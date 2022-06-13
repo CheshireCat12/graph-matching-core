@@ -2,6 +2,7 @@ from graph_pkg_core.edit_cost.edit_cost cimport EditCost
 from graph_pkg_core.graph.edge cimport Edge
 from graph_pkg_core.graph.node cimport Node
 from graph_pkg_core.edit_cost.metrics cimport euclidean_vector
+from graph_pkg_core.edit_cost.metrics cimport dirac_hash
 cimport numpy as cnp
 
 ctypedef double (*metricptr)(double[::1], double[::1])
@@ -10,10 +11,14 @@ ctypedef double (*metricptr)(double[::1], double[::1])
 cdef class EditCostVector(EditCost):
 
     cdef:
+        list weights
+
+        int wl_k
         cnp.ndarray vec_source, vec_target
 
         list metrics_available
         metricptr metric
+
 
     cdef double c_cost_insert_node(self, Node node)
 

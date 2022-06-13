@@ -14,6 +14,7 @@ cdef class CoordinatorVector:
     dataset : str
     folder_dataset : str
     params_edit_cost : tuple
+    use_wl_attr : bint
     graphs : list
     ged : GED
 
@@ -23,10 +24,12 @@ cdef class CoordinatorVector:
                  str dataset_name,
                  tuple params_edit_cost,
                  str folder_dataset='',
+                 bint use_wl_attr=False,
                  bint verbose=False):
         self.dataset = dataset_name
         self.params_edit_cost = params_edit_cost
         self.folder_dataset = folder_dataset
+        self.use_wl_attr=use_wl_attr
         self._init_system()
 
         print('\n** Coordinator Vector Loaded **')
@@ -61,7 +64,7 @@ cdef class CoordinatorVector:
         self.ged = GED(self.edit_cost)
 
     cdef void _init_vector(self):
-        self.loader = LoaderVector(self.folder_dataset)
+        self.loader = LoaderVector(self.folder_dataset, self.use_wl_attr)
         self.edit_cost = EditCostVector(*self.params_edit_cost)
 
     def __repr__(self):
@@ -77,4 +80,5 @@ cdef class CoordinatorVector:
         return f'{indent_}Parameters Coordinator:\n' \
                f'{indent_ * 2}Dataset: {self.dataset}\n' \
                f'{indent_ * 2}Parameters Cost: {edit_cst}\n' \
+               f'{indent_ * 2}Use Hashes (for WL) : {self.use_wl_attr}\n' \
                f'{indent_ * 2}Folder dataset: {self.folder_dataset}\n'
