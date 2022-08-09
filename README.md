@@ -32,5 +32,5 @@ pip install -e .
 
 #### Run tests
 ```bash
-pytest tests
+python -m pytest tests
 ```
