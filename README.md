@@ -90,7 +90,8 @@ mat_dist = MatrixDistances(ged, parallel=True)
 
 mat_edit_dist = mat_dist.calc_matrix_distances(source_graphs,
                                                 target_graphs,
-                                                heuristic=True)
+                                                heuristic=True,
+                                                num_cores=8)
 ```
 
 ## Cite
