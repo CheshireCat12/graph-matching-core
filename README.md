@@ -92,3 +92,26 @@ mat_edit_dist = mat_dist.calc_matrix_distances(source_graphs,
                                                 target_graphs,
                                                 heuristic=True)
 ```
+
+## Cite
+
+Please cite our paper if you use this code in your work:
+```
+@inproceedings{GilliozR22,
+  author    = {Anthony Gillioz and
+               Kaspar Riesen},
+  editor    = {Maria De Marsico and
+               Gabriella Sanniti di Baja and
+               Ana L. N. Fred},
+  title     = {Improving Graph Classification by Means of Linear Combinations of
+               Reduced Graphs},
+  booktitle = {Proceedings of the 11th International Conference on Pattern Recognition
+               Applications and Methods, {ICPRAM} 2022, Online Streaming, February
+               3-5, 2022},
+  pages     = {17--23},
+  publisher = {{SCITEPRESS}},
+  year      = {2022},
+  url       = {https://doi.org/10.5220/0010776900003122},
+  doi       = {10.5220/0010776900003122}
+}
+```
