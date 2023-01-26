@@ -29,8 +29,7 @@ def _convert_graph(idx_graph: int,
     node_attr = 'x'
 
     for idx_node, node_data in graph.nodes(data=True):
-        np_data = np.fromstring(node_data[node_attr][1:-1], sep=' ')
-        lbl_node = LabelNodeVector(np_data)
+        lbl_node = LabelNodeVector(node_data[node_attr])
         node = Node(int(idx_node), lbl_node)
 
         new_graph.add_node(node)
