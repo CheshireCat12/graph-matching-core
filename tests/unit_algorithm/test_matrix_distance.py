@@ -3,7 +3,8 @@ import pytest
 
 import os
 
-from graph_pkg_core.coordinator.coordinator_vector_classifier import CoordinatorVectorClassifier
+from graph_pkg_core.coordinator.coordinator import Coordinator
+from graph_pkg_core.coordinator.graph_loader import load_graphs
 from graph_pkg_core.algorithm.matrix_distances import MatrixDistances
 
 FOLDER_DATA = os.path.join(os.path.dirname(__file__),
@@ -12,9 +13,10 @@ FOLDER_DATA = os.path.join(os.path.dirname(__file__),
 
 @pytest.fixture()
 def graph_coordinator():
-    coordinator = CoordinatorVectorClassifier('proteins',
-                                              (1., 1., 1., 1., 'euclidean', 0.8),
-                                              FOLDER_DATA)
+    graphs, lbls = load_graphs(FOLDER_DATA)
+    coordinator = Coordinator((1., 1., 1., 1., 'euclidean', 0.8),
+                              graphs,
+                              lbls)
 
     return coordinator
 
@@ -24,8 +26,9 @@ def graph_coordinator():
 def test_matrix_distance(graph_coordinator, parallel):
     mat_dist = MatrixDistances(graph_coordinator.ged,
                                parallel=parallel)
-    gr_tr, lbl_tr = graph_coordinator.train_split()
-    gr_te, lbl_te = graph_coordinator.test_split()
+
+    gr_tr = graph_coordinator.graphs[:4]
+    gr_te = graph_coordinator.graphs[4:]
 
     dist = mat_dist.calc_matrix_distances(gr_tr, gr_te, heuristic=True)
 
