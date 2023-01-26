@@ -11,7 +11,8 @@ from graph_pkg_core.graph.graph import Graph
 from graph_pkg_core.graph.label.label_edge import LabelEdge
 from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
 from graph_pkg_core.graph.node import Node
-from graph_pkg_core.loader.loader_vector import LoaderVector
+from graph_pkg_core.coordinator.coordinator import Coordinator
+from graph_pkg_core.coordinator.graph_loader import load_graphs
 
 FOLDER_DATA = os.path.join(os.path.dirname(__file__),
                            '../test_data/proteins_old')
@@ -19,10 +20,10 @@ FOLDER_DATA = os.path.join(os.path.dirname(__file__),
 
 @pytest.fixture()
 def test_graphs():
-    loader = LoaderVector(FOLDER_DATA)
-    graphs = loader.load()
+    graphs, _ = load_graphs(FOLDER_DATA)
+    coordinator = Coordinator((1., 1., 1., 1., 'euclidean'), graphs, None)
 
-    return graphs
+    return coordinator.graphs
 
 
 @pytest.fixture()
