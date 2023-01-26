@@ -113,7 +113,6 @@ cdef class LoaderVector:
             idx = self._format_idx(element['@id'])
 
             assert idx == idx_verification, f'There is a gap in the index {idx} from {graph_idx}'
-
             if isinstance(json.loads(element['data']['#text']), float):
                 print(graph_idx)
             lbl_node = self._formatted_lbl_node(element['data']['#text'])

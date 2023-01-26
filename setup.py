@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from glob import glob
-import os
+
 from setuptools import setup, Extension
-from setuptools.command.install import install
-from setuptools.command.develop import develop
 
 install_requires = [
     'cython',
@@ -14,16 +12,12 @@ install_requires = [
     'xmltodict',
     'pytest-profiling',
     'networkx',
-    'pandas',
     'progress',
     'pyyaml',
-    'notebook',
     'psutil',
     'gitpython',
     'easydict',
     'bunch',
-    'sklearn',
-    'pygad'
 ]
 
 
@@ -52,7 +46,6 @@ def extension_modules():
     return ext
 
 
-
 # Create automatically the extenstions
 extensions = extension_modules()
 
@@ -61,14 +54,10 @@ for e in extensions:
                            'embedsignature': True}
 
 setup(name='graph-matching-core',
-      version='0.1.2',
-      description='A graph module using cython',
+      version='0.2.0',
+      description='A python module to compute GED using cython',
       author='Anthony Gillioz',
       author_email='anthony.gillioz@outlook.com',
       install_requires=install_requires,
-      setup_requires=[
-          'setuptools>=18.0',  # automatically handles Cython extensions
-          'cython>=0.28.4',
-      ],
       ext_modules=extensions,
       )
