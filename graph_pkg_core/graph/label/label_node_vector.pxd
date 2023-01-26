@@ -1,9 +1,9 @@
 from graph_pkg_core.graph.label.label_base cimport LabelBase
-cimport numpy as cnp
-
+import numpy as np
+cimport numpy as np
 
 cdef class LabelNodeVector(LabelBase):
     cdef:
-        readonly cnp.ndarray vector
+        readonly np.ndarray vector
 
     cpdef tuple get_attributes(self)

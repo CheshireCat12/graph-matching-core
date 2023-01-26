@@ -4,8 +4,10 @@ cimport numpy as np
 from progress.bar import Bar
 from multiprocessing import Pool
 
+from graph_pkg_core.algorithm.graph_edit_distance cimport GED
+from graph_pkg_core.graph.graph cimport Graph
+
 import psutil
-from itertools import product
 
 
 cdef class MatrixDistances:
@@ -128,7 +130,10 @@ cdef class MatrixDistances:
         distances = np.array(results)
         return distances
 
-    cpdef double _helper_parallel(self, Graph graph_train, Graph graph_test, bint heuristic=False):
+    cpdef double _helper_parallel(self,
+                                  Graph graph_train,
+                                  Graph graph_test,
+                                  bint heuristic=False):
         dist = self.ged.compute_edit_distance(graph_train, graph_test, heuristic)
 
         return dist

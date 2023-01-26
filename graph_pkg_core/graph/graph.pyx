@@ -2,6 +2,9 @@ cimport cython
 import numpy as np
 cimport numpy as np
 
+from graph_pkg_core.graph.edge cimport Edge
+from graph_pkg_core.graph.node cimport Node
+
 
 cdef class Graph:
     """

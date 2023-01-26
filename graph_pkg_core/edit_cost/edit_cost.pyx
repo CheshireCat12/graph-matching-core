@@ -1,3 +1,6 @@
+from graph_pkg_core.graph.edge cimport Edge
+from graph_pkg_core.graph.node cimport Node
+
 cdef class EditCost:
 
     def __init__(self,

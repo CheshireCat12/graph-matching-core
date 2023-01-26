@@ -1,6 +1,15 @@
+from libc.math cimport fmin
+from libc.math cimport pow as c_pow
+from libc.math cimport sqrt as c_sqrt
+
 import numpy as np
 cimport numpy as np
-from libc.math cimport fmin
+cimport cython
+
+from graph_pkg_core.edit_cost.edit_cost cimport EditCost
+from graph_pkg_core.graph.edge cimport Edge
+from graph_pkg_core.graph.node cimport Node
+
 
 cdef class EditCostVector(EditCost):
 
@@ -13,13 +22,20 @@ cdef class EditCostVector(EditCost):
                  double alpha=-1.):
         super().__init__(c_insert_node, c_delete_node, c_insert_edge, c_delete_edge, metric_name, alpha)
         self.metrics_available = ['euclidean']
-        self._init_metric()
 
-    cdef int _init_metric(self) except? -1:
-        assert self.metric_name in self.metrics_available, f'The metric {self.metric_name} is not available'
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    cdef double metric(self, double[::1] vec_src, double[::1] vec_trgt):
 
-        if self.metric_name == 'euclidean':
-            self.metric = euclidean_vector
+        cdef:
+            int N
+            double sum_pow = 0.
+        N = vec_src.shape[0]
+        for idx in range(N):
+            sum_pow += c_pow(vec_src[idx] - vec_trgt[idx], 2)
+
+        return c_sqrt(sum_pow)
+
 
     cpdef double cost_insert_node(self, Node node) except? -1:
         """

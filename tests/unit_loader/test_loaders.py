@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from graph_pkg_core.loader.loader_vector import LoaderVector
+from graph_pkg_core.loader.graph_loader import load_graphs
 
 ############## VECTOR ##############
 
@@ -24,7 +24,7 @@ FOLDER_DATA = os.path.join(os.path.dirname(__file__),
                               ),
                          ])
 def test_all_letters(folder, num_graphs, size_graphs, name_graphs):
-    loader_vector = LoaderVector(folder)
+    loader_vector = (folder)
     graphs = loader_vector.load()
 
     assert len(graphs) == num_graphs

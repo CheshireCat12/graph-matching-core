@@ -1,12 +1,14 @@
 import numpy as np
 cimport numpy as np
 from cpython.object cimport Py_EQ
+from graph_pkg_core.graph.label.label_base cimport LabelBase
+
 
 cdef class LabelNodeVector(LabelBase):
     """
     LabelNodeVector contains as an np.array as attributes
     """
-    def __init__(self, cnp.ndarray vector):
+    def __init__(self, np.ndarray vector):
         """
 
         Args:

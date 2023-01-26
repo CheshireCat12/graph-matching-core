@@ -6,6 +6,7 @@ import numpy as np
 cimport numpy as np
 cimport cython
 
+ctypedef double (*metricptr)(double[::1], double[::1])
 
 cdef double manhattan_letter(double x1, double y1, double x2, double y2):
     return c_abs(x1 - x2) + c_abs(y1 - y2)

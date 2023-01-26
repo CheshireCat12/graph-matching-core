@@ -1,3 +1,6 @@
+from graph_pkg_core.graph.label.label_base cimport LabelBase
+
+
 cdef class LabelEdge(LabelBase):
     """
     Label edge contains the weights that may exist between 2 vertices

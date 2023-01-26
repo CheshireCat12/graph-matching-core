@@ -1,3 +1,8 @@
+from cpython.object cimport Py_EQ
+
+from graph_pkg_core.graph.label.label_base cimport LabelBase
+
+
 cdef class Edge:
     """
     Class used to represent the edges of the graph class.

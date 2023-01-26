@@ -10,7 +10,7 @@ install_requires = [
     'powerline-status',
     'pytest',
     'xmltodict',
-    'pytest-profiling',
+    'pytest',
     'networkx',
     'progress',
     'pyyaml',
@@ -18,6 +18,8 @@ install_requires = [
     'gitpython',
     'easydict',
     'bunch',
+    'pandas',
+    'tqdm'
 ]
 
 

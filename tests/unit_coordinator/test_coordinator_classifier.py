@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from graph_pkg_core.coordinator.coordinator_vector_classifier import CoordinatorVectorClassifier
+from graph_pkg_core.coordinator.coordinator import Coordinator
 
 FOLDER_DATA = os.path.join(os.path.dirname(__file__),
                            '../test_data/proteins_test')
@@ -56,9 +56,9 @@ FOLDER_DATA_OLD = os.path.join(os.path.dirname(__file__),
                               'test_reverse'),
                          ])
 def test_train_split(load_method, folder_dataset, expected_size, expected_names, expected_cls, filename):
-    coordinator = CoordinatorVectorClassifier('proteins',
-                                              (1., 1., 1., 1., 'euclidean'),
-                                              folder_dataset)
+    coordinator = Coordinator(
+                              (1., 1., 1., 1., 'euclidean'),
+                              folder_dataset)
     if filename is not None:
         print(filename)
         X_train, y_train = getattr(coordinator, load_method)(filename)
