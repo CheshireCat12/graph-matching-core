@@ -55,8 +55,8 @@ for e in extensions:
     e.cython_directives = {'language_level': "3",  # all are Python-3
                            'embedsignature': True}
 
-setup(name='graph-matching-core',
-      version='0.2.0',
+setup(name='cyged',
+      version='0.2.1',
       description='A python module to compute GED using cython',
       author='Anthony Gillioz',
       author_email='anthony.gillioz@outlook.com',

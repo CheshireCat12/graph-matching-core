@@ -1,2 +1,21 @@
 [build-system]
 requires = ["setuptools", "wheel", "Cython>=0.29", "numpy >= 1.15"]
+
+[project]
+name = "cyged"
+version = "0.2.1"
+authors = [
+  { name="Anthony Gillioz", email="anthony.gillioz@outlook.com" },
+]
+description = 'A python module to compute GED using cython'
+readme = "README.md"
+requires-python = "<=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/CheshireCat12/graph-matching-core"
+"Bug Tracker" = "https://github.com/CheshireCat12/graph-matching-core/issues"

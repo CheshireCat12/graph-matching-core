@@ -66,7 +66,7 @@ cdef class Graph:
         Returns: bool
 
         """
-        return 0 <= idx_node < self.num_nodes_max and \
+        return 0 <= idx_node < int(self.num_nodes_max) and \
                self.nodes[idx_node] is not None
 
     cpdef bint has_edge(self, int idx_start, int idx_end):
@@ -80,8 +80,8 @@ cdef class Graph:
         Returns:
 
         """
-        return 0 <= idx_start < self.num_nodes_max and \
-               0 <= idx_end < self.num_nodes_max and \
+        return 0 <= idx_start < int(self.num_nodes_max) and \
+               0 <= idx_end < int(self.num_nodes_max) and \
                self.edges[idx_start][idx_end] is not None
 
     cpdef list get_nodes(self):
@@ -165,7 +165,7 @@ cdef class Graph:
 
         return degrees
 
-    cpdef void remove_node_by_idx(self, int idx_node):
+    cpdef void remove_node_by_idx(self, unsigned int idx_node):
         """
         Remove the node by the given index.
         
@@ -213,7 +213,7 @@ cdef class Graph:
         self.adjacency_matrix = np.delete(self.adjacency_matrix, idx_node, 0)
         self.adjacency_matrix = np.delete(self.adjacency_matrix, idx_node, 1)
 
-    cdef void __del_edge(self, int idx_node, list edges):
+    cdef void __del_edge(self, unsigned int idx_node, list edges):
         cdef:
             Edge edge
             int idx_to_pop= -1

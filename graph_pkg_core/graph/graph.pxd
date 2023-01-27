@@ -35,8 +35,8 @@ cdef class Graph:
 
     cpdef int[::1] degrees(self)
 
-    cpdef void remove_node_by_idx(self, int idx_node)
+    cpdef void remove_node_by_idx(self, unsigned int idx_node)
 
     cpdef void remove_all_edges_by_node_idx(self, int idx_node)
 
-    cdef void __del_edge(self, int idx_node, list edges)
+    cdef void __del_edge(self, unsigned int idx_node, list edges)
