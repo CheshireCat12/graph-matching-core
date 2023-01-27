@@ -4,8 +4,8 @@ Test labels
 """
 import pytest
 import numpy as np
-from graph_pkg_core.graph.label.label_edge import LabelEdge
-from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
+from cyged import LabelEdge
+from cyged import LabelNode
 
 
 @pytest.mark.parametrize('in_args, expected',
@@ -23,7 +23,7 @@ def test_label_edge(in_args, expected):
                           np.array([1, 5.]),
                           np.array([43., 4])])
 def test_label_vector(in_args):
-    label = LabelNodeVector(in_args)
+    label = LabelNode(in_args)
 
     assert np.array_equal(label.get_attributes()[0], in_args) == True
 
@@ -33,14 +33,14 @@ def test_label_vector(in_args):
                           np.array([1, 5.]),
                           np.array([43., 4])])
 def test_label_vector_to_string(in_args):
-    label = LabelNodeVector(in_args)
+    label = LabelNode(in_args)
 
     assert str(label) == f'Label attributes: {", ".join(str(element) for element in (in_args,))}'
 
 
 @pytest.mark.parametrize('lbl_1, lbl_2, expected',
-                         [(LabelNodeVector(np.array([1, 2])), LabelNodeVector(np.array([1, 2])), True),
-                          (LabelNodeVector(np.array([1, 3])), LabelNodeVector(np.array([1, 2])), False),
+                         [(LabelNode(np.array([1, 2])), LabelNode(np.array([1, 2])), True),
+                          (LabelNode(np.array([1, 3])), LabelNode(np.array([1, 2])), False),
                           (LabelEdge(0), LabelEdge(0), True),
                           (LabelEdge(12), LabelEdge(2), False),
                           ])

@@ -3,13 +3,13 @@
 import numpy as np
 import pytest
 
-from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
-from graph_pkg_core.graph.node import Node
+from cyged import LabelNode
+from cyged import Node
 
 
 @pytest.fixture()
 def my_node():
-    my_node = Node(1, LabelNodeVector(np.array([1., 2.])))
+    my_node = Node(1, LabelNode(np.array([1., 2.])))
 
     return my_node
 
@@ -20,14 +20,14 @@ def test_simple_node(my_node):
 
 
 @pytest.mark.parametrize('node1, node2, expected',
-                         [(Node(1, LabelNodeVector(np.array([1., 2.]))),
-                           Node(1, LabelNodeVector(np.array([1., 2.]))),
+                         [(Node(1, LabelNode(np.array([1., 2.]))),
+                           Node(1, LabelNode(np.array([1., 2.]))),
                            True),
-                          (Node(1, LabelNodeVector(np.array([1., 2.]))),
-                           Node(3, LabelNodeVector(np.array([1., 4.]))),
+                          (Node(1, LabelNode(np.array([1., 2.]))),
+                           Node(3, LabelNode(np.array([1., 4.]))),
                            False),
-                          (Node(1, LabelNodeVector(np.array([1., 2.]))),
-                           Node(1, LabelNodeVector(np.array([1, 2.1]))),
+                          (Node(1, LabelNode(np.array([1., 2.]))),
+                           Node(1, LabelNode(np.array([1, 2.1]))),
                            False)])
 def test_equality_node(node1, node2, expected):
     equality = node1 == node2

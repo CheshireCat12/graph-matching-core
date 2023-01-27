@@ -3,11 +3,11 @@ from itertools import combinations
 import numpy as np
 import pytest
 
-from graph_pkg_core.graph.edge import Edge
-from graph_pkg_core.graph.graph import Graph
-from graph_pkg_core.graph.label.label_edge import LabelEdge
-from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
-from graph_pkg_core.graph.node import Node
+from cyged import Edge
+from cyged import Graph
+from cyged import LabelEdge
+from cyged import LabelNode
+from cyged import Node
 
 
 @pytest.fixture()
@@ -35,7 +35,7 @@ def test_remove_node(num_nodes, idx_to_remove, expected_adj):
     nodes = []
 
     for i in range(num_nodes):
-        tmp_node = Node(i, LabelNodeVector(np.array([1 + i, 1])))
+        tmp_node = Node(i, LabelNode(np.array([1 + i, 1])))
         nodes.append(tmp_node)
         my_graph.add_node(tmp_node)
 
@@ -58,7 +58,7 @@ def test_add_node(num_nodes):
     nodes = []
 
     for i in range(num_nodes):
-        tmp_node = Node(i, LabelNodeVector(np.array([1, 1])))
+        tmp_node = Node(i, LabelNode(np.array([1, 1])))
         nodes.append(tmp_node)
         my_graph.add_node(tmp_node)
 
@@ -71,7 +71,7 @@ def test_add_node(num_nodes):
                           (5, 8), ])
 def test_add_node_higher_than_num_nodes(num_nodes, error_idx):
     my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
-    tmp_node = Node(error_idx, LabelNodeVector(np.array([1, 1])))
+    tmp_node = Node(error_idx, LabelNode(np.array([1, 1])))
 
     with pytest.raises(AssertionError) as execinfo:
         my_graph.add_node(tmp_node)
@@ -92,7 +92,7 @@ def test_add_clique_edge(num_nodes, expected_edges):
     my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
 
     for i in range(num_nodes):
-        tmp_node = Node(i, LabelNodeVector(np.array([i, i])))
+        tmp_node = Node(i, LabelNode(np.array([i, i])))
         my_graph.add_node(tmp_node)
 
     for idx_start, idx_end in combinations(range(num_nodes), 2):
@@ -107,7 +107,7 @@ def test_add_clique_edge(num_nodes, expected_edges):
 
 @pytest.mark.parametrize('num_nodes, nodes, edge, expected_error_msg',
                          [(5, [], Edge(7, 1, LabelEdge(0)), 'The starting node 7 does not exist!'),
-                          (5, [Node(0, LabelNodeVector(np.array([1, 1])))], Edge(0, 23, LabelEdge(0)),
+                          (5, [Node(0, LabelNode(np.array([1, 1])))], Edge(0, 23, LabelEdge(0)),
                            'The ending node 23 does not exist!')
                           ])
 def test_insert_invalid_edge(num_nodes, nodes, edge, expected_error_msg):
@@ -135,7 +135,7 @@ def test_adjacency_matrix(num_nodes, expected_matrix):
     my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
 
     for i in range(num_nodes):
-        tmp_node = Node(i, LabelNodeVector(np.array([i, i])))
+        tmp_node = Node(i, LabelNode(np.array([i, i])))
         my_graph.add_node(tmp_node)
 
     for idx_start, idx_end in combinations(range(num_nodes), 2):
@@ -153,7 +153,7 @@ def test_degrees(num_nodes, expected_matrix):
     my_graph = Graph(f'gr{num_nodes}', f'gr{num_nodes}.gxl', num_nodes)
 
     for i in range(num_nodes):
-        tmp_node = Node(i, LabelNodeVector(np.array([i, i])))
+        tmp_node = Node(i, LabelNode(np.array([i, i])))
         my_graph.add_node(tmp_node)
 
     for idx_start, idx_end in combinations(range(num_nodes), 2):

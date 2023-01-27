@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from graph_pkg_core.coordinator.graph_loader import load_graphs
+from cyged import load_graphs
 
 ############## VECTOR ##############
 

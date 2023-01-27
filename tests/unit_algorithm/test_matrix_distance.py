@@ -3,9 +3,9 @@ import pytest
 
 import os
 
-from graph_pkg_core.coordinator.coordinator import Coordinator
-from graph_pkg_core.coordinator.graph_loader import load_graphs
-from graph_pkg_core.algorithm.matrix_distances import MatrixDistances
+from cyged import Coordinator
+from cyged import load_graphs
+from cyged import MatrixDistances
 
 FOLDER_DATA = os.path.join(os.path.dirname(__file__),
                            '../test_data/proteins_old')

@@ -36,17 +36,18 @@ python -m pytest tests
 ```
 
 ## How to use
+
 ```python
 # More example available in ./tests/
 
-from graph_pkg_core.algorithm.graph_edit_distance import GED
-from graph_pkg_core.edit_cost.edit_cost_vector import EditCostVector
-from graph_pkg_core.graph.edge import Edge
-from graph_pkg_core.graph.graph import Graph
-from graph_pkg_core.graph.label.label_edge import LabelEdge
-from graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
-from graph_pkg_core.graph.node import Node
-from graph_pkg_core.loader.loader_vector import LoaderVector
+from cyged.graph_pkg_core import GED
+from cyged.graph_pkg_core.edit_cost.edit_cost_vector import EditCostVector
+from cyged.graph_pkg_core.graph.edge import Edge
+from cyged.graph_pkg_core import Graph
+from cyged.graph_pkg_core.graph.label.label_edge import LabelEdge
+from cyged.graph_pkg_core.graph.label.label_node_vector import LabelNodeVector
+from cyged.graph_pkg_core.graph.node import Node
+from cyged.graph_pkg_core import LoaderVector
 
 ged = GED(EditCostVector(1., 1., 1., 1., 'euclidean'))
 
@@ -75,9 +76,10 @@ edit_cost = ged.compute_edit_distance(graph_source, graph_target)
 ```
 
 #### Parallelization
+
 ```python
 [...]
-from graph_pkg_core.algorithm.matrix_distances import MatrixDistances
+from cyged.graph_pkg_core.algorithm.matrix_distances import MatrixDistances
 
 ged = GED(EditCostVector(1., 1., 1., 1., 'euclidean'))
 
@@ -85,13 +87,12 @@ ged = GED(EditCostVector(1., 1., 1., 1., 'euclidean'))
 source_graphs = [grs1, grs2, ..., grsm]
 target_graphs = [grt1, grt2, ..., grtn]
 
-
 mat_dist = MatrixDistances(ged, parallel=True)
 
 mat_edit_dist = mat_dist.calc_matrix_distances(source_graphs,
-                                                target_graphs,
-                                                heuristic=True,
-                                                num_cores=8)
+                                               target_graphs,
+                                               heuristic=True,
+                                               num_cores=8)
 ```
 
 ## Cite

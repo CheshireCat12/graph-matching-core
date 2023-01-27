@@ -31,7 +31,7 @@ def extension_modules():
     import numpy
     ext = []
     files = glob('**/*.pyx', recursive=True)
-    packages = ['graph_pkg_core']
+    packages = ['cyged']
     for file in files:
         if any(file.startswith(pkg) for pkg in packages):
             ext_name = file[:-4].replace('/', '.')
