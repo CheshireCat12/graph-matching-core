@@ -2,25 +2,25 @@
 from glob import glob
 
 from setuptools import setup, Extension
-
-install_requires = [
-    'cython',
-    'numpy',
-    'scipy',
-    'powerline-status',
-    'pytest',
-    'xmltodict',
-    'pytest',
-    'networkx',
-    'progress',
-    'pyyaml',
-    'psutil',
-    'gitpython',
-    'easydict',
-    'bunch',
-    'pandas',
-    'tqdm'
-]
+#
+# install_requires = [
+#     'cython',
+#     'numpy',
+#     'scipy',
+#     'powerline-status',
+#     'pytest',
+#     'xmltodict',
+#     'pytest',
+#     'networkx',
+#     'progress',
+#     'pyyaml',
+#     'psutil',
+#     'gitpython',
+#     'easydict',
+#     'bunch',
+#     'pandas',
+#     'tqdm'
+# ]
 
 
 def extension_modules():
@@ -56,10 +56,10 @@ for e in extensions:
                            'embedsignature': True}
 
 setup(name='cyged',
-      version='0.2.1',
+      version='0.2.3',
       description='A python module to compute GED using cython',
       author='Anthony Gillioz',
       author_email='anthony.gillioz@outlook.com',
-      install_requires=install_requires,
+      # install_requires=install_requires,
       ext_modules=extensions,
       )

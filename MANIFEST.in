@@ -1,0 +1,11 @@
+include cyged/graph_pkg_core/algorithm/graph_edit_distance.pxd
+include cyged/graph_pkg_core/algorithm/matrix_distances.pxd
+include cyged/graph_pkg_core/edit_cost/edit_cost.pxd
+include cyged/graph_pkg_core/edit_cost/edit_cost_vector.pxd
+include cyged/graph_pkg_core/edit_cost/metrics.pxd
+include cyged/graph_pkg_core/graph/label/label_base.pxd
+include cyged/graph_pkg_core/graph/label/label_edge.pxd
+include cyged/graph_pkg_core/graph/label/label_node.pxd
+include cyged/graph_pkg_core/graph/edge.pxd
+include cyged/graph_pkg_core/graph/graph.pxd
+include cyged/graph_pkg_core/graph/node.pxd

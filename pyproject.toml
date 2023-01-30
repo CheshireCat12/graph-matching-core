@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel", "Cython>=0.29", "numpy >= 1.15"]
 
 [project]
 name = "cyged"
-version = "0.2.1"
+version = "0.2.3"
 authors = [
   { name="Anthony Gillioz", email="anthony.gillioz@outlook.com" },
 ]
@@ -15,6 +15,23 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies =  [
+    'bunch',
+    'easydict',
+    'gitpython',
+    'networkx',
+    'pandas',
+    'powerline-status',
+    'progress',
+    'psutil',
+    'pytest',
+    'pyyaml',
+    'scipy',
+    'tqdm',
+    'xmltodict',
+    'wheel',
+]
+
 
 [project.urls]
 "Homepage" = "https://github.com/CheshireCat12/graph-matching-core"
